@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PauseMenu : MenuTemplpate<PauseMenu>
+public class PauseMenu : MenuGeneric<PauseMenu>
 {
     public void OnResumePressed()
     {
@@ -18,8 +18,8 @@ public class PauseMenu : MenuTemplpate<PauseMenu>
     {
         Time.timeScale = 1f;
         
-        LevelGameplayUtility gameplayUtility = FindObjectOfType<LevelGameplayUtility>();
-        if (gameplayUtility != null) gameplayUtility.RestartGame();
+        LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
+        if (gameplay != null) gameplay.RestartLevel();
     }
     public void OnSettingsPressed()
     {
@@ -28,7 +28,7 @@ public class PauseMenu : MenuTemplpate<PauseMenu>
     public void OnExitPressed()
     {
         Time.timeScale = 1f;
-        SceneLoader.LoadScene(SceneLoader.START_SCENE_INDEX);
+        GameManager.LoadScene(GameManager.START_SCENE_INDEX);
         base.OnBackPressed();
         MainMenu.Open();
         LevelsMenu.Open();

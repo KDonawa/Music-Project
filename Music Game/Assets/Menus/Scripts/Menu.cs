@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MenuTemplpate<T> : Menu where T: MenuTemplpate<T>
+public abstract class MenuGeneric<T> : Menu where T: MenuGeneric<T>
 {
     //static T instance;
     public static T Instance { get; private set; }
@@ -17,6 +17,10 @@ public abstract class MenuTemplpate<T> : Menu where T: MenuTemplpate<T>
             Instance = (T)this;
         }
     }
+    protected virtual void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
 
     public static void Open()
     {
@@ -24,21 +28,20 @@ public abstract class MenuTemplpate<T> : Menu where T: MenuTemplpate<T>
         {
             MenuManager.Instance.OpenMenu(Instance);
         }
-    }
-    protected virtual void OnDestroy()
+    }   
+
+    public override void OnBackPressed()
     {
-        if(Instance == this) Instance = null;
+        if (MenuManager.Instance)
+        {
+            MenuManager.Instance.CloseCurrentMenu();
+        }
     }
 }
 
 [RequireComponent(typeof(Canvas))]
 public abstract class Menu : MonoBehaviour
 {
-    public virtual void OnBackPressed()
-    {
-        if (MenuManager.Instance)
-        {
-            MenuManager.Instance.CloseCurrentMenu();
-        }
-    }  
+    public abstract void OnBackPressed();
+    
 }

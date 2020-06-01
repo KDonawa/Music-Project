@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMenu : MenuTemplpate<GameMenu>
+public class GameMenu : MenuGeneric<GameMenu>
 {
     public void OnPausePressed()
     {

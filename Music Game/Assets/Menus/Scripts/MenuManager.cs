@@ -19,8 +19,8 @@ public class MenuManager : MonoBehaviour
         else
         {
             instance = this;
-            InitializeMenus();
             DontDestroyOnLoad(gameObject);
+            InitializeMenus();          
         }        
     }
     private void OnDestroy()
@@ -67,7 +67,7 @@ public class MenuManager : MonoBehaviour
                 {
                     mainMenuPresent = true;
 
-                    if(SceneLoader.GetCurrentSceneIndex() == SceneLoader.START_SCENE_INDEX)
+                    if(GameManager.GetCurrentSceneIndex() == GameManager.START_SCENE_INDEX)
                     {
                         OpenMenu(menuInstance);
                     }

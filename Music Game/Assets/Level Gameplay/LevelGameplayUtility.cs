@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 // should be responsible for having all game effects and systems
 // should have checks and balances for systems being used
@@ -10,23 +11,33 @@ public class LevelGameplayUtility : MonoBehaviour
 {
     [SerializeField] Timer timerPrefab = null;
     [SerializeField] ScoreSystem scoreSystemPrefab = null;
-    [SerializeField] Sound buttonLoadSound = null;
+    [SerializeField] TextSystem textSystemPrefab = null;
 
     public Timer Timer { get; private set; }
     public ScoreSystem ScoreSystem { get; private set; }
+    public TextSystem TextSystem { get; private set; }
 
-    // events
-    public event System.Action StartGameEvent;
+    string[] notesIN = { "Sa", "Re", "Ga", "Ma", "Pa", "Dha", "Ni" };
+    string[] notesWN  = { "C", "D", "E", "F", "G", "A", "B" };
+    string[] droneNotes = { "Drone: C", "Drone: D", "Drone: E", "Drone: F", "Drone: G", "Drone: A", "Drone: B" };
 
+    #region SETUP
     private void Awake()
     {
-        Timer = Instantiate(timerPrefab).GetComponent<Timer>();
-        ScoreSystem = Instantiate(scoreSystemPrefab).GetComponent<ScoreSystem>();
-        AudioManager.AddSound(buttonLoadSound);
+        Timer = Instantiate(timerPrefab);
+        ScoreSystem = Instantiate(scoreSystemPrefab);
+        TextSystem = Instantiate(textSystemPrefab);
     }
-
+    #endregion
 
     #region UTILITY
+    public string GetIndianNotation(string westernNotation, string droneNote)
+    {
+        int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note in notesWN
+        int indexWN = Array.FindIndex(notesWN, x => x.Contains(westernNotation));
+        int indexIN = (indexWN - indexDrone + notesIN.Length) % notesIN.Length;
+        return notesIN[indexIN];
+    }
     public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growValue, float duration)
     {
         float originalTextSize = textGUI.fontSize;
@@ -47,7 +58,7 @@ public class LevelGameplayUtility : MonoBehaviour
         }
         textGUI.fontSize = originalTextSize;
     }
-    public IEnumerator DisplayButtonsRoutine(List<Button> buttonsList, int numberToDisplay, float timeBetweenButtons = 0f)
+    public IEnumerator DisplayButtonsByNameRoutine(List<Button> buttonsList, int numberToDisplay, float timeBetweenButtons = 0f)
     {
         for (int i = 0; i < numberToDisplay; i++)
         {
@@ -57,12 +68,22 @@ public class LevelGameplayUtility : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenButtons);
         }
     }
+    public IEnumerator DisplayButtonsRoutine(List<Button> buttonsList, float timeBetweenButtons = 0f)
+    {
+        foreach (var b in buttonsList)
+        {
+            ResetButtonColor(b);
+            DisplayButton(b, true);
+            //if (buttonLoadSound) AudioManager.PlaySoundOneShot(buttonLoadSound.name);
+            yield return new WaitForSeconds(timeBetweenButtons);
+        }
+    }
     public void RandomizeList(List<string> currentNotes)
     {
         for (int index = currentNotes.Count - 1; index > 0; index--)
         {
             // Pick a random index from 0 to length of list
-            int randInt = Random.Range(0, currentNotes.Count);
+            int randInt = UnityEngine.Random.Range(0, currentNotes.Count);
 
             // Swap ith element with the element at random index 
             string temp = currentNotes[index];
@@ -79,7 +100,7 @@ public class LevelGameplayUtility : MonoBehaviour
     {
         button.GetComponent<Image>().color = color;
     }
-    public void HideButtons(List<Button> buttonsList, List<string> buttonNames)
+    public void HideButtonsByName(List<Button> buttonsList, List<string> buttonNames)
     {
         foreach (var buttonName in buttonNames)
         {
@@ -87,16 +108,26 @@ public class LevelGameplayUtility : MonoBehaviour
             HideButton(b);
         }
     }
-    public void EnableButtons(List<Button> buttonsList, List<string> buttonNames, bool canEnable = true)
+    public void HideButtons(List<Button> buttonsList)
+    {
+        foreach (var b in buttonsList)
+        {
+            HideButton(b);
+        }
+    }
+    public void EnableButtonsByName(List<Button> buttonsList, List<string> buttonNames, bool canEnable = true)
     {
         foreach (var buttonName in buttonNames)
         {
             EnableButton(FindButtonByName(buttonsList, buttonName), canEnable);
         }
     }
-    public void RestartGame()
+    public void EnableButtons(List<Button> buttonsList, bool canEnable = true)
     {
-        OnStartGamePressed();
+        foreach (var b in buttonsList)
+        {
+            EnableButton(b, canEnable);
+        }
     }
     #endregion
 
@@ -105,11 +136,11 @@ public class LevelGameplayUtility : MonoBehaviour
     {
         if (b) b.interactable = isInteractable;
     }
-    void DisplayButton(Button b)
+    void DisplayButton(Button b, bool canDisplay = true)
     {
         if (b)
         {
-            EnableButton(b);
+            EnableButton(b, canDisplay);
             //TextMeshProUGUI textGUI = b.GetComponentInChildren<TextMeshProUGUI>();
             //textGUI.text = name;
             b.gameObject.SetActive(true);
@@ -122,16 +153,8 @@ public class LevelGameplayUtility : MonoBehaviour
             b.gameObject.SetActive(false);
         }
     }
-
     Button FindButtonByName(List<Button> buttonsList, string name) =>
         buttonsList.Find(button => button.GetComponentInChildren<TextMeshProUGUI>().text == name);
     #endregion
 
-    #region BUTTON EVENTS 
-    public void OnStartGamePressed()
-    {
-        StartGameEvent?.Invoke();
-    }
-    
-    #endregion
 }

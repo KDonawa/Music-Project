@@ -15,7 +15,7 @@ public class SceneLoader : MonoBehaviour
     {
         LoadScene(START_SCENE_INDEX);
     }
-    public static void LoadLevel(string levelName)
+    public static void LoadScene(string levelName)
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {

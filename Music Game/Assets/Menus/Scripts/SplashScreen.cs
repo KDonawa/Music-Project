@@ -33,7 +33,7 @@ public class SplashScreen : MonoBehaviour
         yield return new WaitForSeconds(delay);
         screenFader.FadeOff(); // fade splash screen
 
-        SceneLoader.LoadStartScene();
+        GameManager.LoadStartScene();
 
         yield return new WaitForSeconds(screenFader.FadeOffDuration);
         isFading = false;

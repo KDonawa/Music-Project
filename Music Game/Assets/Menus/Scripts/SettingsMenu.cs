@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsMenu : MenuTemplpate<SettingsMenu>
+public class SettingsMenu : MenuGeneric<SettingsMenu>
 {
     [SerializeField] Slider masterVolumeSlider = null;
     [SerializeField] Slider sfxVolumeSlider = null;

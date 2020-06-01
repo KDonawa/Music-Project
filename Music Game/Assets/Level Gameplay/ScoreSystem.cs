@@ -12,6 +12,9 @@ public class ScoreSystem : MonoBehaviour
     public float PlayerScore { get; private set; }
     public float ScoreMultiplier { get; private set; }
     public int GuessStreak { get; private set; }
+
+    int numCorrectGuesses;
+    int numWrongGuesses;
     
     #region SETUP
     private void Awake()
@@ -23,6 +26,8 @@ public class ScoreSystem : MonoBehaviour
     {
         StopAllCoroutines();
         PlayerScore = 0f;
+        numCorrectGuesses = 0;
+        numWrongGuesses = 0;
         ResetStreakAndMultiplier();
         UpdateScoreText();
         if (scoreTextGUI) ShowTextGUI(scoreTextGUI, false);
@@ -59,16 +64,27 @@ public class ScoreSystem : MonoBehaviour
     }
     void UpdateStreakAndMultiplier()
     {
-        GuessStreak++;
+        //GuessStreak++;
 
-        if (GuessStreak == 2) ScoreMultiplier = 2;
-        else if (GuessStreak == 3) DoubleMultiplier();
-        else if (GuessStreak == 4) DoubleMultiplier();
+        //if (GuessStreak == 2) ScoreMultiplier = 2;
+        //else if (GuessStreak == 3) DoubleMultiplier();
+        //else if (GuessStreak == 4) DoubleMultiplier();
     }
-    void DoubleMultiplier() => ScoreMultiplier *= 2;
+    //void DoubleMultiplier() => ScoreMultiplier *= 2;
     #endregion
 
     #region UTILITY
+    public void UpdateGuessAccuracy(bool isGuessCorrect)
+    {
+        if (isGuessCorrect) numCorrectGuesses++;
+        else numWrongGuesses++;
+    }
+    public int GetPlayerScorePercentage()
+    {
+        float totalNumGuesses = numCorrectGuesses + numWrongGuesses;
+        float scorePercentage = numCorrectGuesses / totalNumGuesses * 100f;
+        return (int)scorePercentage;
+    }
     public void UpdatePlayerScore(int pointsGained) => StartCoroutine(UpdatePlayerScoreRoutine(pointsGained));  
     public void EnableScoreSystem()
     {

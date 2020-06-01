@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenu : MenuTemplpate<MainMenu>
+public class MainMenu : MenuGeneric<MainMenu>
 {  
     public void OnPlayPressed()
     {
-        LevelsMenu.Open();
+        StageSelectMenu.Open();
     }
     public void OnSettingsPressed()
     {

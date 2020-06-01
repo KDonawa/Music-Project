@@ -1,15 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
+using System;
+//using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    //[SerializeField] Sound[] sounds = null;
+    [SerializeField] Sound[] sounds = null;
 
-    Dictionary<string, AudioSource> soundDictionary = new Dictionary<string, AudioSource>();
+    //Dictionary<string, AudioSource> soundDictionary = new Dictionary<string, AudioSource>();
+    List<string> notesList = new List<string>();
 
     #region SETUP
     private void Awake()
@@ -19,6 +21,14 @@ public class AudioManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            foreach (var sound in sounds) 
+            {
+                if(sound != null)
+                {
+                    sound.InitializeAudioSource(gameObject.AddComponent<AudioSource>());
+                }
+            }
         }
     }
     private void OnDestroy()
@@ -35,52 +45,51 @@ public class AudioManager : MonoBehaviour
     #endregion
 
     #region UTILITY
-    public static void AddSound(Sound sound)
+    //public void PlaySoundOneShot(string name)
+    //{
+    //    Sound sound = Array.Find(sounds, s => s.name == name);
+    //    if(sound != null)
+    //    {
+    //        sound.Source.PlayOneShot(sound.audioClip);
+    //    }
+    //}
+    public void StopAllSounds()
     {
-        if (sound == null) return;
-        if (!Instance.soundDictionary.ContainsKey(sound.name))
+        foreach (var sound in sounds)
         {
-            sound.InitializeAudioSource(Instance.gameObject.AddComponent<AudioSource>());
-            Instance.soundDictionary.Add(sound.name, sound.Source);
+            if(sound != null)
+            {
+                sound.Source.Stop();
+            }
         }
     }
-    public static void PlaySoundOneShot(string name)
+    public void PlaySound(string name, bool canPlay = true)
     {
-        AudioSource source;
-        if (Instance.soundDictionary.TryGetValue(name, out source))
+        Sound sound = Array.Find(sounds, s => s.name == name);
+        if (sound != null)
         {
-            source.PlayOneShot(source.clip);
+            if(canPlay) sound.Source.Play();
+            else sound.Source.Stop();
         }
     }
-    public static void PlaySound(string name, bool canPlay = true)
-    {
-        AudioSource source;
-        if (Instance.soundDictionary.TryGetValue(name, out source))
-        {
-            if (canPlay) { source.Play(); }
-            else { source.Stop(); }
-        }
-    }
-    public static void StopSound(string name)
+    public void StopSound(string name)
     {
         PlaySound(name, false);
     }
-    public static void PauseSound(string name, bool isPausing = true)
+    public void PauseSound(string name, bool isPausing = true)
     {
-        AudioSource source;
-        if (Instance.soundDictionary.TryGetValue(name, out source))
+        Sound sound = Array.Find(sounds, s => s.name == name);
+        if (sound != null)
         {
-            if (isPausing)
-            {
-                if (!source.isPlaying) source.Pause();
-            }
-            else { source.UnPause(); }
+            if (isPausing) sound.Source.Pause();
+            else sound.Source.UnPause();
         }
     }
-    public static void ResumeSound(string name)
+    public void UnPauseSound(string name)
     {
         PauseSound(name, false);
     }
+    
     #endregion
 
 }

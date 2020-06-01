@@ -7,11 +7,8 @@ public class Timer : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI countdownTextGUI = null;
     [SerializeField]  TextMeshProUGUI timerTextGUI = null;
-    [SerializeField] Sound timerSound = null;
-    [SerializeField] Sound countdownSound = null;
 
     public float RemainingTime { get; private set; }
-    public Sound TimerSound => timerSound;
 
     Coroutine timerRoutine = null;
     const int timerUpdateFrequency = 5;
@@ -24,8 +21,6 @@ public class Timer : MonoBehaviour
     {
         ShowTextGUI(timerTextGUI, false);
         ShowTextGUI(countdownTextGUI, false);
-        AudioManager.AddSound(timerSound);
-        AudioManager.AddSound(countdownSound);
     }
 
     public void Initialize(float initialTime)
@@ -44,7 +39,7 @@ public class Timer : MonoBehaviour
         while (startTime > 0)
         {
             countdownTextGUI.text = startTime.ToString();
-            AudioManager.PlaySoundOneShot(countdownSound.name);
+            AudioManager.Instance.PlaySound("countdown");
             yield return new WaitForSeconds(delay);
             startTime--;
         }
@@ -104,12 +99,12 @@ public class Timer : MonoBehaviour
     {
         StopGuessTimer();
         timerRoutine = StartCoroutine(TimerRoutine());
-        AudioManager.PlaySound(timerSound.name);
+        //AudioManager.Instance.PlaySound(timerSound.name);
     }
     public void StopGuessTimer()
     {
         if (timerRoutine != null) StopCoroutine(timerRoutine);
-        AudioManager.StopSound(timerSound.name);
+        //AudioManager.Instance.StopSound(timerSound.name);
     }
     public void ResetGuessTimer(float timePerGuess)
     {

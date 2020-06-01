@@ -44,19 +44,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: C3
-    audioClip: {fileID: 8300000, guid: 3ea1f28f84992a243bd1a2fbebabdc42, type: 3}
-    volume: 1
-    pitch: 1
-  - name: D3
-    audioClip: {fileID: 8300000, guid: 3130e88abb7ac674eb616a8282af63b0, type: 3}
-    volume: 1
-    pitch: 1
-  - name: E3
-    audioClip: {fileID: 8300000, guid: 141d27bd6f447224483c3748621ed19c, type: 3}
-    volume: 1
-    pitch: 1
-  - name: F3
-    audioClip: {fileID: 8300000, guid: 40fc9755434097d489c751114e27fbfc, type: 3}
-    volume: 1
-    pitch: 1
+  - {fileID: 11400000, guid: 59c8092cb6827424e95627978ef4fdb6, type: 2}
+  - {fileID: 11400000, guid: 87335af0cce907746a4dd7174c1f9ed3, type: 2}
+  - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}
+  - {fileID: 11400000, guid: a0b747ffed9f63b4da7bdc26b8cafea1, type: 2}
+  - {fileID: 11400000, guid: d6424c0b0ef392b4abff52628f8b177d, type: 2}
+  - {fileID: 11400000, guid: 65c4e2a7de120d1478f76fc6a2a52c1a, type: 2}
+  - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}
+  - {fileID: 11400000, guid: 9500f4a4d6bf37f4ab431758a7872ec6, type: 2}
+  - {fileID: 11400000, guid: be07f1fcc62a96c43adccad1366791f0, type: 2}
+  - {fileID: 11400000, guid: 4b3537000ca464b4abd3832fa7e09e9d, type: 2}
+  - {fileID: 11400000, guid: 135ddfcde6e70a7428539ce6fe91a537, type: 2}
+  - {fileID: 11400000, guid: 30bd1adc5c541564bbfe89d614082128, type: 2}
+  - {fileID: 11400000, guid: feb6a44de3f8eb446a49f504a27b092c, type: 2}
