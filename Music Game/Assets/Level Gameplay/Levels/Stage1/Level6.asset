@@ -20,4 +20,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}
   - {fileID: 11400000, guid: 59c8092cb6827424e95627978ef4fdb6, type: 2}
   - {fileID: 11400000, guid: 87335af0cce907746a4dd7174c1f9ed3, type: 2}
-  pointsPerCorrectGuess: 100
+  numOfStartingNotes: 5
+  numNotesToGuess: 6

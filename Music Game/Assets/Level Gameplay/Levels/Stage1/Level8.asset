@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74509fb684e6d764ca930a52f9f2840e, type: 3}
-  m_Name: Level1
+  m_Name: Level8
   m_EditorClassIdentifier: 
   droneNote: {fileID: 11400000, guid: feb6a44de3f8eb446a49f504a27b092c, type: 2}
   notes:
@@ -20,5 +20,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}
   - {fileID: 11400000, guid: 59c8092cb6827424e95627978ef4fdb6, type: 2}
   - {fileID: 11400000, guid: 87335af0cce907746a4dd7174c1f9ed3, type: 2}
-  numOfStartingNotes: 3
-  numNotesToGuess: 1
+  numOfStartingNotes: 5
+  numNotesToGuess: 8

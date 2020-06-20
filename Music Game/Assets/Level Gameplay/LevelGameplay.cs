@@ -8,7 +8,8 @@ using System;
 public abstract class LevelGameplay : MonoBehaviour
 {
     [SerializeField] bool showAllPossibleGuesses = false;
-    [Range(2, 10)] [SerializeField] protected int timePerGuess = 10;
+    [Range(0, 5f)] [SerializeField] protected float timeToGuessPerNote = 3f;
+    protected float timePerGuess;
 
     [SerializeField] protected LevelGameplayUtility gameplayUtility;
     //protected int currentLevelIndex;
@@ -19,15 +20,16 @@ public abstract class LevelGameplay : MonoBehaviour
 
     protected Level currentLevel;
     protected List<Button> guessButtons;
-    protected List<string> notesInLevel;
+    protected List<string> currentNotes;
     protected string droneNote;
+    protected int numNotesPlayedPerGuess;
 
     #region SETUP
     protected virtual void Awake()
     {
         gameplayUtility = Instantiate(gameplayUtility);
         guessButtons = new List<Button>();
-        notesInLevel = new List<string>();
+        currentNotes = new List<string>();
         droneNote = string.Empty;
     }
     protected virtual void OnEnable()
@@ -49,13 +51,20 @@ public abstract class LevelGameplay : MonoBehaviour
     {
         StopAllCoroutines();
         MenuManager.Instance.ClearMenuHistory();
-        AudioManager.Instance.StopAllSounds();
+        AudioManager.Instance.StopAllSounds();        
+        
+        levelText.gameObject.SetActive(false);
+        droneText.gameObject.SetActive(false);
+
+        currentLevel = GameManager.Instance.GetCurrentLevel();
+
+        numNotesPlayedPerGuess = currentLevel.numNotesToGuess;
+        timePerGuess = timeToGuessPerNote * numNotesPlayedPerGuess;
+
         gameplayUtility.Timer.Initialize(timePerGuess);
         gameplayUtility.ScoreSystem.Initialize();
         // init text system
-        levelText.gameObject.SetActive(false);
-        droneText.gameObject.SetActive(false);
-        currentLevel = GameManager.Instance.GetCurrentLevel();
+
         //GameMenu.Open();
 
         InitializeNotes();
@@ -64,10 +73,13 @@ public abstract class LevelGameplay : MonoBehaviour
     void InitializeNotes()
     {
         droneNote = currentLevel.droneNote.name;
+        currentNotes.Clear();
 
-        notesInLevel.Clear();
-        foreach (var sound in currentLevel.notes) notesInLevel.Add(sound.name);
-        gameplayUtility.RandomizeList(notesInLevel);
+        // add notes depending on num of starting notes
+        for (int i = 0; i < currentLevel.numOfStartingNotes; i++)
+        {
+            currentNotes.Add(currentLevel.notes[i].name);
+        }        
     }
     void InitializeGuessOptions()
     {
@@ -111,6 +123,8 @@ public abstract class LevelGameplay : MonoBehaviour
         }
         else
         {
+            //add one more note
+            currentNotes.Add(currentLevel.notes[currentNotes.Count].name);
             PlayGameLoop();
         }
     }
@@ -159,7 +173,7 @@ public abstract class LevelGameplay : MonoBehaviour
     }       
     public abstract void PauseGame();
     public abstract void ResumeGame();
-    public virtual bool IsLevelComplete() => false;
+    public virtual bool IsLevelComplete() => currentNotes.Count == currentLevel.notes.Length;
     public virtual bool IsLevelPassed() => true;
     #endregion
 }

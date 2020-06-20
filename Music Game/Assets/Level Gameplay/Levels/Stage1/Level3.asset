@@ -17,4 +17,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a0b747ffed9f63b4da7bdc26b8cafea1, type: 2}
   - {fileID: 11400000, guid: d6424c0b0ef392b4abff52628f8b177d, type: 2}
   - {fileID: 11400000, guid: 65c4e2a7de120d1478f76fc6a2a52c1a, type: 2}
-  pointsPerCorrectGuess: 100
+  - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}
+  - {fileID: 11400000, guid: 59c8092cb6827424e95627978ef4fdb6, type: 2}
+  - {fileID: 11400000, guid: 87335af0cce907746a4dd7174c1f9ed3, type: 2}
+  numOfStartingNotes: 3
+  numNotesToGuess: 3

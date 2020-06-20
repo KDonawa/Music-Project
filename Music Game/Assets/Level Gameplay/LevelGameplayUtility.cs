@@ -68,12 +68,13 @@ public class LevelGameplayUtility : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenButtons);
         }
     }
-    public IEnumerator DisplayButtonsRoutine(List<Button> buttonsList, float timeBetweenButtons = 0f)
+    public IEnumerator DisplayButtonsRoutine(List<Button> buttonsList, int numToDisplay, float timeBetweenButtons = 0f, bool canEnable = true)
     {
-        foreach (var b in buttonsList)
+        for (int i = 0; i < numToDisplay; i++)
         {
+            Button b = buttonsList[i];
             ResetButtonColor(b);
-            DisplayButton(b, true);
+            DisplayButton(b, canEnable);
             //if (buttonLoadSound) AudioManager.PlaySoundOneShot(buttonLoadSound.name);
             yield return new WaitForSeconds(timeBetweenButtons);
         }
@@ -129,6 +130,14 @@ public class LevelGameplayUtility : MonoBehaviour
             EnableButton(b, canEnable);
         }
     }
+    public void DisableButton(Button b)
+    {
+        EnableButton(b, false);
+    }
+    public void DisableButtons(List<Button> buttonsList)
+    {
+        EnableButtons(buttonsList, false);
+    }
     #endregion
 
     #region HELPER METHODS
@@ -136,13 +145,11 @@ public class LevelGameplayUtility : MonoBehaviour
     {
         if (b) b.interactable = isInteractable;
     }
-    void DisplayButton(Button b, bool canDisplay = true)
+    void DisplayButton(Button b, bool canEnable = true)
     {
         if (b)
         {
-            EnableButton(b, canDisplay);
-            //TextMeshProUGUI textGUI = b.GetComponentInChildren<TextMeshProUGUI>();
-            //textGUI.text = name;
+            EnableButton(b, canEnable);
             b.gameObject.SetActive(true);
         }
     }
