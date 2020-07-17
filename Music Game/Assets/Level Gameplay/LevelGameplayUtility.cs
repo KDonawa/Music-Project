@@ -17,8 +17,8 @@ public class LevelGameplayUtility : MonoBehaviour
     public ScoreSystem ScoreSystem { get; private set; }
     public TextSystem TextSystem { get; private set; }
 
-    string[] notesIN = { "Sa", "Re", "Ga", "Ma", "Pa", "Dha", "Ni" };
-    string[] notesWN  = { "C", "D", "E", "F", "G", "A", "B" };
+    string[] notesIN = { "Sa", "Re", "Ga", "Ma", "Pa", "Dha", "Ni", "SA" };
+    string[] notesWN  = { "C3", "D", "E", "F", "G", "A", "B", "C4" };
     string[] droneNotes = { "Drone: C", "Drone: D", "Drone: E", "Drone: F", "Drone: G", "Drone: A", "Drone: B" };
 
     #region SETUP
@@ -33,10 +33,17 @@ public class LevelGameplayUtility : MonoBehaviour
     #region UTILITY
     public string GetIndianNotation(string westernNotation, string droneNote)
     {
-        int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note in notesWN
+        int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note 
         int indexWN = Array.FindIndex(notesWN, x => x.Contains(westernNotation));
         int indexIN = (indexWN - indexDrone + notesIN.Length) % notesIN.Length;
         return notesIN[indexIN];
+    }
+    public string GetWesternNotation(string indianNotation, string droneNote)
+    {
+        int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note
+        int indexIN = Array.FindIndex(notesIN, x => x.Contains(indianNotation));
+        int indexWN = (indexIN - indexDrone + notesWN.Length) % notesWN.Length;
+        return notesWN[indexWN];
     }
     public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growValue, float duration)
     {

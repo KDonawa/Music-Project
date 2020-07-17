@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -2469956759821070727}
   - component: {fileID: 3237030485289987566}
   m_Layer: 0
-  m_Name: Stage 1
+  m_Name: Beginners 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3980be3f3d4e66c43bc071bb8edecf98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showAllPossibleGuesses: 0
   timeToGuessPerNote: 5
   gameplayUtility: {fileID: 5867478692182558738, guid: 7d8ce3be67ff2bf40895bd5253472f96,
     type: 3}
@@ -66,6 +65,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84eb5f1c43e70d747aaa8ba70c0cd67c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: Beginners 1
+  isUnlocked: 1
   levels:
   - {fileID: 11400000, guid: cc4ac2339bc1e8a428d713c42b4e1097, type: 2}
   - {fileID: 11400000, guid: 43557b791c6251b44821ce71e558f63b, type: 2}

@@ -45,5 +45,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stages:
   - {fileID: 3237030485289987566, guid: e52b9cccfc4657a4389f20f6e574b5be, type: 3}
-  currentStageIndex: 1
-  currentLevelIndex: 1
+  - {fileID: 3237030485289987566, guid: abc93b4bbf783c0468a5769188b8759e, type: 3}
+  - {fileID: 3237030485289987566, guid: c1b767a9f49e247458515dc2d0a170c2, type: 3}
+  - {fileID: 3237030485289987566, guid: 029d7c779aae2244aac8262af2ec41a9, type: 3}
+  currentStage: 1
+  currentLevel: 1

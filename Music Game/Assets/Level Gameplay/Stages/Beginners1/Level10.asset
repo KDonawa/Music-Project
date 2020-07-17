@@ -13,12 +13,9 @@ MonoBehaviour:
   m_Name: Level10
   m_EditorClassIdentifier: 
   droneNote: {fileID: 11400000, guid: feb6a44de3f8eb446a49f504a27b092c, type: 2}
-  notes:
-  - {fileID: 11400000, guid: a0b747ffed9f63b4da7bdc26b8cafea1, type: 2}
-  - {fileID: 11400000, guid: d6424c0b0ef392b4abff52628f8b177d, type: 2}
-  - {fileID: 11400000, guid: 65c4e2a7de120d1478f76fc6a2a52c1a, type: 2}
-  - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}
-  - {fileID: 11400000, guid: 59c8092cb6827424e95627978ef4fdb6, type: 2}
-  - {fileID: 11400000, guid: 87335af0cce907746a4dd7174c1f9ed3, type: 2}
-  numOfStartingNotes: 5
+  subLevels:
+  - {fileID: 11400000, guid: 8169d887872034d41ac396601ea46db6, type: 2}
+  - {fileID: 11400000, guid: b89ffdcf97fd27743a683968b3406862, type: 2}
+  - {fileID: 11400000, guid: 479894327d8f7b947b557254dd560149, type: 2}
+  - {fileID: 11400000, guid: 6573bc8a6ab2ffb4bb18ffa6f4c9de38, type: 2}
   numNotesToGuess: 10

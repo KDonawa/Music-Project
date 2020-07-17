@@ -9,7 +9,7 @@ public class GameplayType2 : LevelGameplay
     
     int currentNumGuessesGiven;
     List<string> answers;
-    int currentNumAttemptsInGuessCycle;
+    //int currentNumAttemptsInGuessCycle;
 
     #region SETUP
     protected override void SetupLevel()
@@ -28,25 +28,28 @@ public class GameplayType2 : LevelGameplay
     #endregion
 
     #region HELPERS
-
-    IEnumerator PlayGameLoopRoutine()
+    IEnumerator PlayIntro()
     {
-        // play intro
         StartCoroutine(gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .1f, false));
         yield return new WaitForSeconds(1f);
         for (int i = 0; i < currentNotes.Count; i++)
         {
             Button b = guessButtons[i];
             gameplayUtility.ChangeButtonColor(b, Color.green);
-            AudioManager.Instance.PlaySound(currentLevel.notes[i].name);
+            string noteToPlay = gameplayUtility.GetWesternNotation(currentLevel.subLevels[currentSubLevel].notes[i], droneNote);
+            AudioManager.Instance.PlaySound(noteToPlay);
             yield return new WaitForSeconds(2.5f);
             gameplayUtility.ResetButtonColor(b);
             yield return new WaitForSeconds(0.2f);
         }
         gameplayUtility.HideButtons(guessButtons);
-
+    }
+    IEnumerator PlayGameLoopRoutine()
+    {
+        //yield return StartCoroutine(PlayIntro());
+        yield return null;
         
-        currentNumAttemptsInGuessCycle = 0;
+        //currentNumAttemptsInGuessCycle = 0;
         PlayCurrentNotes();
     }
     IEnumerator PlayCurrentNotesRoutine()
@@ -69,7 +72,7 @@ public class GameplayType2 : LevelGameplay
         {
             string note = currentNotes[UnityEngine.Random.Range(0, currentNotes.Count)];
             answers.Add(note);
-            AudioManager.Instance.PlaySound(note);
+            AudioManager.Instance.PlaySound(gameplayUtility.GetWesternNotation(note, droneNote)); 
             yield return new WaitForSeconds(2.5f);
         }
         AudioManager.Instance.StopSound(droneNote);
@@ -90,7 +93,8 @@ public class GameplayType2 : LevelGameplay
             gameplayUtility.EnableButtons(guessButtons, false);
         }
 
-        bool isGuessCorrect = gameplayUtility.GetIndianNotation(answers[currentNumGuessesGiven-1], droneNote) == guessButton.GetComponentInChildren<TextMeshProUGUI>().text;
+        //bool isGuessCorrect = gameplayUtility.GetIndianNotation(answers[currentNumGuessesGiven-1], droneNote) == guessButton.GetComponentInChildren<TextMeshProUGUI>().text;
+        bool isGuessCorrect = answers[currentNumGuessesGiven - 1] == guessButton.GetComponentInChildren<TextMeshProUGUI>().text;
         if (isGuessCorrect)
         {
             gameplayUtility.ChangeButtonColor(guessButton, Color.green);
@@ -116,26 +120,11 @@ public class GameplayType2 : LevelGameplay
             gameplayUtility.Timer.ResetGuessTimer(timePerGuess);
             yield return new WaitForSeconds(1f);
 
-            
-            //StartNextGuessCycle();
             ContinueGameLoop();
         }
         else
         {
             gameplayUtility.EnableButtons(guessButtons);
-        }
-    }
-    void StartNextGuessCycle()
-    {
-        currentNumAttemptsInGuessCycle++;
-
-        if (currentNumAttemptsInGuessCycle < currentNotes.Count)
-        {
-            PlayCurrentNotes();
-        }
-        else
-        {
-            ContinueGameLoop();
         }
     }
     #endregion

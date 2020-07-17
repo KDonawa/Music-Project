@@ -383,6 +383,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2660862382678545333, guid: 7d4de24633bbf3c4285329d6013a3423,
+        type: 3}
+      propertyPath: currentLevelIndex
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d4de24633bbf3c4285329d6013a3423, type: 3}
 --- !u!1 &1821346935
@@ -513,6 +518,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8758347865857615345, guid: 87af7a9f90d0b884586124bffb3dc038,
+        type: 3}
+      propertyPath: sounds.Array.size
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8758347865857615345, guid: 87af7a9f90d0b884586124bffb3dc038,
+        type: 3}
+      propertyPath: sounds.Array.data[14]
+      value: 
+      objectReference: {fileID: 11400000, guid: 711be8b894c3002439cee59888350ca8,
+        type: 2}
     - target: {fileID: 8758347865857615346, guid: 87af7a9f90d0b884586124bffb3dc038,
         type: 3}
       propertyPath: m_Name

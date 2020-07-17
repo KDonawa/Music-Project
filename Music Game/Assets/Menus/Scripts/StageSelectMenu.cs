@@ -16,11 +16,12 @@ public class StageSelectMenu : MenuGeneric<StageSelectMenu>
 
     void InitializeButtons()
     {
-        int numStages = GameManager.Instance.NumStages;
-        for (int i = 1; i <= numStages; i++)
+        Stage[] stages = GameManager.Instance.GetStages();
+        for (int i = 1; i <= GameManager.Instance.NumStages; i++)
         {
             Button b = Instantiate(stageSelectButtonsPrefab, buttonsContainer.transform);
-            b.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
+            b.interactable = stages[i-1].isUnlocked;
+            b.GetComponentInChildren<TextMeshProUGUI>().text = stages[i-1].name.ToString();
 
             StageSelectButton ssb = b.GetComponent<StageSelectButton>();
             ssb.InitializeButton(i);
@@ -33,9 +34,9 @@ public class StageSelectMenu : MenuGeneric<StageSelectMenu>
         MainMenu.Open();
     }
 
-    public void OnStageSelected(int index)
+    public void OnStageSelected(int val)
     {
-        GameManager.Instance.SetCurrentStageIndex(index);
+        GameManager.Instance.SetCurrentStage(val);
         LevelsMenu.Open();
     }
 

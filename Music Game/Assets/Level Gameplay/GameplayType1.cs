@@ -30,7 +30,7 @@ public class GameplayType1 : LevelGameplay
         {
             Button b = guessButtons[i];
             gameplayUtility.ChangeButtonColor(b, Color.green);
-            AudioManager.Instance.PlaySound(currentLevel.notes[i].name);
+            //AudioManager.Instance.PlaySound(currentLevel.notes[i].name);
             yield return new WaitForSeconds(2.5f);
             gameplayUtility.ResetButtonColor(b);
             yield return new WaitForSeconds(0.2f);

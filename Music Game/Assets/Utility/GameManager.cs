@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] Stage[] stages = null;
     public int NumStages => stages.Length;
 
-    public int currentStageIndex = 1;
-    public int currentLevelIndex = 1; // put range attr 1 - w/e
+    public int currentStage = 1;
+    public int currentLevel = 1; // put range attr 1 - w/e
 
     private void Awake()
     {
@@ -32,17 +32,18 @@ public class GameManager : MonoBehaviour
     }
 
     #region UTILITY
-    public void SetCurrentLevelIndex(int level) => currentLevelIndex = level;
-    public void SetCurrentStageIndex(int stage) => currentStageIndex = stage;
+    public Stage[] GetStages() => stages;
+    public void SetCurrentLevel(int level) => currentLevel = level;
+    public void SetCurrentStage(int stage) => currentStage = stage;
     public void IncrementLevel()
     {
         Level[] levels = GetCurrentStageLevels();
-        if (currentLevelIndex < levels.Length) ++currentLevelIndex;
+        if (currentLevel < levels.Length) ++currentLevel;
     }    
     public Level GetCurrentLevel()
     {
         Level[] levels = GetCurrentStageLevels();
-        return currentLevelIndex - 1 < levels.Length ? levels[currentLevelIndex - 1] : levels[0];
+        return currentLevel - 1 < levels.Length ? levels[currentLevel - 1] : levels[0];
     }
     public Level GetFinalLevel()
     {
@@ -52,7 +53,7 @@ public class GameManager : MonoBehaviour
     public bool IsFinalLevel()
     {
         //if (GetCurrentStageLevels() == null) return false;
-        return GetCurrentStageLevels().Length == currentLevelIndex;
+        return GetCurrentStageLevels().Length == currentLevel;
     }
     public int GetNumLevelsInStage()
     {
@@ -62,9 +63,9 @@ public class GameManager : MonoBehaviour
     }
     public void InitializeGame()
     {
-        if (currentStageIndex > 0 && currentStageIndex <= stages.Length)
+        if (currentStage > 0 && currentStage <= stages.Length)
         {
-            Instantiate(stages[currentStageIndex - 1]);
+            Instantiate(stages[currentStage - 1]);
         }
     }
     public void QuitGame()
@@ -81,9 +82,9 @@ public class GameManager : MonoBehaviour
     #region HELPERS
     Level[] GetCurrentStageLevels()
     {
-        if(currentStageIndex > 0 && currentStageIndex <= stages.Length)
+        if(currentStage > 0 && currentStage <= stages.Length)
         {
-            return stages[currentStageIndex - 1].Levels;
+            return stages[currentStage - 1].Levels;
         }
         return null;
     }
