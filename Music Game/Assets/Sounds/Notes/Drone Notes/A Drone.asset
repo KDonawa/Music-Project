@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
   m_Name: A Drone
   m_EditorClassIdentifier: 
-  name: 'Drone: A'
+  name: 
   audioClip: {fileID: 8300000, guid: e650e1e83d6965440a7b4bc311c4e270, type: 3}
   volume: 0.2
   pitch: 1

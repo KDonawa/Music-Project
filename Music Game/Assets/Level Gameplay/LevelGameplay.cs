@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System;
+using System.Text;
 
 public abstract class LevelGameplay : MonoBehaviour
 {
@@ -24,6 +24,7 @@ public abstract class LevelGameplay : MonoBehaviour
     protected string droneNote;
     protected int numNotesPlayedPerGuess;
     protected int currentSubLevel;
+    //StringBuilder sb;
 
     #region SETUP
     protected virtual void Awake()
@@ -32,6 +33,7 @@ public abstract class LevelGameplay : MonoBehaviour
         guessButtons = new List<Button>();
         currentNotes = new List<string>();
         droneNote = string.Empty;
+        //sb = new StringBuilder(30);
     }
     protected virtual void OnEnable()
     {
@@ -77,11 +79,6 @@ public abstract class LevelGameplay : MonoBehaviour
         droneNote = currentLevel.droneNote.name;
         currentNotes.Clear();
 
-        // add notes depending on num of starting notes
-        //for (int i = 0; i < currentLevel.subLevels[currentSubLevel].notes.Length; i++)
-        //{
-        //    currentNotes.Add(currentLevel.subLevels[currentSubLevel].notes[i]);
-        //}
         foreach (var note in currentLevel.subLevels[currentSubLevel].notes)
         {
             currentNotes.Add(note);
@@ -92,16 +89,18 @@ public abstract class LevelGameplay : MonoBehaviour
         foreach (var b in guessButtons) Destroy(b.gameObject);
         guessButtons.Clear();
 
-        string[] guessesToDisplay = null;
+        //string[] guessesToDisplay = null;
         //if (showAllPossibleGuesses) guessesToDisplay = currentLevel.subLevels[currentLevel.subLevels.Length - 1].notes;
         //else guessesToDisplay = currentLevel.subLevels[0].notes;
-        guessesToDisplay = currentLevel.subLevels[currentSubLevel].notes;
-        foreach (var note in guessesToDisplay)
+        //guessesToDisplay = currentLevel.subLevels[currentSubLevel].notes;
+        foreach (var note in currentNotes)
         {
             Button b = Instantiate(choiceButtonPrefab, guessButtonsContainer.transform);
             b.gameObject.SetActive(false);
-            b.GetComponentInChildren<TextMeshProUGUI>().text = note;      
-            //b.GetComponentInChildren<TextMeshProUGUI>().text = gameplayUtility.GetIndianNotation(sound.name, droneNote);
+
+            b.GetComponent<ChoiceButton>().Initialize(note);
+            b.GetComponentInChildren<TextMeshProUGUI>().text = gameplayUtility.GetIndianNotationAndFormat(note);
+
             b.onClick.AddListener(delegate { OnGuessButtonPressed(b); });
             guessButtons.Add(b);
         }

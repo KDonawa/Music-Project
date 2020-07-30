@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: F
   m_EditorClassIdentifier: 
   notes:
-  - Sa
-  - Re
-  - Ga
-  - Ma
-  - Pa
-  - Dha
-  - Ni
-  - SA
+  - sa
+  - re
+  - ga
+  - ma
+  - pa
+  - dha
+  - ni
+  - '''sa'

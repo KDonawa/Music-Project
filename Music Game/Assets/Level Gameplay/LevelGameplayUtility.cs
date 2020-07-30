@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Text;
 
 // should be responsible for having all game effects and systems
 // should have checks and balances for systems being used
@@ -17,13 +18,23 @@ public class LevelGameplayUtility : MonoBehaviour
     public ScoreSystem ScoreSystem { get; private set; }
     public TextSystem TextSystem { get; private set; }
 
-    string[] notesIN = { "Sa", "Re", "Ga", "Ma", "Pa", "Dha", "Ni", "SA" };
-    string[] notesWN  = { "C3", "D", "E", "F", "G", "A", "B", "C4" };
-    string[] droneNotes = { "Drone: C", "Drone: D", "Drone: E", "Drone: F", "Drone: G", "Drone: A", "Drone: B" };
+    //string[] notesIN = { "Sa", "Re", "Ga", "Ma", "Pa", "Dha", "Ni", "SA" };
+    //string[] notesWN  = { "C3", "D", "E", "F", "G", "A", "B", "C4" };
+    //string[] droneNotes = { "Drone: C", "Drone: D", "Drone: E", "Drone: F", "Drone: G", "Drone: A", "Drone: B" };
 
+    readonly string[] indianNotes = { "sa", "_re", "re", "_ga", "ga", "ma", "Ma", "pa", "_dha", "dha", "_ni", "ni" };
+    readonly string[] westernNotes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    readonly string[] droneNotes = { "d:C", "d:C#", "d:D", "d:D#", "d:E", "d:F", "d:F#", "d:G", "d:G#", "d:A", "d:A#", "d:B", };
+
+    StringBuilder sb;
+
+    // lower octaves: .sa .re .ga (must be bold and italicized)
+    // higher octaves: 'sa 're 'ga (end in apostrophe and Capitalized)
+    // drone: d:C3 -> 3 will tell us the octave
     #region SETUP
     private void Awake()
     {
+        sb = new StringBuilder(30);
         Timer = Instantiate(timerPrefab);
         ScoreSystem = Instantiate(scoreSystemPrefab);
         TextSystem = Instantiate(textSystemPrefab);
@@ -33,17 +44,74 @@ public class LevelGameplayUtility : MonoBehaviour
     #region UTILITY
     public string GetIndianNotation(string westernNotation, string droneNote)
     {
-        int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note 
-        int indexWN = Array.FindIndex(notesWN, x => x.Contains(westernNotation));
-        int indexIN = (indexWN - indexDrone + notesIN.Length) % notesIN.Length;
-        return notesIN[indexIN];
+        //int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note 
+        //int indexWN = Array.FindIndex(notesWN, x => x.Contains(westernNotation));
+        //int indexIN = (indexWN - indexDrone + notesIN.Length) % notesIN.Length;
+        //return notesIN[indexIN];
+        return string.Empty;
+    }
+    public string GetIndianNotationAndFormat(string indianNotation)
+    {
+        bool isBoldAndItalicized = false;
+        bool isUnderlined = false;
+        bool isCapitalized = false;
+
+        if (indianNotation[0] == '.')
+        {
+            indianNotation = indianNotation.Substring(1);
+            isBoldAndItalicized = true;
+        }
+        else if (indianNotation[0] == '\'')
+        {
+            isCapitalized = true;
+            indianNotation = indianNotation.Substring(1) + '\'';
+        }
+        if(indianNotation[0] == '_')
+        {
+            isUnderlined = true;
+            indianNotation = indianNotation.Substring(1);
+        }
+        if (isCapitalized)
+        {
+            indianNotation = char.ToUpper(indianNotation[0]) + indianNotation.Substring(1);
+        }
+
+        sb.Clear();
+        if (isBoldAndItalicized) sb.Append("<i><b>");
+        if (isUnderlined) sb.Append("<u>");
+        sb.Append(indianNotation);
+        if (isUnderlined) sb.Append("</u>");
+        if (isBoldAndItalicized) sb.Append("</b></i>");
+
+        return sb.ToString();
     }
     public string GetWesternNotation(string indianNotation, string droneNote)
     {
-        int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note
-        int indexIN = Array.FindIndex(notesIN, x => x.Contains(indianNotation));
-        int indexWN = (indexIN - indexDrone + notesWN.Length) % notesWN.Length;
-        return notesWN[indexWN];
+        int octave = droneNote[droneNote.Length - 1] - '0';        
+        droneNote = droneNote.Substring(0, droneNote.Length - 1);
+        if (indianNotation[0] == '.')
+        {
+            octave--;
+            indianNotation = indianNotation.Substring(1);
+        }
+        else if (indianNotation[0] == '\'')
+        {
+            octave++;
+            indianNotation = indianNotation.Substring(1);
+        }
+        Debug.Log("octave: " + octave);
+
+        int indexDrone = Array.FindIndex(droneNotes, x => x == droneNote); // find the index of the drone note
+        //Debug.Log("drone note: " + droneNote);
+        //Debug.Log("drone index: " + indexDrone);
+
+        int indexIN = Array.FindIndex(indianNotes, x => x == indianNotation);
+        //Debug.Log("indian note: " + indianNotation);
+        //Debug.Log("IN index: " + indexIN);
+
+        int indexWN = (indexIN - indexDrone + westernNotes.Length) % westernNotes.Length;
+        //Debug.Log("WN index: " + indexWN);
+        return westernNotes[indexWN] + octave;
     }
     public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growValue, float duration)
     {

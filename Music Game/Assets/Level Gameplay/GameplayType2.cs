@@ -56,15 +56,15 @@ public class GameplayType2 : LevelGameplay
     {
         currentNumGuessesGiven = 0;
 
-        droneText.text = "Playing " + droneNote;
-        droneText.gameObject.SetActive(true);
-        AudioManager.Instance.PlaySound(droneNote);
+        //droneText.text = "Drone: " + droneNote;
+        //droneText.gameObject.SetActive(true);
+        //AudioManager.Instance.PlaySound(droneNote);
 
-        yield return new WaitForSeconds(4f);
-        droneText.gameObject.SetActive(false);
-        yield return new WaitForSeconds(1f);
+        //yield return new WaitForSeconds(4f);
+        //droneText.gameObject.SetActive(false);
+        //yield return new WaitForSeconds(1f);
 
-        droneText.text = "Playing Notes";
+        //droneText.text = "Playing Notes";
         droneText.gameObject.SetActive(true);
 
         answers.Clear();
@@ -72,8 +72,10 @@ public class GameplayType2 : LevelGameplay
         {
             string note = currentNotes[UnityEngine.Random.Range(0, currentNotes.Count)];
             answers.Add(note);
-            AudioManager.Instance.PlaySound(gameplayUtility.GetWesternNotation(note, droneNote)); 
+            //AudioManager.Instance.PlaySound(gameplayUtility.GetWesternNotation(note, droneNote)); 
+            droneText.text = "Playing: " + gameplayUtility.GetWesternNotation(note, droneNote) + "/" + gameplayUtility.GetIndianNotationAndFormat(note); // testing
             yield return new WaitForSeconds(2.5f);
+            
         }
         AudioManager.Instance.StopSound(droneNote);
         StartCoroutine(gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .1f));
@@ -92,9 +94,8 @@ public class GameplayType2 : LevelGameplay
             gameplayUtility.Timer.StopGuessTimer();
             gameplayUtility.EnableButtons(guessButtons, false);
         }
-
-        //bool isGuessCorrect = gameplayUtility.GetIndianNotation(answers[currentNumGuessesGiven-1], droneNote) == guessButton.GetComponentInChildren<TextMeshProUGUI>().text;
-        bool isGuessCorrect = answers[currentNumGuessesGiven - 1] == guessButton.GetComponentInChildren<TextMeshProUGUI>().text;
+                
+        bool isGuessCorrect = answers[currentNumGuessesGiven - 1] == guessButton.GetComponent<ChoiceButton>().NoteName;
         if (isGuessCorrect)
         {
             gameplayUtility.ChangeButtonColor(guessButton, Color.green);
