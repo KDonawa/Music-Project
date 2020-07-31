@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 /*
     TODO:
-    -update win screen/pause menu
     -have graphic and sound effect for screen transitions
 */
 public abstract class LevelGameplay : MonoBehaviour
@@ -119,6 +118,7 @@ public abstract class LevelGameplay : MonoBehaviour
         if (IsLevelComplete())
         {
             //end level routine
+            _gameUI.HideDroneText();
             _gameplayUtility.HideButtons(guessButtons);
             LevelCompleteMenu.Instance.SetFinalScore(_gameplayUtility.ScoreSystem.GetPlayerScorePercentage());
             MenuManager.Instance.OpenMenu(LevelCompleteMenu.Instance);

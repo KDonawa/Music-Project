@@ -7,13 +7,27 @@ using TMPro;
 public class GameplayType2 : LevelGameplay
 { 
     int currentNumGuessesGiven;
+
     List<string> answers;
+    List<string> activeSounds;
+
+    Coroutine droneNoteEffectRoutine;
 
     #region SETUP
+    protected override void Awake()
+    {
+        base.Awake();
+        answers = new List<string>();
+        activeSounds = new List<string>();
+    }
     protected override void SetupLevel()
     {
         base.SetupLevel();
-        answers = new List<string>();        
+        answers.Clear();
+        activeSounds.Clear();
+
+        
+
     }
     #endregion
 
@@ -48,43 +62,64 @@ public class GameplayType2 : LevelGameplay
         
         PlayCurrentNotes();
     }
+    void PlayNote(string note)
+    {
+        activeSounds.Add(note);
+        //AudioManager.Instance.PlaySound(note);
+    }
+
+    void StopNote(string note)
+    {
+        activeSounds.Remove(note);
+        //AudioManager.Instance.StopSound(note);
+    }
+    void StartDroneNoteEffect()
+    {
+        droneNoteEffectRoutine = StartCoroutine(_gameplayUtility.GrowAndShrinkTextRoutine(_gameUI.DroneText, 1.3f, 2f));
+    }
+    void StopDroneNoteEffect()
+    {
+        if (droneNoteEffectRoutine != null) StopCoroutine(droneNoteEffectRoutine);
+        _gameUI.ResetDroneText();
+    }
     IEnumerator PlayCurrentNotesRoutine()
     {
         currentNumGuessesGiven = 0;
-
-        _gameUI.DroneText.text = "Drone: " + _gameplayUtility.GetDroneNoteFormatted(droneNote);
-        _gameUI.DroneText.gameObject.SetActive(true);
-
-        //_gameUI.GameText.text = "Playing Drone";
-        //_gameUI.GameText.gameObject.SetActive(true);
-        ////AudioManager.Instance.PlaySound(droneNote);
-        ////yield return new WaitForSeconds(4f);
-        //_gameUI.GameText.gameObject.SetActive(false);
-        ////yield return new WaitForSeconds(1f);
-
-        _gameUI.GameText.text = "Playing Notes";
-        _gameUI.GameText.gameObject.SetActive(true);
-
         answers.Clear();
 
+        // drone effects
+        _gameUI.DisplayDroneText("Drone: " + _gameplayUtility.GetDroneNoteFormatted(droneNote));        
+        PlayNote(droneNote);
+        yield return new WaitForSeconds(0.5f);
+        StartDroneNoteEffect();
+        yield return new WaitForSeconds(4f);
+
+        // game messages
+        _gameUI.DisplayGameText("Playing Notes");
+        
+        // play each note consecutively
         for (int i = 0; i < numNotesPlayedPerGuess; i++)
         {
             string note = currentNotes[UnityEngine.Random.Range(0, currentNotes.Count)];
             answers.Add(note);
-            //AudioManager.Instance.PlaySound(gameplayUtility.GetWesternNotation(note, droneNote)); 
-            _gameUI.DebugText.text = "Answer: " + _gameplayUtility.GetIndianNotationFormatted(note); // testing
-            _gameUI.DebugText.gameObject.SetActive(true);
+            PlayNote(_gameplayUtility.GetWesternNotation(note, droneNote));
+            _gameUI.DisplayDebugText(_gameplayUtility.GetIndianNotationFormatted(note)); // testing
+
            yield return new WaitForSeconds(2.5f);
-            _gameUI.DebugText.gameObject.SetActive(false);
-
+            StopNote(_gameplayUtility.GetWesternNotation(note, droneNote));            
         }
-        AudioManager.Instance.StopSound(droneNote);
-        StartCoroutine(_gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .1f));
 
-        _gameUI.DroneText.gameObject.SetActive(false);
-        _gameUI.GameText.gameObject.SetActive(false);
-        //_gameUI.DebugText.gameObject.SetActive(false);
+        StopNote(droneNote);
+        StopDroneNoteEffect();
+        _gameUI.HideGameText();
+        _gameUI.HideDroneText();
+        _gameUI.HideDebugText();        
 
+        // display guess options
+        yield return new WaitForSeconds(0.8f);
+        StartCoroutine(_gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .3f));              
+
+        //start timer
         _gameplayUtility.Timer.StartGuessTimer();
     }
     IEnumerator GuessButtonPressedRoutine(Button guessButton)
@@ -137,11 +172,17 @@ public class GameplayType2 : LevelGameplay
 
     public override void PauseGame()
     {
-
+        foreach (var sound in activeSounds)
+        {
+            AudioManager.Instance.PauseSound(sound);
+        }
     }
     public override void ResumeGame()
     {
-
+        foreach (var sound in activeSounds)
+        {
+            AudioManager.Instance.UnPauseSound(sound);
+        }
     }
     #endregion
 

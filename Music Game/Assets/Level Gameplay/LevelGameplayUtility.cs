@@ -18,19 +18,15 @@ public class LevelGameplayUtility : MonoBehaviour
     public ScoreSystem ScoreSystem { get; private set; }
     public TextSystem TextSystem { get; private set; }
 
-    //string[] notesIN = { "Sa", "Re", "Ga", "Ma", "Pa", "Dha", "Ni", "SA" };
-    //string[] notesWN  = { "C3", "D", "E", "F", "G", "A", "B", "C4" };
-    //string[] droneNotes = { "Drone: C", "Drone: D", "Drone: E", "Drone: F", "Drone: G", "Drone: A", "Drone: B" };
-
+    // lower octaves: .sa .re .ga (must be bold and italicized)
+    // higher octaves: 'sa 're 'ga (end in apostrophe and Capitalized)
+    // drone: d:C3 -> 3 will tell us the octave
     readonly string[] indianNotes = { "sa", "_re", "re", "_ga", "ga", "ma", "Ma", "pa", "_dha", "dha", "_ni", "ni" };
     readonly string[] westernNotes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
     readonly string[] droneNotes = { "d:C", "d:C#", "d:D", "d:D#", "d:E", "d:F", "d:F#", "d:G", "d:G#", "d:A", "d:A#", "d:B", };
 
     StringBuilder sb;
-
-    // lower octaves: .sa .re .ga (must be bold and italicized)
-    // higher octaves: 'sa 're 'ga (end in apostrophe and Capitalized)
-    // drone: d:C3 -> 3 will tell us the octave
+    
     #region SETUP
     private void Awake()
     {
@@ -119,25 +115,30 @@ public class LevelGameplayUtility : MonoBehaviour
         //Debug.Log("WN index: " + indexWN);
         return westernNotes[indexWN] + octave;
     }
-    public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growValue, float duration)
+    public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growthAmount, float period)
     {
         float originalTextSize = textGUI.fontSize;
+        float growValue = originalTextSize * growthAmount;
 
-        float elapsedTime = 0f;
-        while (elapsedTime < duration / 2)
+        while (true)
         {
-            textGUI.fontSize = Mathf.Lerp(textGUI.fontSize, growValue, Time.deltaTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        elapsedTime = 0f;
-        while (elapsedTime < duration / 2)
-        {
-            textGUI.fontSize = Mathf.Lerp(textGUI.fontSize, originalTextSize, Time.deltaTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        textGUI.fontSize = originalTextSize;
+            float elapsedTime = 0f;
+            while (elapsedTime < period / 2)
+            {
+                textGUI.fontSize = Mathf.Lerp(textGUI.fontSize, growValue, Time.deltaTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            elapsedTime = 0f;
+            while (elapsedTime < period / 2)
+            {
+                textGUI.fontSize = Mathf.Lerp(textGUI.fontSize, originalTextSize, Time.deltaTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            //textGUI.fontSize = originalTextSize;
+        }        
+        
     }
     public IEnumerator DisplayButtonsByNameRoutine(List<Button> buttonsList, int numberToDisplay, float timeBetweenButtons = 0f)
     {

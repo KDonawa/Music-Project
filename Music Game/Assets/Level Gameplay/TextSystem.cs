@@ -53,7 +53,7 @@ public class TextSystem : MonoBehaviour
         }
 
         ShowTextGUI(textGUI);
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
         ShowTextGUI(textGUI, false);
     }
     #endregion
