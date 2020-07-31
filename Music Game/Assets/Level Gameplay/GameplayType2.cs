@@ -5,18 +5,15 @@ using UnityEngine.UI;
 using TMPro;
 
 public class GameplayType2 : LevelGameplay
-{
-    
+{ 
     int currentNumGuessesGiven;
     List<string> answers;
-    //int currentNumAttemptsInGuessCycle;
 
     #region SETUP
     protected override void SetupLevel()
     {
         base.SetupLevel();
-        answers = new List<string>();
-        
+        answers = new List<string>();        
     }
     #endregion
 
@@ -30,102 +27,108 @@ public class GameplayType2 : LevelGameplay
     #region HELPERS
     IEnumerator PlayIntro()
     {
-        StartCoroutine(gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .1f, false));
+        StartCoroutine(_gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .1f, false));
         yield return new WaitForSeconds(1f);
         for (int i = 0; i < currentNotes.Count; i++)
         {
             Button b = guessButtons[i];
-            gameplayUtility.ChangeButtonColor(b, Color.green);
-            string noteToPlay = gameplayUtility.GetWesternNotation(currentLevel.subLevels[currentSubLevel].notes[i], droneNote);
+            _gameplayUtility.ChangeButtonColor(b, Color.green);
+            string noteToPlay = _gameplayUtility.GetWesternNotation(currentLevel.subLevels[currentSubLevel].notes[i], droneNote);
             AudioManager.Instance.PlaySound(noteToPlay);
             yield return new WaitForSeconds(2.5f);
-            gameplayUtility.ResetButtonColor(b);
+            _gameplayUtility.ResetButtonColor(b);
             yield return new WaitForSeconds(0.2f);
         }
-        gameplayUtility.HideButtons(guessButtons);
+        _gameplayUtility.HideButtons(guessButtons);
     }
     IEnumerator PlayGameLoopRoutine()
     {
         //yield return StartCoroutine(PlayIntro());
         yield return null;
         
-        //currentNumAttemptsInGuessCycle = 0;
         PlayCurrentNotes();
     }
     IEnumerator PlayCurrentNotesRoutine()
     {
         currentNumGuessesGiven = 0;
 
-        //droneText.text = "Drone: " + droneNote;
-        //droneText.gameObject.SetActive(true);
-        //AudioManager.Instance.PlaySound(droneNote);
+        _gameUI.DroneText.text = "Drone: " + _gameplayUtility.GetDroneNoteFormatted(droneNote);
+        _gameUI.DroneText.gameObject.SetActive(true);
 
-        //yield return new WaitForSeconds(4f);
-        //droneText.gameObject.SetActive(false);
-        //yield return new WaitForSeconds(1f);
+        //_gameUI.GameText.text = "Playing Drone";
+        //_gameUI.GameText.gameObject.SetActive(true);
+        ////AudioManager.Instance.PlaySound(droneNote);
+        ////yield return new WaitForSeconds(4f);
+        //_gameUI.GameText.gameObject.SetActive(false);
+        ////yield return new WaitForSeconds(1f);
 
-        //droneText.text = "Playing Notes";
-        droneText.gameObject.SetActive(true);
+        _gameUI.GameText.text = "Playing Notes";
+        _gameUI.GameText.gameObject.SetActive(true);
 
         answers.Clear();
+
         for (int i = 0; i < numNotesPlayedPerGuess; i++)
         {
             string note = currentNotes[UnityEngine.Random.Range(0, currentNotes.Count)];
             answers.Add(note);
             //AudioManager.Instance.PlaySound(gameplayUtility.GetWesternNotation(note, droneNote)); 
-            droneText.text = "Playing: " + gameplayUtility.GetWesternNotation(note, droneNote) + "/" + gameplayUtility.GetIndianNotationAndFormat(note); // testing
-            yield return new WaitForSeconds(2.5f);
-            
+            _gameUI.DebugText.text = "Answer: " + _gameplayUtility.GetIndianNotationFormatted(note); // testing
+            _gameUI.DebugText.gameObject.SetActive(true);
+           yield return new WaitForSeconds(2.5f);
+            _gameUI.DebugText.gameObject.SetActive(false);
+
         }
         AudioManager.Instance.StopSound(droneNote);
-        StartCoroutine(gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .1f));
+        StartCoroutine(_gameplayUtility.DisplayButtonsRoutine(guessButtons, currentNotes.Count, .1f));
 
-        droneText.gameObject.SetActive(false);
+        _gameUI.DroneText.gameObject.SetActive(false);
+        _gameUI.GameText.gameObject.SetActive(false);
+        //_gameUI.DebugText.gameObject.SetActive(false);
 
-        gameplayUtility.Timer.StartGuessTimer();
+        _gameplayUtility.Timer.StartGuessTimer();
     }
     IEnumerator GuessButtonPressedRoutine(Button guessButton)
     {
-        gameplayUtility.DisableButtons(guessButtons);
+        _gameplayUtility.DisableButtons(guessButtons);
         currentNumGuessesGiven++;
 
         if(currentNumGuessesGiven == numNotesPlayedPerGuess)
         {
-            gameplayUtility.Timer.StopGuessTimer();
-            gameplayUtility.EnableButtons(guessButtons, false);
+            _gameplayUtility.Timer.StopGuessTimer();
+            _gameplayUtility.EnableButtons(guessButtons, false);
         }
                 
         bool isGuessCorrect = answers[currentNumGuessesGiven - 1] == guessButton.GetComponent<ChoiceButton>().NoteName;
         if (isGuessCorrect)
         {
-            gameplayUtility.ChangeButtonColor(guessButton, Color.green);
+            _gameplayUtility.ChangeButtonColor(guessButton, Color.green);
             AudioManager.Instance.PlaySound("correct guess");            
         }
         else
         {
-            gameplayUtility.ChangeButtonColor(guessButton, Color.red);
+            _gameplayUtility.ChangeButtonColor(guessButton, Color.red);
             AudioManager.Instance.PlaySound("wrong guess");            
         }
         yield return new WaitForSeconds(0.5f);
-        gameplayUtility.ResetButtonColor(guessButton);
+        _gameplayUtility.ResetButtonColor(guessButton);
 
-        gameplayUtility.ScoreSystem.UpdateGuessAccuracy(isGuessCorrect);
-        gameplayUtility.TextSystem.DisplayGuessFeedback(isGuessCorrect);
+        _gameplayUtility.ScoreSystem.UpdateGuessAccuracy(isGuessCorrect);
+        _gameplayUtility.TextSystem.DisplayGuessFeedback(isGuessCorrect);
         
 
         if (currentNumGuessesGiven == numNotesPlayedPerGuess)
         {
             yield return new WaitForSeconds(1.5f);
-            gameplayUtility.ResetButtonColor(guessButton);
-            gameplayUtility.HideButtons(guessButtons);
-            gameplayUtility.Timer.ResetGuessTimer(timePerGuess);
+            _gameplayUtility.ResetButtonColor(guessButton);
+            _gameplayUtility.HideButtons(guessButtons);
+            _gameplayUtility.Timer.ResetGuessTimer(timePerGuess);
             yield return new WaitForSeconds(1f);
 
             ContinueGameLoop();
         }
         else
         {
-            gameplayUtility.EnableButtons(guessButtons);
+            _gameplayUtility.EnableButtons(guessButtons);
         }
     }
     #endregion

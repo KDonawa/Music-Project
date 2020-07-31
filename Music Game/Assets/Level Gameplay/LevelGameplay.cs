@@ -3,37 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Text;
-
+/*
+    TODO:
+    -update win screen/pause menu
+    -have graphic and sound effect for screen transitions
+*/
 public abstract class LevelGameplay : MonoBehaviour
 {
     //[SerializeField] bool showAllPossibleGuesses = false;
     [Range(0, 5f)] [SerializeField] protected float timeToGuessPerNote = 3f;
-    protected float timePerGuess;
+    
 
-    [SerializeField] protected LevelGameplayUtility gameplayUtility;
-    //protected int currentLevelIndex;
-    [SerializeField] protected TextMeshProUGUI levelText = null;
-    [SerializeField] protected TextMeshProUGUI droneText = null;
-    [SerializeField] protected GameObject guessButtonsContainer = null;
-    [SerializeField] protected Button choiceButtonPrefab = null;
-
+    protected GameUI _gameUI;
+    protected LevelGameplayUtility _gameplayUtility;
     protected Level currentLevel;
     protected List<Button> guessButtons;
     protected List<string> currentNotes;
     protected string droneNote;
     protected int numNotesPlayedPerGuess;
     protected int currentSubLevel;
-    //StringBuilder sb;
+    protected float timePerGuess;
 
     #region SETUP
     protected virtual void Awake()
     {
-        gameplayUtility = Instantiate(gameplayUtility);
+        _gameUI = Instantiate(GameManager.Instance.GameUI);
+        _gameplayUtility = Instantiate(GameManager.Instance.GameplayUtility);
         guessButtons = new List<Button>();
         currentNotes = new List<string>();
         droneNote = string.Empty;
-        //sb = new StringBuilder(30);
     }
     protected virtual void OnEnable()
     {
@@ -41,23 +39,22 @@ public abstract class LevelGameplay : MonoBehaviour
     }
     protected virtual void Start()
     {
-        gameplayUtility.Timer.TimerExpiredEvent += OnTimerExpired;
-        gameplayUtility.Timer.CountdownCompletedEvent += OnCountdownCompleted;
+        _gameplayUtility.Timer.TimerExpiredEvent += OnTimerExpired;
+        _gameplayUtility.Timer.CountdownCompletedEvent += OnCountdownCompleted;
         PlayLevel();
     }
     protected virtual void OnDisable()
     {
-        gameplayUtility.Timer.TimerExpiredEvent -= OnTimerExpired;
-        gameplayUtility.Timer.CountdownCompletedEvent -= OnCountdownCompleted;
+        _gameplayUtility.Timer.TimerExpiredEvent -= OnTimerExpired;
+        _gameplayUtility.Timer.CountdownCompletedEvent -= OnCountdownCompleted;
     }    
     protected virtual void SetupLevel()
     {
         StopAllCoroutines();
         MenuManager.Instance.ClearMenuHistory();
-        AudioManager.Instance.StopAllSounds();        
-        
-        levelText.gameObject.SetActive(false);
-        droneText.gameObject.SetActive(false);
+        AudioManager.Instance.StopAllSounds();
+
+        _gameUI.Inititialize();
 
         currentLevel = GameManager.Instance.GetCurrentLevel();
 
@@ -65,11 +62,9 @@ public abstract class LevelGameplay : MonoBehaviour
         numNotesPlayedPerGuess = currentLevel.numNotesToGuess;
         timePerGuess = timeToGuessPerNote * numNotesPlayedPerGuess;
 
-        gameplayUtility.Timer.Initialize(timePerGuess);
-        gameplayUtility.ScoreSystem.Initialize();
+        _gameplayUtility.Timer.Initialize(timePerGuess);
+        _gameplayUtility.ScoreSystem.Initialize();
         // init text system
-
-        //GameMenu.Open();
 
         InitializeNotes();
         InitializeGuessOptions();
@@ -95,11 +90,11 @@ public abstract class LevelGameplay : MonoBehaviour
         //guessesToDisplay = currentLevel.subLevels[currentSubLevel].notes;
         foreach (var note in currentNotes)
         {
-            Button b = Instantiate(choiceButtonPrefab, guessButtonsContainer.transform);
+            Button b = _gameUI.InstantiateGuessButton();
             b.gameObject.SetActive(false);
 
             b.GetComponent<ChoiceButton>().Initialize(note);
-            b.GetComponentInChildren<TextMeshProUGUI>().text = gameplayUtility.GetIndianNotationAndFormat(note);
+            b.GetComponentInChildren<TextMeshProUGUI>().text = _gameplayUtility.GetIndianNotationFormatted(note);
 
             b.onClick.AddListener(delegate { OnGuessButtonPressed(b); });
             guessButtons.Add(b);
@@ -124,8 +119,8 @@ public abstract class LevelGameplay : MonoBehaviour
         if (IsLevelComplete())
         {
             //end level routine
-            gameplayUtility.HideButtons(guessButtons);
-            LevelCompleteMenu.Instance.SetFinalScore(gameplayUtility.ScoreSystem.GetPlayerScorePercentage());
+            _gameplayUtility.HideButtons(guessButtons);
+            LevelCompleteMenu.Instance.SetFinalScore(_gameplayUtility.ScoreSystem.GetPlayerScorePercentage());
             MenuManager.Instance.OpenMenu(LevelCompleteMenu.Instance);
         }
         else
@@ -143,28 +138,24 @@ public abstract class LevelGameplay : MonoBehaviour
 
     IEnumerator StartLevelRoutine()
     {
-        levelText.text = "Level " + GameManager.Instance.currentLevel;
-        levelText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(1.5f);
-        levelText.gameObject.SetActive(false);
-        yield return new WaitForSeconds(0.2f);
+        yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());
 
         GameMenu.Open();
-        gameplayUtility.Timer.EnableTimer();
+        _gameplayUtility.Timer.EnableTimer();
         //GameplayUtility.ScoreSystem.EnableScoreSystem();
         // enable text system
         yield return new WaitForSeconds(0.2f);
 
-        gameplayUtility.Timer.StartCountdown(1, 0.8f);
+        _gameplayUtility.Timer.StartCountdown(0, 0.8f);
     }
     IEnumerator TimerExpiredRoutine()
     {
-        gameplayUtility.EnableButtons(guessButtons, false);
-        gameplayUtility.Timer.StopGuessTimer();
-        gameplayUtility.ScoreSystem.ResetStreakAndMultiplier();
+        _gameplayUtility.EnableButtons(guessButtons, false);
+        _gameplayUtility.Timer.StopGuessTimer();
+        _gameplayUtility.ScoreSystem.ResetStreakAndMultiplier();
         // play time out effect and sound
         yield return new WaitForSeconds(1.5f);
-        gameplayUtility.Timer.ResetGuessTimer(timePerGuess);
+        _gameplayUtility.Timer.ResetGuessTimer(timePerGuess);
         ContinueGameLoop();
     }
     

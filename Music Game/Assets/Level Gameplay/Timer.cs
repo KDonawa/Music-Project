@@ -113,7 +113,7 @@ public class Timer : MonoBehaviour
 
         // reset timerGUI properties
         timerTextGUI.fontSize = 65f;
-        timerTextGUI.color = Color.black;
+        timerTextGUI.color = Color.white;
         UpdateTimerText();
     }
     #endregion

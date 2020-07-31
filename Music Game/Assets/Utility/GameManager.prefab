@@ -43,6 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0231aac68032f4bab82093b03fb7bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameUI: {fileID: -7934387354947085321, guid: 84c887ad78e4d484684623e50236e657, type: 3}
+  gameplayUtility: {fileID: 5867478692182558738, guid: 7d8ce3be67ff2bf40895bd5253472f96,
+    type: 3}
   stages:
   - {fileID: 3237030485289987566, guid: e52b9cccfc4657a4389f20f6e574b5be, type: 3}
   - {fileID: 3237030485289987566, guid: abc93b4bbf783c0468a5769188b8759e, type: 3}

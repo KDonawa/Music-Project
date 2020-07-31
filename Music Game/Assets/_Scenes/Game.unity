@@ -518,17 +518,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8758347865857615345, guid: 87af7a9f90d0b884586124bffb3dc038,
-        type: 3}
-      propertyPath: sounds.Array.size
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 8758347865857615345, guid: 87af7a9f90d0b884586124bffb3dc038,
-        type: 3}
-      propertyPath: sounds.Array.data[14]
-      value: 
-      objectReference: {fileID: 11400000, guid: 711be8b894c3002439cee59888350ca8,
-        type: 2}
     - target: {fileID: 8758347865857615346, guid: 87af7a9f90d0b884586124bffb3dc038,
         type: 3}
       propertyPath: m_Name

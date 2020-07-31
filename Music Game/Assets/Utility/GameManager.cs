@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -8,7 +6,12 @@ public class GameManager : MonoBehaviour
     public const int START_SCENE_INDEX = 1;
     public static GameManager Instance { get; private set; }
 
+    [SerializeField] GameUI gameUI;
+    [SerializeField] LevelGameplayUtility gameplayUtility;
     [SerializeField] Stage[] stages = null;
+
+    public GameUI GameUI => gameUI;
+    public LevelGameplayUtility GameplayUtility => gameplayUtility;
     public int NumStages => stages.Length;
 
     public int currentStage = 1;

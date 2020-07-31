@@ -50,7 +50,13 @@ public class LevelGameplayUtility : MonoBehaviour
         //return notesIN[indexIN];
         return string.Empty;
     }
-    public string GetIndianNotationAndFormat(string indianNotation)
+    public string GetDroneNoteFormatted(string droneNote)
+    {
+        int octave = droneNote[droneNote.Length - 1] - '0';
+        droneNote = droneNote.Substring(0, droneNote.Length - 1);
+        return westernNotes[Array.FindIndex(droneNotes, x => x == droneNote)] + octave;
+    }
+    public string GetIndianNotationFormatted(string indianNotation)
     {
         bool isBoldAndItalicized = false;
         bool isUnderlined = false;
@@ -99,7 +105,7 @@ public class LevelGameplayUtility : MonoBehaviour
             octave++;
             indianNotation = indianNotation.Substring(1);
         }
-        Debug.Log("octave: " + octave);
+        //Debug.Log("octave: " + octave);
 
         int indexDrone = Array.FindIndex(droneNotes, x => x == droneNote); // find the index of the drone note
         //Debug.Log("drone note: " + droneNote);
@@ -170,7 +176,7 @@ public class LevelGameplayUtility : MonoBehaviour
     }
     public void ResetButtonColor(Button b)
     {
-        if (b) b.GetComponent<Image>().color = Color.white;
+        if (b) b.GetComponent<Image>().color = Color.black;
     }
     public void ChangeButtonColor(Button button, Color color)
     {
