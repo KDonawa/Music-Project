@@ -75,7 +75,7 @@ public class GameplayType2 : LevelGameplay
     }
     void StartDroneNoteEffect()
     {
-        droneNoteEffectRoutine = StartCoroutine(_gameplayUtility.GrowAndShrinkTextRoutine(_gameUI.DroneText, 1.3f, 2f));
+        droneNoteEffectRoutine = StartCoroutine(_gameplayUtility.GrowAndShrinkTextRoutine(_gameUI.DroneText, 1.2f, 0.5f));
     }
     void StopDroneNoteEffect()
     {

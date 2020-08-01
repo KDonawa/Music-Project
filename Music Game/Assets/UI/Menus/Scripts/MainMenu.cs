@@ -6,11 +6,11 @@ public class MainMenu : MenuGeneric<MainMenu>
 {  
     public void OnPlayPressed()
     {
-        StageSelectMenu.Open();
+        SceneTransitions.PlaySceneTransition(SceneTransitions.CROSS_FADE, StageSelectMenu.Open);
     }
     public void OnSettingsPressed()
     {
-        SettingsMenu.Open();
+        SceneTransitions.PlaySceneTransition(SceneTransitions.CROSS_FADE, SettingsMenu.Open);
     }
     public void OnQuitPressed()
     {

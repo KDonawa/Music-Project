@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
     public const int START_SCENE_INDEX = 1;
     public static GameManager Instance { get; private set; }
 
+    [SerializeField] SceneTransitions sceneTransition = null;
+    [SerializeField] UIAnimator uiAnimator = null;
     [SerializeField] GameUI gameUI;
     [SerializeField] LevelGameplayUtility gameplayUtility;
     [SerializeField] Stage[] stages = null;
@@ -25,6 +27,9 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        sceneTransition = Instantiate(sceneTransition);
+        uiAnimator = Instantiate(uiAnimator);
     }
     private void OnDestroy()
     {

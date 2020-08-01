@@ -115,30 +115,28 @@ public class LevelGameplayUtility : MonoBehaviour
         //Debug.Log("WN index: " + indexWN);
         return westernNotes[indexWN] + octave;
     }
-    public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growthAmount, float period)
+    public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growthAmount, float duration)
     {
-        float originalTextSize = textGUI.fontSize;
-        float growValue = originalTextSize * growthAmount;
+        Mathf.Clamp(growthAmount, 1f, 5f);
+        Mathf.Clamp(duration, 0.1f, Mathf.Infinity);
+        float minValue = textGUI.fontSize;
+        float maxValue = minValue * growthAmount;
 
+        float lerp = (maxValue - minValue) / duration;
         while (true)
         {
-            float elapsedTime = 0f;
-            while (elapsedTime < period / 2)
+            while (textGUI.fontSize <= maxValue)
             {
-                textGUI.fontSize = Mathf.Lerp(textGUI.fontSize, growValue, Time.deltaTime);
-                elapsedTime += Time.deltaTime;
+                textGUI.fontSize += lerp * Time.deltaTime;
                 yield return null;
             }
-            elapsedTime = 0f;
-            while (elapsedTime < period / 2)
+            while (textGUI.fontSize >= minValue)
             {
-                textGUI.fontSize = Mathf.Lerp(textGUI.fontSize, originalTextSize, Time.deltaTime);
-                elapsedTime += Time.deltaTime;
+                textGUI.fontSize -= lerp * Time.deltaTime;
                 yield return null;
             }
-            //textGUI.fontSize = originalTextSize;
-        }        
-        
+            //textGUI.fontSize = minValue;
+        }
     }
     public IEnumerator DisplayButtonsByNameRoutine(List<Button> buttonsList, int numberToDisplay, float timeBetweenButtons = 0f)
     {

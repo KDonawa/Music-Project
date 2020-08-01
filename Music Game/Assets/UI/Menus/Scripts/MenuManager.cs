@@ -9,7 +9,7 @@ public class MenuManager : MonoBehaviour
     Stack<Menu> menuStack = new Stack<Menu>();
 
     static MenuManager instance;
-    public static MenuManager Instance { get { return instance; } }
+    public static MenuManager Instance => instance;
     private void Awake()
     {
         if (instance)

@@ -5,7 +5,11 @@ using UnityEngine.UI;
 using TMPro;
 /*
     TODO:
+    -next level only available if you pass the level: 80%
     -have graphic and sound effect for screen transitions
+        -stage select will rotate the buttons and screen will move to left in transition to level select
+        -or button selected will light up and others will disappear
+    -button press effects
 */
 public abstract class LevelGameplay : MonoBehaviour
 {
