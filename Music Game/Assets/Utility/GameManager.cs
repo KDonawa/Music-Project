@@ -3,13 +3,13 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public const int START_SCENE_INDEX = 1;
+    //public const int START_SCENE_INDEX = 1;
     public static GameManager Instance { get; private set; }
 
     [SerializeField] SceneTransitions sceneTransition = null;
     [SerializeField] UIAnimator uiAnimator = null;
-    [SerializeField] GameUI gameUI;
-    [SerializeField] LevelGameplayUtility gameplayUtility;
+    [SerializeField] GameUI gameUI = null;
+    [SerializeField] LevelGameplayUtility gameplayUtility = null;
     [SerializeField] Stage[] stages = null;
 
     public GameUI GameUI => gameUI;
@@ -28,8 +28,10 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
-        sceneTransition = Instantiate(sceneTransition);
-        uiAnimator = Instantiate(uiAnimator);
+        Instantiate(sceneTransition);
+        Instantiate(uiAnimator);
+        //GameUI = Instantiate(gameUI);
+        //GameplayUtility = Instantiate(gameplayUtility);
     }
     private void OnDestroy()
     {
@@ -99,26 +101,19 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region SCENE LOADING
-    public void LoadGameScene()
-    {
-        if (Application.CanStreamedLevelBeLoaded("Game"))
-        {
-            MenuManager.Instance.ClearMenuHistory();
-            SceneManager.LoadScene("Game");            
-        }
-    }
+    public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
+    public void LoadGameScene() => SceneManager.LoadScene("GameScene");
     public static int GetCurrentSceneIndex()
     {
         return SceneManager.GetActiveScene().buildIndex;
     }
-    public static void LoadStartScene()
-    {
-        LoadScene(START_SCENE_INDEX);
-    }
+    public static void LoadStartScene() => LoadScene("MenuScene");
+
     public static void LoadScene(string levelName)
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
+            if(MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
             SceneManager.LoadScene(levelName);
             // instantiate the stage prefab here
         }

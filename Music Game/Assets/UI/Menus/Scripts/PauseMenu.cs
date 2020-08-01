@@ -28,9 +28,9 @@ public class PauseMenu : MenuGeneric<PauseMenu>
     public void OnExitPressed()
     {
         Time.timeScale = 1f;
-        GameManager.LoadScene(GameManager.START_SCENE_INDEX);
-        base.OnBackPressed();
-        MainMenu.Open();
+        GameManager.LoadScene("MenuScene");
+        //base.OnBackPressed();
+        //MainMenu.Open();
         LevelsMenu.Open();
     }
 

@@ -13,7 +13,6 @@ using TMPro;
 */
 public abstract class LevelGameplay : MonoBehaviour
 {
-    //[SerializeField] bool showAllPossibleGuesses = false;
     [Range(0, 5f)] [SerializeField] protected float timeToGuessPerNote = 3f;
     
 
@@ -25,7 +24,6 @@ public abstract class LevelGameplay : MonoBehaviour
     protected string droneNote;
     protected int numNotesPlayedPerGuess;
     protected int currentSubLevel;
-    protected float timePerGuess;
 
     #region SETUP
     protected virtual void Awake()
@@ -36,38 +34,30 @@ public abstract class LevelGameplay : MonoBehaviour
         currentNotes = new List<string>();
         droneNote = string.Empty;
     }
-    protected virtual void OnEnable()
-    {
-        
-    }
     protected virtual void Start()
     {
-        _gameplayUtility.Timer.TimerExpiredEvent += OnTimerExpired;
-        _gameplayUtility.Timer.CountdownCompletedEvent += OnCountdownCompleted;
-        PlayLevel();
+        Timer.TimerExpiredEvent += OnTimerExpired;
+        Play();
     }
-    protected virtual void OnDisable()
+    private void OnDestroy()
     {
-        _gameplayUtility.Timer.TimerExpiredEvent -= OnTimerExpired;
-        _gameplayUtility.Timer.CountdownCompletedEvent -= OnCountdownCompleted;
-    }    
-    protected virtual void SetupLevel()
+        Timer.TimerExpiredEvent -= OnTimerExpired;
+    }
+  
+    protected virtual void InitializeLevel()
     {
         StopAllCoroutines();
         MenuManager.Instance.ClearMenuHistory();
-        AudioManager.Instance.StopAllSounds();
-
-        _gameUI.Inititialize();
+        AudioManager.Instance.StopAllSounds();        
 
         currentLevel = GameManager.Instance.GetCurrentLevel();
-
         currentSubLevel = 0;
         numNotesPlayedPerGuess = currentLevel.numNotesToGuess;
-        timePerGuess = timeToGuessPerNote * numNotesPlayedPerGuess;
 
-        _gameplayUtility.Timer.Initialize(timePerGuess);
+        _gameUI.Inititialize();
+        _gameplayUtility.Timer.Initialize(timeToGuessPerNote * numNotesPlayedPerGuess);
         _gameplayUtility.ScoreSystem.Initialize();
-        // init text system
+        _gameplayUtility.TextSystem.Initialize();
 
         InitializeNotes();
         InitializeGuessOptions();
@@ -87,19 +77,15 @@ public abstract class LevelGameplay : MonoBehaviour
         foreach (var b in guessButtons) Destroy(b.gameObject);
         guessButtons.Clear();
 
-        //string[] guessesToDisplay = null;
-        //if (showAllPossibleGuesses) guessesToDisplay = currentLevel.subLevels[currentLevel.subLevels.Length - 1].notes;
-        //else guessesToDisplay = currentLevel.subLevels[0].notes;
-        //guessesToDisplay = currentLevel.subLevels[currentSubLevel].notes;
         foreach (var note in currentNotes)
         {
             Button b = _gameUI.InstantiateGuessButton();
             b.gameObject.SetActive(false);
 
-            b.GetComponent<ChoiceButton>().Initialize(note);
+            b.GetComponent<GuessButton>().Initialize(note);
             b.GetComponentInChildren<TextMeshProUGUI>().text = _gameplayUtility.GetIndianNotationFormatted(note);
 
-            b.onClick.AddListener(delegate { OnGuessButtonPressed(b); });
+            b.onClick.AddListener(delegate { OnGuessButtonPressed(b.GetComponent<GuessButton>()); });
             guessButtons.Add(b);
         }
     }
@@ -107,12 +93,12 @@ public abstract class LevelGameplay : MonoBehaviour
 
     #region GAMEPLAY
 
-    private void PlayLevel()
+    private void Play()
     {
-        SetupLevel();
+        InitializeLevel();
         StartCoroutine(StartLevelRoutine());
     }
-    private void OnCountdownCompleted() => PlayGameLoop();
+
     private void OnTimerExpired() => StartCoroutine(TimerExpiredRoutine());
     protected abstract void PlayGameLoop();
     protected void ContinueGameLoop()
@@ -122,7 +108,6 @@ public abstract class LevelGameplay : MonoBehaviour
         if (IsLevelComplete())
         {
             //end level routine
-            _gameUI.HideDroneText();
             _gameplayUtility.HideButtons(guessButtons);
             LevelCompleteMenu.Instance.SetFinalScore(_gameplayUtility.ScoreSystem.GetPlayerScorePercentage());
             MenuManager.Instance.OpenMenu(LevelCompleteMenu.Instance);
@@ -134,7 +119,7 @@ public abstract class LevelGameplay : MonoBehaviour
             PlayGameLoop();
         }
     }
-    protected abstract void OnGuessButtonPressed(Button guessButton);
+    protected abstract void OnGuessButtonPressed(GuessButton guessButton);
     
     #endregion
 
@@ -145,12 +130,12 @@ public abstract class LevelGameplay : MonoBehaviour
         yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());
 
         GameMenu.Open();
-        _gameplayUtility.Timer.EnableTimer();
-        //GameplayUtility.ScoreSystem.EnableScoreSystem();
-        // enable text system
+        _gameplayUtility.Timer.DisplayTimer();
+        _gameplayUtility.ScoreSystem.DisplayScoreSystem(false);
+
         yield return new WaitForSeconds(0.2f);
 
-        _gameplayUtility.Timer.StartCountdown(0, 0.8f);
+        _gameplayUtility.Timer.StartCountdown(0, 0.8f, PlayGameLoop);
     }
     IEnumerator TimerExpiredRoutine()
     {
@@ -159,7 +144,7 @@ public abstract class LevelGameplay : MonoBehaviour
         _gameplayUtility.ScoreSystem.ResetStreakAndMultiplier();
         // play time out effect and sound
         yield return new WaitForSeconds(1.5f);
-        _gameplayUtility.Timer.ResetGuessTimer(timePerGuess);
+        _gameplayUtility.Timer.ResetGuessTimer();
         ContinueGameLoop();
     }
     
@@ -167,11 +152,11 @@ public abstract class LevelGameplay : MonoBehaviour
 
     #region UTILITY
 
-    public void RestartLevel() => PlayLevel();
+    public void RestartLevel() => Play();
     public void PlayNextLevel()
     {
         GameManager.Instance.IncrementLevel();
-        PlayLevel();
+        Play();
     }       
     public abstract void PauseGame();
     public abstract void ResumeGame();

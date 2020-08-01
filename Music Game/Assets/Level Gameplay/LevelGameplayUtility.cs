@@ -40,10 +40,6 @@ public class LevelGameplayUtility : MonoBehaviour
     #region UTILITY
     public string GetIndianNotation(string westernNotation, string droneNote)
     {
-        //int indexDrone = Array.FindIndex(droneNotes, x => x.Contains(droneNote)); // find the index of the drone note 
-        //int indexWN = Array.FindIndex(notesWN, x => x.Contains(westernNotation));
-        //int indexIN = (indexWN - indexDrone + notesIN.Length) % notesIN.Length;
-        //return notesIN[indexIN];
         return string.Empty;
     }
     public string GetDroneNoteFormatted(string droneNote)
@@ -115,34 +111,12 @@ public class LevelGameplayUtility : MonoBehaviour
         //Debug.Log("WN index: " + indexWN);
         return westernNotes[indexWN] + octave;
     }
-    public IEnumerator GrowAndShrinkTextRoutine(TextMeshProUGUI textGUI, float growthAmount, float duration)
-    {
-        Mathf.Clamp(growthAmount, 1f, 5f);
-        Mathf.Clamp(duration, 0.1f, Mathf.Infinity);
-        float minValue = textGUI.fontSize;
-        float maxValue = minValue * growthAmount;
 
-        float lerp = (maxValue - minValue) / duration;
-        while (true)
-        {
-            while (textGUI.fontSize <= maxValue)
-            {
-                textGUI.fontSize += lerp * Time.deltaTime;
-                yield return null;
-            }
-            while (textGUI.fontSize >= minValue)
-            {
-                textGUI.fontSize -= lerp * Time.deltaTime;
-                yield return null;
-            }
-            //textGUI.fontSize = minValue;
-        }
-    }
     public IEnumerator DisplayButtonsByNameRoutine(List<Button> buttonsList, int numberToDisplay, float timeBetweenButtons = 0f)
     {
         for (int i = 0; i < numberToDisplay; i++)
         {
-            ResetButtonColor(buttonsList[i]);
+            UIAnimator.SetColor(buttonsList[i].GetComponent<Image>(), Color.black);
             DisplayButton(buttonsList[i]);
             //if (buttonLoadSound) AudioManager.PlaySoundOneShot(buttonLoadSound.name);
             yield return new WaitForSeconds(timeBetweenButtons);
@@ -153,7 +127,7 @@ public class LevelGameplayUtility : MonoBehaviour
         for (int i = 0; i < numToDisplay; i++)
         {
             Button b = buttonsList[i];
-            ResetButtonColor(b);
+            UIAnimator.SetColor(b.GetComponent<Image>(), Color.black);
             DisplayButton(b, canEnable);
             //if (buttonLoadSound) AudioManager.PlaySoundOneShot(buttonLoadSound.name);
             yield return new WaitForSeconds(timeBetweenButtons);
@@ -171,16 +145,8 @@ public class LevelGameplayUtility : MonoBehaviour
             currentNotes[index] = currentNotes[randInt];
             currentNotes[randInt] = temp;
         }
-        //return currentNotes;
     }
-    public void ResetButtonColor(Button b)
-    {
-        if (b) b.GetComponent<Image>().color = Color.black;
-    }
-    public void ChangeButtonColor(Button button, Color color)
-    {
-        button.GetComponent<Image>().color = color;
-    }
+
     public void HideButtonsByName(List<Button> buttonsList, List<string> buttonNames)
     {
         foreach (var buttonName in buttonNames)

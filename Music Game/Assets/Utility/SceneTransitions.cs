@@ -5,17 +5,20 @@ using System;
 
 public class SceneTransitions : MonoBehaviour
 {
+    [SerializeField] RectTransform canvasRect = null;
     [SerializeField] CanvasGroup crossfadeCG = null;
+    [SerializeField] CanvasGroup circleWipeCG = null;
+    [SerializeField] CanvasGroup circleFillCG = null;
 
     public static float fadeDuration = 2f;
 
-    public static int CROSS_FADE = 0;  
+    public const int CROSS_FADE = 1;
+    public const int CIRCLE_WIPE_RIGHT = 2;
+    public const int CIRCLE_WIPE_LEFT = 3;
+    public const int CIRCLE_FILL = 4;
 
     static SceneTransitions _instance;
 
-    //delegate void TransitionDelegate();
-    //TransitionDelegate transitionDelegate;
-    //static event Action transitionDelegate;
     private void Awake()
     {
         if (_instance == null)
@@ -27,6 +30,15 @@ public class SceneTransitions : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        crossfadeCG.alpha = 0f;
+        _instance.crossfadeCG.interactable = false;
+
+        circleWipeCG.alpha = 0f;
+        _instance.circleWipeCG.interactable = false;
+
+        circleFillCG.alpha = 0f;
+        _instance.circleFillCG.interactable = false;
     }
     private void OnDestroy()
     {
@@ -40,13 +52,98 @@ public class SceneTransitions : MonoBehaviour
     {
         switch (index)
         {
-            case 0: _instance.StartCoroutine(CrossFadeRoutine(fadeDuration, transitionDelegate));
+            case CROSS_FADE: 
+                _instance.StartCoroutine(_instance.CrossFadeRoutine(fadeDuration, transitionDelegate));
+                break;
+            case CIRCLE_WIPE_RIGHT:
+                _instance.StartCoroutine(_instance.CircleWipeRoutine(fadeDuration, transitionDelegate, 1f));
+                break;
+            case CIRCLE_WIPE_LEFT:
+                _instance.StartCoroutine(_instance.CircleWipeRoutine(fadeDuration, transitionDelegate, -1f));
+                break;
+            case CIRCLE_FILL:
+                _instance.StartCoroutine(_instance.CircleFillRoutine(fadeDuration, transitionDelegate));
                 break;
             default:
                 break;
         }    
     }
-    static IEnumerator CrossFadeRoutine(float duration, Action transitionDelegate)
+
+    #region FILL
+    IEnumerator CircleFillRoutine(float duration, Action transitionDelegate)
+    {
+        RectTransform circleFillRect = circleFillCG.GetComponent<RectTransform>();
+
+        circleFillRect.localPosition = Vector3.zero;
+        circleFillRect.localScale = Vector3.zero;
+        _instance.circleFillCG.alpha = 1f;
+
+        float lerp = duration * 0.5f;
+
+        // 1st half
+        while (circleFillRect.localScale.x < 1f)
+        {
+            circleFillRect.localScale += Vector3.one * Time.deltaTime / lerp;
+            yield return null;
+        }
+
+        transitionDelegate?.Invoke();
+        yield return new WaitForSeconds(0.3f);
+
+        // 2nd half
+        while (circleFillRect.localScale.x > 0.05f)
+        {
+            circleFillRect.localScale -= Vector3.one * Time.deltaTime / lerp;
+            yield return null;
+        }        
+
+        _instance.circleFillCG.blocksRaycasts = false;
+        _instance.circleFillCG.alpha = 0f;
+    }
+    #endregion
+
+    #region WIPE
+
+    IEnumerator CircleWipeRoutine(float duration, Action transitionDelegate, float direction)
+    {      
+        _instance.circleWipeCG.blocksRaycasts = true;
+
+        RectTransform circleWipeRect = circleWipeCG.GetComponent<RectTransform>();
+        float startPos = -canvasRect.rect.width / 2f - circleWipeRect.rect.width / 2f;
+        startPos *= direction;
+        float endPos = -startPos;
+
+        circleWipeRect.localPosition = Vector3.right * startPos;
+        _instance.circleWipeCG.alpha = 1f;
+
+        float lerp = (endPos - startPos) / duration * 2f;
+
+        //first half
+        while((0f - circleWipeRect.localPosition.x)*direction > 0f)
+        {
+            circleWipeRect.localPosition += Vector3.right * lerp * Time.deltaTime;
+            yield return null;
+        }
+
+        transitionDelegate?.Invoke();
+        yield return new WaitForSeconds(0.3f);
+
+        //2nd half
+        while ((endPos - circleWipeRect.localPosition.x)*direction > 0f)
+        {
+            circleWipeRect.localPosition += Vector3.right * lerp * Time.deltaTime;
+            yield return null;
+        }
+
+        circleWipeRect.localPosition = Vector3.right * endPos;
+
+        _instance.circleWipeCG.blocksRaycasts = false;
+        _instance.circleWipeCG.alpha = 0f;
+    }
+    #endregion
+
+    #region CROSS FADE
+    IEnumerator CrossFadeRoutine(float duration, Action transitionDelegate)
     {
         yield return _instance.StartCoroutine(FadeRoutine(0f, 1f, duration*0.5f, true));
         transitionDelegate?.Invoke();
@@ -54,11 +151,10 @@ public class SceneTransitions : MonoBehaviour
         yield return _instance.StartCoroutine(FadeRoutine(1f, 0f, duration*0.5f, false));
     }
 
-    static IEnumerator FadeRoutine(float startAlpha, float endAlpha, float duration, bool blocksRaycastAfterFade)
+    IEnumerator FadeRoutine(float startAlpha, float endAlpha, float duration, bool blocksRaycastAfterFade)
     {
         
-        _instance.crossfadeCG.blocksRaycasts = true;
-        _instance.crossfadeCG.interactable = false;
+        _instance.crossfadeCG.blocksRaycasts = true;        
 
         duration = Mathf.Clamp(duration, 0.1f, Mathf.Infinity);
         _instance.crossfadeCG.alpha = startAlpha;
@@ -71,7 +167,7 @@ public class SceneTransitions : MonoBehaviour
         }
         _instance.crossfadeCG.alpha = endAlpha;
         _instance.crossfadeCG.blocksRaycasts = blocksRaycastAfterFade;
-        //_instance.crossfadeCG.interactable = true;
     }
+    #endregion
 
 }

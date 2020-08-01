@@ -67,7 +67,7 @@ public class MenuManager : MonoBehaviour
                 {
                     mainMenuPresent = true;
 
-                    if(GameManager.GetCurrentSceneIndex() == GameManager.START_SCENE_INDEX)
+                    if(GameManager.GetCurrentSceneName() == "MenuScene")
                     {
                         OpenMenu(menuInstance);
                     }

@@ -21,15 +21,18 @@ public class GameUI : MonoBehaviour
     //public TextMeshProUGUI DebugText => debugText;
     //public GameObject GuessButtonsContainer => guessButtonsContainer;
     //public Button GuessButton => guessButton;
+    
 
     private void Awake()
     {
+        
         Inititialize();
-        originalDroneTextSize = droneText.fontSize;
+        
     }
     public void Inititialize()
-    {
-        if (levelText != null) levelText.gameObject.SetActive(false);
+    {        
+        originalDroneTextSize = droneText.fontSize;
+        HideLevelText();
         HideDroneText();
         HideGameText();
         HideDebugText();
@@ -37,11 +40,10 @@ public class GameUI : MonoBehaviour
 
 
     public void DisplayGameText(string textToDisplay)
-    {
+    {       
         if (gameText == null) return;
         gameText.text = textToDisplay;
         gameText.gameObject.SetActive(true);
-
     }
     public void DisplayDroneText(string textToDisplay)
     {
@@ -57,6 +59,10 @@ public class GameUI : MonoBehaviour
         debugText.gameObject.SetActive(true);
 
     }
+    public void HideLevelText()
+    {
+        if (levelText != null) levelText.gameObject.SetActive(false);
+    }
     public void HideGameText()
     {
         if (gameText == null) return;
@@ -66,6 +72,7 @@ public class GameUI : MonoBehaviour
     {
         if (droneText == null) return;
         droneText.gameObject.SetActive(false);
+        ResetDroneText();
     }
     public void HideDebugText()
     {

@@ -12,27 +12,29 @@ public class Timer : MonoBehaviour
 
     Coroutine timerRoutine = null;
     const int timerUpdateFrequency = 5;
-    // events
-    public event System.Action TimerExpiredEvent;
-    public event System.Action CountdownCompletedEvent;
+    float maxTime;
+
+
+    public static event System.Action TimerExpiredEvent;
 
     #region SETUP
     private void Awake()
     {
+        maxTime = 10f;
         ShowTextGUI(timerTextGUI, false);
         ShowTextGUI(countdownTextGUI, false);
     }
-
     public void Initialize(float initialTime)
     {
         StopAllCoroutines();
-        ResetGuessTimer(initialTime);
+        maxTime = initialTime;
+        ResetGuessTimer();
         ShowTextGUI(timerTextGUI, false);
     }
     #endregion
 
     #region HELPER METHODS
-    IEnumerator CountdownRoutine(int startTime, float delay = 0.5f)
+    IEnumerator CountdownRoutine(int startTime, float delay, System.Action endOfCountdownDelegate)
     {
         yield return new WaitForSeconds(1f); // this delay is needed for smoother start
         ShowTextGUI(countdownTextGUI);
@@ -44,7 +46,7 @@ public class Timer : MonoBehaviour
             startTime--;
         }
         ShowTextGUI(countdownTextGUI, false);
-        CountdownCompletedEvent?.Invoke();
+        endOfCountdownDelegate?.Invoke();
     }
     IEnumerator TimerRoutine()
     {
@@ -87,13 +89,13 @@ public class Timer : MonoBehaviour
     #endregion
 
     #region UTILITY METHODS
-    public void EnableTimer(bool isEnabled = true)
+    public void DisplayTimer(bool isEnabled = true)
     {
         ShowTextGUI(timerTextGUI, isEnabled);
     }
-    public void StartCountdown(int startTime, float delay = 0.5f)
+    public void StartCountdown(int startTime, float delay, System.Action endOfCountdownDelegate)
     {
-        StartCoroutine(CountdownRoutine(startTime, delay));
+        StartCoroutine(CountdownRoutine(startTime, delay, endOfCountdownDelegate));
     }
     public void StartGuessTimer()
     {
@@ -106,10 +108,10 @@ public class Timer : MonoBehaviour
         if (timerRoutine != null) StopCoroutine(timerRoutine);
         //AudioManager.Instance.StopSound(timerSound.name);
     }
-    public void ResetGuessTimer(float timePerGuess)
+    public void ResetGuessTimer()
     {
         StopGuessTimer();
-        RemainingTime = timePerGuess;
+        RemainingTime = maxTime;
 
         // reset timerGUI properties
         timerTextGUI.fontSize = 65f;

@@ -12,13 +12,18 @@ public class TextSystem : MonoBehaviour
     #region SETUP
     private void Awake()
     {
+        GuessButton.GuessEvent += DisplayGuessFeedback;
         Initialize();
     }
-
+    private void OnDestroy()
+    {
+        GuessButton.GuessEvent -= DisplayGuessFeedback;
+    }
     public void Initialize()
     {
         StopAllCoroutines();
         if (textGUI) ShowTextGUI(textGUI, false);
+        
     }
     #endregion
 

@@ -14,6 +14,8 @@ public class UIAnimator : MonoBehaviour
 {
     static UIAnimator _instance;
 
+    Coroutine pulseTextCoroutine;
+
     private void Awake()
     {
         if(_instance == null)
@@ -34,16 +36,28 @@ public class UIAnimator : MonoBehaviour
         }
     }
 
-
+    #region COLOR
+    public static void SetColor(Image image, Color color)
+    {
+        image.color = color;
+    }
+    #endregion
 
     #region SCALE
     public static void ShrinkAndExpand(RectTransform rect, float percentage, float duration)
     {
         _instance.StartCoroutine(ShrinkAndExpandRoutine(rect, percentage, duration));
     }
+    public static void StopTextPulse()
+    {
+        if(_instance.pulseTextCoroutine != null)
+        {
+            _instance.StopCoroutine(_instance.pulseTextCoroutine);
+        }
+    }
     public static void PulseTextSize(TextMeshProUGUI textGUI, float growthAmount, float period)
     {
-        _instance.StartCoroutine(PulseTextSizeRoutine(textGUI, growthAmount, period));
+        _instance.pulseTextCoroutine = _instance.StartCoroutine(PulseTextSizeRoutine(textGUI, growthAmount, period));
     }
     public static void ShrinkToNothing(RectTransform rect, float duration)
     {
@@ -79,6 +93,7 @@ public class UIAnimator : MonoBehaviour
     {
         _instance.StartCoroutine(MoveRoutine(rect, velocity, duration, Vector3.up * 1920));
     }
+
     #endregion
 
     #region HELPERS

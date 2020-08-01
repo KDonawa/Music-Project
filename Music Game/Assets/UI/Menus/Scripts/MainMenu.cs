@@ -6,7 +6,7 @@ public class MainMenu : MenuGeneric<MainMenu>
 {  
     public void OnPlayPressed()
     {
-        SceneTransitions.PlaySceneTransition(SceneTransitions.CROSS_FADE, StageSelectMenu.Open);
+        SceneTransitions.PlaySceneTransition(SceneTransitions.CIRCLE_FILL, StageSelectMenu.Open);
     }
     public void OnSettingsPressed()
     {

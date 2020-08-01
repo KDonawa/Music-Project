@@ -86,9 +86,9 @@ public class ScoreSystem : MonoBehaviour
         return (int)scorePercentage;
     }
     public void UpdatePlayerScore(int pointsGained) => StartCoroutine(UpdatePlayerScoreRoutine(pointsGained));  
-    public void EnableScoreSystem()
+    public void DisplayScoreSystem(bool canDisplay = true)
     {
-        if (scoreTextGUI) ShowTextGUI(scoreTextGUI);
+        if (scoreTextGUI) ShowTextGUI(scoreTextGUI, canDisplay);
     }
     public void ResetStreakAndMultiplier()
     {
