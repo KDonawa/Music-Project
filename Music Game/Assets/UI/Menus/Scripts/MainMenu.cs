@@ -6,11 +6,12 @@ public class MainMenu : MenuGeneric<MainMenu>
 {  
     public void OnPlayPressed()
     {
-        SceneTransitions.PlaySceneTransition(SceneTransitions.CIRCLE_FILL, StageSelectMenu.Open);
+        //SceneTransitions.PlayTransition(SceneTransitions.CROSS_FADE, StageSelectMenu.Open);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, StageSelectMenu.Open);
     }
     public void OnSettingsPressed()
     {
-        SceneTransitions.PlaySceneTransition(SceneTransitions.CROSS_FADE, SettingsMenu.Open);
+        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, SettingsMenu.Open);
     }
     public void OnQuitPressed()
     {
