@@ -7,7 +7,7 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameManager.Instance.InitializeGame();
+        GameManager.Instance.InstantiateGame();
     }
 
 }

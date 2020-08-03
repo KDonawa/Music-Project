@@ -47,7 +47,7 @@ MonoBehaviour:
     type: 3}
   uiAnimator: {fileID: 1546590672288415898, guid: 7290146321476444abe2d1b66e76be6c,
     type: 3}
-  gameUI: {fileID: -7934387354947085321, guid: 84c887ad78e4d484684623e50236e657, type: 3}
+  gameUI: {fileID: 3331185885103300582, guid: 84c887ad78e4d484684623e50236e657, type: 3}
   gameplayUtility: {fileID: 5867478692182558738, guid: 7d8ce3be67ff2bf40895bd5253472f96,
     type: 3}
   stages:

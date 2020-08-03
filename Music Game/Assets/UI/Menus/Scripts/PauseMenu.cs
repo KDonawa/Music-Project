@@ -31,14 +31,14 @@ public class PauseMenu : MenuGeneric<PauseMenu>
     public void OnExitPressed()
     {
         Time.timeScale = 1f;
-        if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, LoadLevelsMenu);
+        //if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_RIGHT, LoadLevelsMenu);
         
     }
     void LoadLevelsMenu()
     {
         GameManager.LoadStartScene();
-        LevelsMenu.Open();
+        LevelsMenu.Open();        
     }
 
 

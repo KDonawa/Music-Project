@@ -11,6 +11,6 @@ public class StageSelectButton : MonoBehaviour
     public void OnButtonPressed()
     {
         GameManager.Instance.SetCurrentStage(stage);
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_LEFT, OutTransition.CIRCLE_WIPE_LEFT, LevelsMenu.Open);
+        SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.OPEN_HORIZONTAL, LevelsMenu.Open);
     }
 }

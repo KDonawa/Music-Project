@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: Timer
+  m_Name: Wrong Guess 1
   m_EditorClassIdentifier: 
-  name: timer
-  audioClip: {fileID: 8300000, guid: 33d9d9ef0b487aa4aa7c300cf7486d24, type: 3}
-  volume: 0.046
+  name: wrong guess
+  audioClip: {fileID: 8300000, guid: 130a177e727814a2ea78a886ab72213d, type: 3}
+  volume: 0.173
   pitch: 1
-  canLoop: 1
+  canLoop: 0

@@ -80,6 +80,7 @@ public class SceneTransitions : MonoBehaviour
         inTransitonCG = null;
 
         // In Transition - - put in separate routine
+        //AudioManager.Instance.PlaySound("scene transition");
         switch (inTransition)
         {
             case InTransition.FADE_IN:
@@ -135,6 +136,7 @@ public class SceneTransitions : MonoBehaviour
         }
 
         // Out Transition - put in separate routine
+        //AudioManager.Instance.PlaySound("scene transition");
         switch (outTransition)
         {
             case OutTransition.FADE_OUT:

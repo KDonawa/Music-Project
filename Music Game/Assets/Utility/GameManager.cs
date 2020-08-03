@@ -34,8 +34,13 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {        
-        //if(GetCurrentSceneName() == "GameScene") InitializeGame();
- 
+        SceneManager.sceneLoaded += InitializeGame;
+        if(GetCurrentSceneName() == "GameScene") InstantiateGame();
+    }
+    void InitializeGame(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        if (scene.name != "GameScene") return;
+        InstantiateGame();
     }
     private void OnDestroy()
     {
@@ -114,6 +119,7 @@ public class GameManager : MonoBehaviour
     {
         if (sceneIndex >= 0 && sceneIndex < SceneManager.sceneCountInBuildSettings)
         {
+            if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
             SceneManager.LoadScene(sceneIndex);
             SceneTransitions.sceneLoadingComplete = true;
         }
@@ -137,7 +143,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region HELPERS
-    public void InitializeGame()
+    public void InstantiateGame()
     {
         if (currentStage > 0 && currentStage <= stages.Length)
         {

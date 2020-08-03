@@ -28,7 +28,7 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
         LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
         if (gameplay != null)
         {
-            SceneTransitions.PlayTransition(InTransition.CLOSE_HORIZONTAL, OutTransition.OPEN_VERTICAL, gameplay.RestartLevel);
+            SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, gameplay.RestartLevel);
         }
     }
 
@@ -45,7 +45,7 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
 
     public void OnHomeButtonPressed()
     {      
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_UP, LoadLevelsMenu);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_LEFT, LoadLevelsMenu);
     }
     void LoadLevelsMenu()
     {

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: Wrong Guess
+  m_Name: Button Load
   m_EditorClassIdentifier: 
-  name: wrong guess
-  audioClip: {fileID: 8300000, guid: 0308f506d8ebf4d4295ad2738b3bf07e, type: 3}
-  volume: 0.173
+  name: button load
+  audioClip: {fileID: 8300000, guid: 19f89c6e740e7447f9e12a8310d3e973, type: 3}
+  volume: 1
   pitch: 1
   canLoop: 0
