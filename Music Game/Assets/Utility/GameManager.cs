@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public int currentStage = 1;
     public int currentLevel = 1; // put range attr 1 - w/e
 
+    #region SETUP
     private void Awake()
     {
         if (Instance) { Destroy(gameObject); }
@@ -30,8 +31,11 @@ public class GameManager : MonoBehaviour
 
         Instantiate(sceneTransition);
         Instantiate(uiAnimator);
-        //GameUI = Instantiate(gameUI);
-        //GameplayUtility = Instantiate(gameplayUtility);
+    }
+    private void Start()
+    {        
+        //if(GetCurrentSceneName() == "GameScene") InitializeGame();
+ 
     }
     private void OnDestroy()
     {
@@ -41,58 +45,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    #region UTILITY
-    public Stage[] GetStages() => stages;
-    public void SetCurrentLevel(int level) => currentLevel = level;
-    public void SetCurrentStage(int stage) => currentStage = stage;
-    public void IncrementLevel()
-    {
-        Level[] levels = GetCurrentStageLevels();
-        if (currentLevel < levels.Length) ++currentLevel;
-    }    
-    public Level GetCurrentLevel()
-    {
-        Level[] levels = GetCurrentStageLevels();
-        return currentLevel - 1 < levels.Length ? levels[currentLevel - 1] : levels[0];
-    }
-    public Level GetFinalLevel()
-    {
-        Level[] levels = GetCurrentStageLevels();
-        return levels[levels.Length - 1];
-    }
-    public bool IsFinalLevel()
-    {
-        //if (GetCurrentStageLevels() == null) return false;
-        return GetCurrentStageLevels().Length == currentLevel;
-    }
-    public int GetNumLevelsInStage()
-    {
-        Level[] levels = GetCurrentStageLevels();
-        if (levels != null) return levels.Length;
-        else return 0;
-    }
-    public void InitializeGame()
-    {
-        if (currentStage > 0 && currentStage <= stages.Length)
-        {
-            Instantiate(stages[currentStage - 1]);
-        }
-    }
-    public void QuitGame()
-    {
-        #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-        #else
-        Application.Quit();
-        #endif
-    }
-
     #endregion
 
-    #region HELPERS
+    #region STAGE UTILITY
+    public Stage[] GetStages() => stages;
+    public void SetCurrentStage(int stage) => currentStage = stage;
     Level[] GetCurrentStageLevels()
     {
-        if(currentStage > 0 && currentStage <= stages.Length)
+        if (currentStage > 0 && currentStage <= stages.Length)
         {
             return stages[currentStage - 1].Levels;
         }
@@ -100,22 +60,50 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    #region LEVEL UTILITY
+    public void SetCurrentLevel(int level) => currentLevel = level;
+
+    public void IncrementLevel()
+    {
+        Level[] levels = GetCurrentStageLevels();
+        if (currentLevel < levels.Length) ++currentLevel;
+    }
+    public Level GetCurrentLevel()
+    {
+        Level[] levels = GetCurrentStageLevels();
+        return currentLevel - 1 < levels.Length ? levels[currentLevel - 1] : levels[0];
+    }
+    public bool IsFinalLevel()
+    {
+        //if (GetCurrentStageLevels() == null) return false;
+        return GetCurrentStageLevels().Length == currentLevel;
+    }
+    public int GetNumLevelsInCurrentStage()
+    {
+        Level[] levels = GetCurrentStageLevels();
+        if (levels != null) return levels.Length;
+        else return 0;
+    }
+
+    #endregion    
+
     #region SCENE LOADING
     public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
-    public void LoadGameScene() => SceneManager.LoadScene("GameScene");
-    public static int GetCurrentSceneIndex()
+    public static int GetCurrentSceneIndex() => SceneManager.GetActiveScene().buildIndex;
+    public void LoadGameScene()
     {
-        return SceneManager.GetActiveScene().buildIndex;
-    }
+        SceneManager.LoadScene("GameScene");
+        //InitializeGame();
+    }    
     public static void LoadStartScene() => LoadScene("MenuScene");
-
     public static void LoadScene(string levelName)
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
             if(MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
             SceneManager.LoadScene(levelName);
-            // instantiate the stage prefab here
+            //SceneManager.LoadSceneAsync(levelName);
+            SceneTransitions.sceneLoadingComplete = true;
         }
         else
         {
@@ -127,29 +115,43 @@ public class GameManager : MonoBehaviour
         if (sceneIndex >= 0 && sceneIndex < SceneManager.sceneCountInBuildSettings)
         {
             SceneManager.LoadScene(sceneIndex);
+            SceneTransitions.sceneLoadingComplete = true;
         }
         else
         {
             Debug.LogWarning("LevelLoader.LoadLevel(int buildIndex) Error: invalid build index specified");
         }
     }
-    public static void ReloadScene()
-    {
-        LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
+    public static void ReloadScene() => LoadScene(SceneManager.GetActiveScene().buildIndex);
     public static void LoadNextScene()
     {
         //int nextSceneIndex = (SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings;
-        int nextSceneIndex = (SceneManager.GetActiveScene().buildIndex + 1);
-        LoadScene(nextSceneIndex);
+        //int nextSceneIndex = (SceneManager.GetActiveScene().buildIndex + 1);
+        //LoadScene(nextSceneIndex);
     }
-
     public void LoadPreviousScene()
     {
-        int previousSceneIndex = SceneManager.GetActiveScene().buildIndex - 1;
-        LoadScene(previousSceneIndex);
+        //int previousSceneIndex = SceneManager.GetActiveScene().buildIndex - 1;
+        //LoadScene(previousSceneIndex);
     }
     #endregion
 
+    #region HELPERS
+    public void InitializeGame()
+    {
+        if (currentStage > 0 && currentStage <= stages.Length)
+        {
+            Instantiate(stages[currentStage - 1]);
+        }
+    }
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 
+    #endregion
 }

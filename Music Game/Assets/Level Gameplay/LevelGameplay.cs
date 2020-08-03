@@ -39,6 +39,7 @@ public abstract class LevelGameplay : MonoBehaviour
         Timer.TimerExpiredEvent += OnTimerExpired;
         Play();
     }
+    
     private void OnDestroy()
     {
         Timer.TimerExpiredEvent -= OnTimerExpired;
@@ -95,8 +96,7 @@ public abstract class LevelGameplay : MonoBehaviour
 
     private void Play()
     {
-        InitializeLevel();
-        StartCoroutine(StartLevelRoutine());
+        StartCoroutine(PlayWhenLoadCompleteRoutine());
     }
 
     private void OnTimerExpired() => StartCoroutine(TimerExpiredRoutine());
@@ -120,11 +120,19 @@ public abstract class LevelGameplay : MonoBehaviour
         }
     }
     protected abstract void OnGuessButtonPressed(GuessButton guessButton);
-    
+
     #endregion
 
     #region HELPERS
-
+    IEnumerator PlayWhenLoadCompleteRoutine()
+    {
+        while (!SceneTransitions.sceneLoadingComplete)
+        {
+            yield return null;
+        }
+        InitializeLevel();
+        StartCoroutine(StartLevelRoutine());
+    }
     IEnumerator StartLevelRoutine()
     {
         yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());

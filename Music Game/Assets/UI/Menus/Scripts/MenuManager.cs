@@ -106,5 +106,6 @@ public class MenuManager : MonoBehaviour
             menuInstance.gameObject.SetActive(true);
             menuStack.Push(menuInstance);
         }
+        SceneTransitions.sceneLoadingComplete = true;
     }
 }

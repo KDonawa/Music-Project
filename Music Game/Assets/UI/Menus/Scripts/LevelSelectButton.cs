@@ -10,7 +10,7 @@ public class LevelSelectButton : MonoBehaviour
     public void OnLoadLevelButtonPressed()
     {
         GameManager.Instance.SetCurrentLevel(level);
-        GameManager.Instance.LoadGameScene();
-        
+        // probably play an animation first
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.CIRCLE_SHRINK, GameManager.Instance.LoadGameScene); 
     }
 }

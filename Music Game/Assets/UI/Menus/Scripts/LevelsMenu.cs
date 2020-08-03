@@ -16,7 +16,7 @@ public class LevelsMenu : MenuGeneric<LevelsMenu>
 
     void InitializeButtons()
     {
-        int numLevels = GameManager.Instance.GetNumLevelsInStage();
+        int numLevels = GameManager.Instance.GetNumLevelsInCurrentStage();
         for (int i = 1; i <= numLevels; i++)
         {
             Button b = Instantiate(levelSelectButtonsPrefab, buttonsContainer.transform);
@@ -29,11 +29,11 @@ public class LevelsMenu : MenuGeneric<LevelsMenu>
     }
     public void OnMainMenuPressed()
     {
-        MainMenu.Open();
+        SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.OPEN_HORIZONTAL, MainMenu.Open);
     }
     public void OnStageMenuPressed()
     {
-        StageSelectMenu.Open();
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_LEFT, OutTransition.CIRCLE_WIPE_LEFT, StageSelectMenu.Open);
     }
     
 }

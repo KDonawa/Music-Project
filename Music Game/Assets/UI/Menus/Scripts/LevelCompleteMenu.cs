@@ -23,26 +23,36 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
     }
     public void OnRestartPressed()
     {
-        if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
+        //if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
 
         LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
-        if (gameplay != null) gameplay.RestartLevel();
+        if (gameplay != null)
+        {
+            SceneTransitions.PlayTransition(InTransition.CLOSE_HORIZONTAL, OutTransition.OPEN_VERTICAL, gameplay.RestartLevel);
+        }
     }
 
     public void OnNextLevelPressed()
     {
-        if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
+        //if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
 
         LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
-        if (gameplay != null) gameplay.PlayNextLevel();
+        if (gameplay != null)
+        {
+            SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.CIRCLE_SHRINK, gameplay.PlayNextLevel);
+        }
     }
 
     public void OnHomeButtonPressed()
+    {      
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_UP, LoadLevelsMenu);
+    }
+    void LoadLevelsMenu()
     {
         if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
+        GameManager.LoadStartScene();
         LevelsMenu.Open();
     }
-
     // main menu
 
     // level select

@@ -31,13 +31,7 @@ public class StageSelectMenu : MenuGeneric<StageSelectMenu>
 
     public void OnMainMenuPressed()
     {
-        MainMenu.Open();
-    }
-
-    public void OnStageSelected(int val)
-    {
-        GameManager.Instance.SetCurrentStage(val);
-        LevelsMenu.Open();
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, MainMenu.Open);
     }
 
 }

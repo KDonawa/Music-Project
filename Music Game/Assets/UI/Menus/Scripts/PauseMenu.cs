@@ -8,18 +8,21 @@ public class PauseMenu : MenuGeneric<PauseMenu>
     {
         Time.timeScale = 1f;
 
-        LevelGameplay level = FindObjectOfType<LevelGameplay>(); 
+        LevelGameplay level = FindObjectOfType<LevelGameplay>();
         if (level) level.ResumeGame();
-        
+
         base.OnBackPressed();
         GameMenu.Open();
     }
     public void OnRestartPressed()
     {
         Time.timeScale = 1f;
-        
+
         LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
-        if (gameplay != null) gameplay.RestartLevel();
+        if (gameplay != null)
+        {
+            gameplay.RestartLevel();
+        }
     }
     public void OnSettingsPressed()
     {
@@ -28,10 +31,15 @@ public class PauseMenu : MenuGeneric<PauseMenu>
     public void OnExitPressed()
     {
         Time.timeScale = 1f;
-        GameManager.LoadScene("MenuScene");
-        //base.OnBackPressed();
-        //MainMenu.Open();
+        if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, LoadLevelsMenu);
+        
+    }
+    void LoadLevelsMenu()
+    {
+        GameManager.LoadStartScene();
         LevelsMenu.Open();
     }
+
 
 }

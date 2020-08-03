@@ -126,8 +126,10 @@ public class GameplayType2 : LevelGameplay
         }
 
         // check guess
-        guessButton.CheckGuess(answers[currentNumGuessesGiven - 1]);        
-        
+        bool guessCorrect = guessButton.CheckGuess(answers[currentNumGuessesGiven - 1]);
+
+        _gameplayUtility.ScoreSystem.UpdateGuessAccuracy(guessCorrect);
+
         // we have no more notes to guess
         if (currentNumGuessesGiven == numNotesPlayedPerGuess)
         {

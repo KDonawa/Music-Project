@@ -37,10 +37,11 @@ public class SceneTransitions : MonoBehaviour
     [SerializeField] CanvasGroup closeOpenCG = null;
 
     public static float fadeDuration = 2f;
+    public static bool sceneLoadingComplete = true;
 
     static SceneTransitions _instance;
     CanvasGroup inTransitonCG;
-    WaitForSeconds fadeDelay;
+    float minTransitionDelay;
 
     #region SETUP
     private void Awake()
@@ -55,7 +56,7 @@ public class SceneTransitions : MonoBehaviour
             Destroy(gameObject);
         }
 
-        fadeDelay = new WaitForSeconds(0.3f);
+        minTransitionDelay = 0.3f;
 
     }
     private void OnDestroy()
@@ -73,11 +74,12 @@ public class SceneTransitions : MonoBehaviour
     }
     IEnumerator PlayTransitionRoutine(InTransition inTransition, OutTransition outTransition, Action transitionAction, float duration)
     {
+        sceneLoadingComplete = false;
         mainCG.blocksRaycasts = true;
         duration *= 0.5f;
         inTransitonCG = null;
 
-        // In Transition
+        // In Transition - - put in separate routine
         switch (inTransition)
         {
             case InTransition.FADE_IN:
@@ -108,11 +110,31 @@ public class SceneTransitions : MonoBehaviour
                 break;
         }
 
-        if (inTransitonCG == null) yield break;
-
+        if (inTransitonCG == null)
+        {
+            mainCG.blocksRaycasts = false;
+            canvasRect.gameObject.SetActive(false);
+            yield break;
+        }
+        
+        // load scene - make separate func
         transitionAction?.Invoke();
-        yield return fadeDelay;
 
+        // put in separate routine
+        float timeElapsed = 0f;
+        while (timeElapsed < minTransitionDelay)
+        {
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        sceneLoadingComplete = true; // this will be set elsewhere
+        while (!sceneLoadingComplete)
+        {
+            yield return null;
+        }
+
+        // Out Transition - put in separate routine
         switch (outTransition)
         {
             case OutTransition.FADE_OUT:
