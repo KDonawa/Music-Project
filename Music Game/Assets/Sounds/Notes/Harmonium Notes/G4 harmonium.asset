@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: G
+  m_Name: G4 harmonium
   m_EditorClassIdentifier: 
   name: G4
   audioClip: {fileID: 8300000, guid: f069213b102b41147aaaf5d49b051cdf, type: 3}

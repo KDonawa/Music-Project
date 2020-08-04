@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ec841c78bbe3874a94f360bdce564b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonsContainer: {fileID: 6681820022561557267}
+  mainMenuButton: {fileID: 7151872158300518646}
   stageSelectButtonsPrefab: {fileID: 5168801028055804622, guid: 003bfa8ab31de374eb0c809c822d8641,
     type: 3}
-  buttonsContainer: {fileID: 6681820022561557267}
 --- !u!1 &6681820022561557267
 GameObject:
   m_ObjectHideFlags: 0
@@ -24,7 +25,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8234337114884548055}
-  - component: {fileID: 941225213676696249}
+  - component: {fileID: 8098633827568681537}
   m_Layer: 5
   m_Name: Stage Options
   m_TagString: Untagged
@@ -51,7 +52,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 19.423}
   m_SizeDelta: {x: 980, y: 1307}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &941225213676696249
+--- !u!114 &8098633827568681537
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -60,7 +61,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6681820022561557267}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -69,12 +70,13 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_StartCorner: 0
-  m_StartAxis: 0
-  m_CellSize: {x: 800, y: 180}
-  m_Spacing: {x: 60, y: 50}
-  m_Constraint: 1
-  m_ConstraintCount: 1
+  m_Spacing: 77.5
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
 --- !u!1 &7971806883736836003
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +310,7 @@ PrefabInstance:
     - target: {fileID: 7425867515273900017, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7425867515273900017, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -343,6 +345,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 310034777140975367}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7151872158300518646 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7425867515273900017, guid: bf22540e6c297da4ca42c86314ae34f3,
+    type: 3}
+  m_PrefabInstance: {fileID: 310034777140975367}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6031972740463602806
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -398,7 +412,7 @@ PrefabInstance:
     - target: {fileID: 5629412899646332615, guid: 29454671040889f489e1624ec0f2da7a,
         type: 3}
       propertyPath: m_Name
-      value: Stage Select Menu
+      value: Stage Select Menu Variant
       objectReference: {fileID: 0}
     - target: {fileID: 5629412899646332666, guid: 29454671040889f489e1624ec0f2da7a,
         type: 3}

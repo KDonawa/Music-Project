@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
   m_Name: Scene Transition
   m_EditorClassIdentifier: 
-  name: scene transition
+  name: sceneTransition
   audioClip: {fileID: 8300000, guid: 57615b2e49bd342528393467a22c2a85, type: 3}
   volume: 1
   pitch: 1

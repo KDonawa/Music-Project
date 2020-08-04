@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 /*
-    TODO:
+    TODO:    
+    -fix level complete menu
+    -stage complete
     -next level only available if you pass the level: 80%
-    -have graphic and sound effect for screen transitions
-        -stage select will rotate the buttons and screen will move to left in transition to level select
-        -or button selected will light up and others will disappear
-    -button press effects
+    -make transitions where the buttons fly off the screen
 */
 public abstract class LevelGameplay : MonoBehaviour
 {
@@ -49,7 +48,7 @@ public abstract class LevelGameplay : MonoBehaviour
     {
         StopAllCoroutines();
         MenuManager.Instance.ClearMenuHistory();
-        AudioManager.Instance.StopAllSounds();        
+        AudioManager.StopAllGamplaySounds();        
 
         currentLevel = GameManager.Instance.GetCurrentLevel();
         currentSubLevel = 0;
@@ -57,7 +56,7 @@ public abstract class LevelGameplay : MonoBehaviour
 
         _gameUI.Inititialize();
         _gameplayUtility.Timer.Initialize(timeToGuessPerNote * numNotesPlayedPerGuess);
-        _gameplayUtility.ScoreSystem.Initialize();
+        _gameplayUtility.ScoreSystem.Initialize(numNotesPlayedPerGuess * currentLevel.subLevels.Length);
         _gameplayUtility.TextSystem.Initialize();
 
         InitializeNotes();
@@ -80,13 +79,8 @@ public abstract class LevelGameplay : MonoBehaviour
 
         foreach (var note in currentNotes)
         {
-            Button b = _gameUI.InstantiateGuessButton();
-            b.gameObject.SetActive(false);
-
-            b.GetComponent<GuessButton>().Initialize(note);
-            b.GetComponentInChildren<TextMeshProUGUI>().text = _gameplayUtility.GetIndianNotationFormatted(note);
-
-            b.onClick.AddListener(delegate { OnGuessButtonPressed(b.GetComponent<GuessButton>()); });
+            Button b = _gameUI.InstantiateGuessButton(note, _gameplayUtility.GetIndianNotationFormatted(note));
+            b.onClick.AddListener(() => OnGuessButtonPressed(b.GetComponent<GuessButton>()));
             guessButtons.Add(b);
         }
     }
@@ -99,7 +93,7 @@ public abstract class LevelGameplay : MonoBehaviour
         StartCoroutine(PlayWhenLoadCompleteRoutine());
     }
 
-    private void OnTimerExpired() => StartCoroutine(TimerExpiredRoutine());
+    protected abstract void OnTimerExpired();
     protected abstract void PlayGameLoop();
     protected void ContinueGameLoop()
     {
@@ -109,11 +103,13 @@ public abstract class LevelGameplay : MonoBehaviour
         {
             //end level routine
             _gameplayUtility.HideButtons(guessButtons);
-            LevelCompleteMenu.Instance.SetFinalScore(_gameplayUtility.ScoreSystem.GetPlayerScorePercentage());
+            _gameplayUtility.Timer.ResetGuessTimer();
+            LevelCompleteMenu.SetFinalScore(_gameplayUtility.ScoreSystem.GetPlayerScorePercentage());
             MenuManager.Instance.OpenMenu(LevelCompleteMenu.Instance);
         }
         else
         {
+            _gameplayUtility.Timer.ResetGuessTimer();
             InitializeNotes();
             InitializeGuessOptions();
             PlayGameLoop();
@@ -144,16 +140,6 @@ public abstract class LevelGameplay : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         _gameplayUtility.Timer.StartCountdown(0, 0.8f, PlayGameLoop);
-    }
-    IEnumerator TimerExpiredRoutine()
-    {
-        _gameplayUtility.EnableButtons(guessButtons, false);
-        _gameplayUtility.Timer.StopGuessTimer();
-        _gameplayUtility.ScoreSystem.ResetStreakAndMultiplier();
-        // play time out effect and sound
-        yield return new WaitForSeconds(1.5f);
-        _gameplayUtility.Timer.ResetGuessTimer();
-        ContinueGameLoop();
     }
     
     #endregion

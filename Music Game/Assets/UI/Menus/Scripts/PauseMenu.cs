@@ -17,7 +17,7 @@ public class PauseMenu : MenuGeneric<PauseMenu>
     public void OnRestartPressed()
     {
         Time.timeScale = 1f;
-
+        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
         LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
         if (gameplay != null)
         {
@@ -31,7 +31,7 @@ public class PauseMenu : MenuGeneric<PauseMenu>
     public void OnExitPressed()
     {
         Time.timeScale = 1f;
-        //if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
+        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
         SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_RIGHT, LoadLevelsMenu);
         
     }

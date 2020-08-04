@@ -37,7 +37,18 @@ public class GameUI : MonoBehaviour
         HideGameText();
         HideDebugText();
     }
-
+    public Button InstantiateGuessButton(string name, string textToDisplay)
+    {
+        if (guessButtonsContainer != null && guessButton != null)
+        {
+            Button b = Instantiate(guessButton, guessButtonsContainer.transform);
+            b.gameObject.SetActive(false);
+            b.GetComponent<GuessButton>().Initialize(name);
+            b.GetComponentInChildren<TextMeshProUGUI>().text = textToDisplay;
+            return b;
+        }
+        return null;
+    }
 
     public void DisplayGameText(string textToDisplay)
     {       
@@ -86,18 +97,13 @@ public class GameUI : MonoBehaviour
         droneText.fontSize = originalDroneTextSize;
     }
 
-    public Button InstantiateGuessButton()
+    
+    public IEnumerator DisplayCurrentLevelRoutine()    
     {
-        if(guessButtonsContainer != null && guessButton != null)
-        {
-            return Instantiate(guessButton, guessButtonsContainer.transform);
-        }
-        return null;
-    }
-    public IEnumerator DisplayCurrentLevelRoutine()    {
         
         levelText.text = "Level " + GameManager.Instance.currentLevel;
         levelText.gameObject.SetActive(true);
+        //UIAnimator.MoveY
         yield return new WaitForSeconds(2f);
         levelText.gameObject.SetActive(false);
         yield return new WaitForSeconds(0.2f);

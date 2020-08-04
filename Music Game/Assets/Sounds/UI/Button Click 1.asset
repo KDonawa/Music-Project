@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
   m_Name: Button Click 1
   m_EditorClassIdentifier: 
-  name: click 1
-  audioClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-  volume: 1
+  name: click1
+  audioClip: {fileID: 8300000, guid: e78c4f0fe881cac48bc0e77aeb7b8bec, type: 3}
+  volume: 0.695
   pitch: 1
   canLoop: 0

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: Correct Guess
+  m_Name: C4 harmonium
   m_EditorClassIdentifier: 
-  name: correctGuess
-  audioClip: {fileID: 8300000, guid: 52320e590bf774734a288886eba557ba, type: 3}
-  volume: 0.05
-  pitch: 0.6
+  name: C4
+  audioClip: {fileID: 0}
+  volume: 0.6
+  pitch: 1
   canLoop: 0

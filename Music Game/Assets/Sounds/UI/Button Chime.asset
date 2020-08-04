@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: A
+  m_Name: Button Chime
   m_EditorClassIdentifier: 
-  name: A4
-  audioClip: {fileID: 8300000, guid: 7cbd776f5863a204a8f226cc74fbe129, type: 3}
-  volume: 0.6
+  name: buttonChime
+  audioClip: {fileID: 8300000, guid: 8dd85dd1cb601bf4d94ad2848aa5494d, type: 3}
+  volume: 0.695
   pitch: 1
   canLoop: 0

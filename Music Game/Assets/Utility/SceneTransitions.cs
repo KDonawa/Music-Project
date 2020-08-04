@@ -79,14 +79,17 @@ public class SceneTransitions : MonoBehaviour
         duration *= 0.5f;
         inTransitonCG = null;
 
+        yield return new WaitForSeconds(0.75f);
+
         // In Transition - - put in separate routine
-        //AudioManager.Instance.PlaySound("scene transition");
+        //AudioManager.PlaySound(AudioManager.sceneTransition, SoundType.UI);
         switch (inTransition)
         {
             case InTransition.FADE_IN:
-                yield return _instance.StartCoroutine(FadeInRoutine(duration));
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, fadeCG));
                 break;
-            case InTransition.CLOSE_VERTICAL:                
+            case InTransition.CLOSE_VERTICAL:
+                _instance.StartCoroutine(FadeInRoutine(duration, closeOpenCG));
                 yield return _instance.StartCoroutine(CloseRoutine(CloseVertically, duration));
                 break;
             case InTransition.CLOSE_HORIZONTAL:
@@ -136,7 +139,7 @@ public class SceneTransitions : MonoBehaviour
         }
 
         // Out Transition - put in separate routine
-        //AudioManager.Instance.PlaySound("scene transition");
+        //AudioManager.PlaySound(AudioManager.sceneTransition, SoundType.UI);
         switch (outTransition)
         {
             case OutTransition.FADE_OUT:
@@ -171,15 +174,25 @@ public class SceneTransitions : MonoBehaviour
     }
 
     #region IN TRANSITIONS
-    IEnumerator FadeInRoutine(float duration)
+    IEnumerator FadeInRoutine(float duration, CanvasGroup cg)
     {
-        inTransitonCG = fadeCG;
-        fadeCG.alpha = 0f;
+        //inTransitonCG = fadeCG;
+        //fadeCG.alpha = 0f;
+
+        //float lerp = 1 / duration;
+        //while (fadeCG.alpha < 1f)
+        //{
+        //    fadeCG.alpha += Time.deltaTime * lerp;
+        //    yield return null;
+        //}
+
+        inTransitonCG = cg;
+        cg.alpha = 0f;
 
         float lerp = 1 / duration;
-        while (fadeCG.alpha < 1f)
+        while (cg.alpha < 1f)
         {
-            fadeCG.alpha += Time.deltaTime * lerp;
+            cg.alpha += Time.deltaTime * lerp;
             yield return null;
         }
     }
@@ -215,7 +228,7 @@ public class SceneTransitions : MonoBehaviour
 
         Vector2 direction = closeDirection(increasing, decreasing);
 
-        closeOpenCG.alpha = 1f;
+        //closeOpenCG.alpha = 1f;
 
         float dist = Mathf.Abs(Vector2.Dot(direction, increasing.sizeDelta));
         Vector2 lerp = direction * dist / duration;

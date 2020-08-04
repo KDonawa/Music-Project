@@ -1,41 +1,54 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class GuessButton : MonoBehaviour
 {
     string _name;
     Image _image;
+    Button _button;
 
-    public static event System.Action<bool> GuessEvent;
-    public event System.Action GuessRoutineCompletedEvent;
+    public static event Action<bool> GuessEvent;
+    public event Action GuessRoutineCompletedEvent;
+
+    private void Awake()
+    {
+        _image = GetComponent<Image>();
+        _button = GetComponent<Button>();
+    }
+
 
     public void Initialize(string name)
     {
         _name = name;
-        _image = GetComponent<Image>();
+        //_image = GetComponent<Image>();
     }
 
-    public bool CheckGuess(string guess)
+    public void CheckGuess(string guess, Action correctGuessAction)
     {
         bool isGuessCorrect = guess == _name;
+        if (isGuessCorrect) correctGuessAction?.Invoke();
         StartCoroutine(ProcessGuessRoutine(isGuessCorrect));
-        return isGuessCorrect;
+        //return isGuessCorrect;
     }
 
     IEnumerator ProcessGuessRoutine(bool isGuessCorrect)
-    {
-        GuessEvent?.Invoke(isGuessCorrect);
+    {     
         if (isGuessCorrect)
         {
+            UIAnimator.ButtonPressEffect(_button, AudioManager.correctGuess);
             UIAnimator.SetColor(_image, Color.green);
-            AudioManager.Instance.PlaySound("correct guess");
+            //AudioManager.PlaySound(AudioManager.correctGuess, SoundType.UI);
         }
         else
         {
+            UIAnimator.ButtonPressEffect(_button, AudioManager.wrongGuess);
             UIAnimator.SetColor(_image, Color.red);
-            AudioManager.Instance.PlaySound("wrong guess");
+            //AudioManager.PlaySound(AudioManager.wrongGuess, SoundType.UI);
         }
+        GuessEvent?.Invoke(isGuessCorrect);
+
         yield return new WaitForSeconds(0.5f);
         UIAnimator.SetColor(_image, Color.black);
 

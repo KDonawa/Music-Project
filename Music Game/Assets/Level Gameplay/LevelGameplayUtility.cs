@@ -37,7 +37,7 @@ public class LevelGameplayUtility : MonoBehaviour
     }
     #endregion
 
-    #region UTILITY
+    #region FORMAT NOTES
     public string GetIndianNotation(string westernNotation, string droneNote)
     {
         return string.Empty;
@@ -111,28 +111,47 @@ public class LevelGameplayUtility : MonoBehaviour
         //Debug.Log("WN index: " + indexWN);
         return westernNotes[indexWN] + octave;
     }
+    #endregion
 
-    public IEnumerator DisplayButtonsByNameRoutine(List<Button> buttonsList, int numberToDisplay, float timeBetweenButtons = 0f)
+    #region UTILITY
+
+    public IEnumerator LoadButtonsRoutine(List<Button> buttonsList, float timeBetweenButtons, bool canEnable = true)
     {
-        for (int i = 0; i < numberToDisplay; i++)
+        for (int i = 0; i < buttonsList.Count; i++)
         {
-            UIAnimator.SetColor(buttonsList[i].GetComponent<Image>(), Color.black);
-            DisplayButton(buttonsList[i]);
-            //if (buttonLoadSound) AudioManager.PlaySoundOneShot(buttonLoadSound.name);
+            LoadButton(buttonsList[i], canEnable);
             yield return new WaitForSeconds(timeBetweenButtons);
         }
     }
-    public IEnumerator DisplayButtonsRoutine(List<Button> buttonsList, int numToDisplay, float timeBetweenButtons = 0f, bool canEnable = true)
+    public void LoadButtons(List<Button> buttonsList, float timeBetweenButtons = 0f, bool canEnable = true)
     {
-        for (int i = 0; i < numToDisplay; i++)
+        StartCoroutine(LoadButtonsRoutine(buttonsList, timeBetweenButtons, canEnable));
+    }
+    public void LoadButton(Button b, bool canEnable = true)
+    {
+        UIAnimator.SetColor(b.GetComponent<Image>(), Color.black);
+        DisplayButton(b, canEnable);
+        AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
+    }  
+    public void HideButtons(List<Button> buttonsList)
+    {
+        foreach (var b in buttonsList)
         {
-            Button b = buttonsList[i];
-            UIAnimator.SetColor(b.GetComponent<Image>(), Color.black);
-            DisplayButton(b, canEnable);
-            //if (buttonLoadSound) AudioManager.PlaySoundOneShot(buttonLoadSound.name);
-            yield return new WaitForSeconds(timeBetweenButtons);
+            HideButton(b);
         }
     }
+    public void EnableButtons(List<Button> buttonsList, bool canEnable = true)
+    {
+        foreach (var b in buttonsList)
+        {
+            EnableButton(b, canEnable);
+        }
+    }
+    public void DisableButtons(List<Button> buttonsList)
+    {
+        EnableButtons(buttonsList, false);
+    }
+
     public void RandomizeList(List<string> currentNotes)
     {
         for (int index = currentNotes.Count - 1; index > 0; index--)
@@ -145,44 +164,6 @@ public class LevelGameplayUtility : MonoBehaviour
             currentNotes[index] = currentNotes[randInt];
             currentNotes[randInt] = temp;
         }
-    }
-
-    public void HideButtonsByName(List<Button> buttonsList, List<string> buttonNames)
-    {
-        foreach (var buttonName in buttonNames)
-        {
-            Button b = FindButtonByName(buttonsList, buttonName);
-            HideButton(b);
-        }
-    }
-    public void HideButtons(List<Button> buttonsList)
-    {
-        foreach (var b in buttonsList)
-        {
-            HideButton(b);
-        }
-    }
-    public void EnableButtonsByName(List<Button> buttonsList, List<string> buttonNames, bool canEnable = true)
-    {
-        foreach (var buttonName in buttonNames)
-        {
-            EnableButton(FindButtonByName(buttonsList, buttonName), canEnable);
-        }
-    }
-    public void EnableButtons(List<Button> buttonsList, bool canEnable = true)
-    {
-        foreach (var b in buttonsList)
-        {
-            EnableButton(b, canEnable);
-        }
-    }
-    public void DisableButton(Button b)
-    {
-        EnableButton(b, false);
-    }
-    public void DisableButtons(List<Button> buttonsList)
-    {
-        EnableButtons(buttonsList, false);
     }
     #endregion
 

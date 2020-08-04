@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour
     public int currentStage = 1;
     public int currentLevel = 1; // put range attr 1 - w/e
 
+    public const string StartScene = "MenuScene";
+    public const string GameScene = "GameScene";
+
     #region SETUP
     private void Awake()
     {
@@ -95,12 +98,8 @@ public class GameManager : MonoBehaviour
     #region SCENE LOADING
     public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
     public static int GetCurrentSceneIndex() => SceneManager.GetActiveScene().buildIndex;
-    public void LoadGameScene()
-    {
-        SceneManager.LoadScene("GameScene");
-        //InitializeGame();
-    }    
-    public static void LoadStartScene() => LoadScene("MenuScene");
+    public void LoadGameScene() => SceneManager.LoadScene(GameScene);
+    public static void LoadStartScene() => LoadScene(StartScene);
     public static void LoadScene(string levelName)
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
@@ -150,7 +149,7 @@ public class GameManager : MonoBehaviour
             Instantiate(stages[currentStage - 1]);
         }
     }
-    public void QuitGame()
+    public static void QuitGame()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

@@ -41,7 +41,7 @@ public class Timer : MonoBehaviour
         while (startTime > 0)
         {
             countdownTextGUI.text = startTime.ToString();
-            AudioManager.Instance.PlaySound("countdown");
+            AudioManager.PlaySound(AudioManager.countdown, SoundType.UI);
             yield return new WaitForSeconds(delay);
             startTime--;
         }

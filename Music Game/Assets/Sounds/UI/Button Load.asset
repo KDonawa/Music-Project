@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
   m_Name: Button Load
   m_EditorClassIdentifier: 
-  name: button load
+  name: buttonLoad
   audioClip: {fileID: 8300000, guid: 19f89c6e740e7447f9e12a8310d3e973, type: 3}
   volume: 1
   pitch: 1

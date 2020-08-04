@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: B
+  m_Name: F#4 harmonium
   m_EditorClassIdentifier: 
-  name: B4
-  audioClip: {fileID: 8300000, guid: d9a7f6128c8a2c645af71c67b97b495f, type: 3}
+  name: F#4
+  audioClip: {fileID: 8300000, guid: 300c1e3cc7b96e942a40c7c96ff5ef21, type: 3}
   volume: 0.6
   pitch: 1
   canLoop: 0

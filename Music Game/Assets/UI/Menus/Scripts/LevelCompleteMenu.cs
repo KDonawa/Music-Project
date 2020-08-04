@@ -6,9 +6,32 @@ using TMPro;
 
 public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
 {
-    [SerializeField] TextMeshProUGUI scoreText = null;
+    [Header("Buttons")]
+    [SerializeField] Button homeButton = null;
+    [SerializeField] Button restartButton = null;
     [SerializeField] Button nextLevelButton = null;
 
+    [Header("UI")]
+    [SerializeField] TextMeshProUGUI scoreText = null;
+
+    private void Start()
+    {
+        if (homeButton == null) Debug.LogError("No reference to Home button");
+        else homeButton.onClick.AddListener(OnHomeButtonPressed);
+
+        if (restartButton == null) Debug.LogError("No reference to Restart button");
+        else restartButton.onClick.AddListener(OnRestartPressed);
+
+        if (nextLevelButton == null) Debug.LogError("No reference to Next Lvl button");
+        else nextLevelButton.onClick.AddListener(OnNextLevelPressed);
+    }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (homeButton != null) homeButton.onClick.RemoveListener(OnHomeButtonPressed);
+        if (restartButton != null) restartButton.onClick.RemoveListener(OnRestartPressed);
+        if (nextLevelButton != null) nextLevelButton.onClick.RemoveListener(OnNextLevelPressed);
+    }
     private void OnEnable()
     {
         if (GameManager.Instance != null && GameManager.Instance.IsFinalLevel())
@@ -17,25 +40,28 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
         }
         else nextLevelButton.gameObject.SetActive(true);
     }
-    public void SetFinalScore(float score)
+    public static void SetFinalScore(float score)
     {
-        scoreText.text = score.ToString() + "%";
+        Instance.scoreText.text = score.ToString() + "%";
     }
-    public void OnRestartPressed()
-    {
-        //if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
 
+    void OnHomeButtonPressed()
+    {
+        UIAnimator.ButtonPressEffect(homeButton, AudioManager.click1);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_LEFT, LoadLevelsMenu);
+    }
+    void OnRestartPressed()
+    {
+        UIAnimator.ButtonPressEffect(restartButton, AudioManager.click1);
         LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
         if (gameplay != null)
         {
             SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, gameplay.RestartLevel);
         }
     }
-
-    public void OnNextLevelPressed()
+    void OnNextLevelPressed()
     {
-        //if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
-
+        UIAnimator.ButtonPressEffect(nextLevelButton, AudioManager.buttonChime);
         LevelGameplay gameplay = FindObjectOfType<LevelGameplay>();
         if (gameplay != null)
         {
@@ -43,10 +69,7 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
         }
     }
 
-    public void OnHomeButtonPressed()
-    {      
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_LEFT, LoadLevelsMenu);
-    }
+    
     void LoadLevelsMenu()
     {
         if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();

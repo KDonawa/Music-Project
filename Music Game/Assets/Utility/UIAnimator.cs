@@ -36,10 +36,49 @@ public class UIAnimator : MonoBehaviour
         }
     }
 
+    #region UTILITY
+    public static void ButtonPressEffect(Button b, string soundEffect)
+    {
+        if (b == null) return;
+        ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.5f);
+        FlashColor(b.GetComponent<Image>(), Color.white, 0.5f);
+        AudioManager.PlaySound(soundEffect, SoundType.UI);
+    }
+    #endregion
+
     #region COLOR
     public static void SetColor(Image image, Color color)
     {
         image.color = color;
+    }
+    public static void FlashColor(Image image, Color color, float duration)
+    {
+        _instance.StartCoroutine(FlashColorRoutine(image, color, duration));
+    }
+    public static IEnumerator FlashColorRoutine(Image image, Color color, float duration)
+    {
+        Color originalColor = image.color;
+
+        float stepSize = duration * 0.5f;
+        float lerp = 1 / stepSize * 5f;
+
+        float timeElapsed = 0f;
+        while(timeElapsed < stepSize)
+        {
+            float deltaTime = Time.deltaTime;
+            image.color = Color.Lerp(image.color, color, deltaTime * lerp);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        while (timeElapsed < duration)
+        {
+            float deltaTime = Time.deltaTime;
+            image.color = Color.Lerp(image.color, originalColor, deltaTime * lerp);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+        image.color = originalColor;
     }
     #endregion
 
@@ -47,6 +86,27 @@ public class UIAnimator : MonoBehaviour
     public static void ShrinkAndExpand(RectTransform rect, float percentage, float duration)
     {
         _instance.StartCoroutine(ShrinkAndExpandRoutine(rect, percentage, duration));
+    }
+    public static IEnumerator ShrinkAndExpandRoutine(RectTransform rect, float fraction, float duration)
+    {
+        duration = Mathf.Clamp(duration, 0.1f, Mathf.Infinity);
+        fraction = Mathf.Clamp01(fraction);
+
+        Vector3 originalScale = new Vector3(1f, 1f, 1f);
+
+        Vector3 scaleDirection = new Vector3(1f, 1f, 0f);
+        while (rect.localScale.x > originalScale.x * fraction)
+        {
+            rect.localScale -= scaleDirection * Time.deltaTime / duration * 0.5f;
+            yield return null;
+        }
+        while (rect.localScale.x < originalScale.x)
+        {
+            rect.localScale += scaleDirection * Time.deltaTime / duration * 0.5f;
+            yield return null;
+        }
+
+        rect.localScale = originalScale;
     }
     public static void StopTextPulse()
     {
@@ -59,9 +119,39 @@ public class UIAnimator : MonoBehaviour
     {
         _instance.pulseTextCoroutine = _instance.StartCoroutine(PulseTextSizeRoutine(textGUI, growthAmount, period));
     }
+    public static void ShrinkToNothing(RectTransform rect, float duration, float postEffectDelay, Action onCompletedAction)
+    {
+        _instance.StartCoroutine(ShrinkToNothingRoutine(rect, duration, postEffectDelay, onCompletedAction));
+    }
+    public static IEnumerator ShrinkToNothingRoutine(RectTransform rect, float duration, float postEffectDelay, Action EffectCompleted)
+    {
+        yield return _instance.StartCoroutine(ShrinkToNothingRoutine(rect, duration));
+
+        float remainingTime = postEffectDelay - duration;
+        while (remainingTime > 0f)
+        {
+            remainingTime -= Time.deltaTime;
+            yield return null;
+        }
+        EffectCompleted?.Invoke();
+    }
     public static void ShrinkToNothing(RectTransform rect, float duration)
     {
-        _instance.StartCoroutine(ShrinkRoutine(rect, duration));
+        _instance.StartCoroutine(ShrinkToNothingRoutine(rect, duration));
+    }
+    public static IEnumerator ShrinkToNothingRoutine(RectTransform rect, float duration)
+    {
+        duration = Mathf.Abs(duration);
+        Vector3 originalScale = Vector3.one;
+        Vector3 scaleDirection = new Vector3(1f, 1f, 0f);
+
+        while (rect.localScale.x > 0f)
+        {
+            rect.localScale -= scaleDirection * Time.deltaTime / duration;
+            yield return null;
+        }
+        rect.gameObject.SetActive(false);
+        rect.localScale = originalScale;
     }
     public static void Scale(RectTransform rect, float growthAmount, float duration)
     {
@@ -115,20 +205,8 @@ public class UIAnimator : MonoBehaviour
         //rect.gameObject.SetActive(false);
         //rect.localScale = originalScale;
     }
-    static IEnumerator ShrinkRoutine(RectTransform rect, float duration)
-    {
-        duration = Mathf.Abs(duration);
-        Vector3 originalScale = Vector3.one;
-        Vector3 scaleDirection = new Vector3(1f, 1f, 0f);
 
-        while(rect.localScale.x > 0f)
-        {
-            rect.localScale -= scaleDirection * Time.deltaTime / duration;
-            yield return null;
-        }
-        rect.gameObject.SetActive(false);
-        rect.localScale = originalScale;
-    }
+    
     static IEnumerator MoveRoutine(RectTransform rect, float velocity, float duration, Vector3 direction)
     {
         duration = Mathf.Abs(duration);
@@ -154,27 +232,7 @@ public class UIAnimator : MonoBehaviour
         }
         rect.localRotation = Quaternion.Euler(orientation * degrees * sign);
     }
-    static IEnumerator ShrinkAndExpandRoutine(RectTransform rect, float fraction, float duration)
-    {
-        duration = Mathf.Clamp(duration, 0.1f, Mathf.Infinity);
-        fraction = Mathf.Clamp01(fraction);
-
-        Vector3 originalScale = new Vector3(1f, 1f, 1f);
-
-        Vector3 scaleDirection = new Vector3(1f, 1f, 0f);
-        while (rect.localScale.x > originalScale.x * fraction)
-        {
-            rect.localScale -= scaleDirection * Time.deltaTime / duration * 0.5f;
-            yield return null;
-        }
-        while (rect.localScale.x < originalScale.x)
-        {
-            rect.localScale += scaleDirection * Time.deltaTime / duration * 0.5f;
-            yield return null;
-        }
-
-        rect.localScale = originalScale;
-    }
+    
     static IEnumerator PulseTextSizeRoutine(TextMeshProUGUI textGUI, float growthAmount, float duration)
     {
         Mathf.Clamp(growthAmount, 1f, 5f);

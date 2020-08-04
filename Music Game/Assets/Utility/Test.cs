@@ -5,16 +5,26 @@ using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-    [SerializeField] Button b;
+    Button b;
+
+    private void Awake()
+    {
+        b = GetComponent<Button>();
+    }
+    private void Start()
+    {
+        b.onClick.AddListener(DoSomething);
+    }
 
     public void DoSomething()
     {
         //UIAnimator.ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.8f, 2f);
-        //UIAnimator.ChangeImageColor(b.GetComponent<Image>(), Color.green);
+        //UIAnimator.SetColor(GetComponent<Image>(), Color.white);
         //UIAnimator.RotateZ(b.GetComponent<RectTransform>(), -360f, 1f);
         //UIAnimator.MoveY(b.GetComponent<RectTransform>(), -1f, 5f);
         //UIAnimator.ShrinkToNothing(b.GetComponent<RectTransform>(), 5f);
         //UIAnimator.Scale(b.GetComponent<RectTransform>(), 2f, 2f);
         //UITransition.CrossFade(2f);
+        UIAnimator.FlashColor(GetComponent<Image>(), Color.white, 0.5f);
     }
 }
