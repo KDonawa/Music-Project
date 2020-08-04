@@ -43,17 +43,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0231aac68032f4bab82093b03fb7bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuManager: {fileID: 969780858601185771, guid: b61e39e8437f81740a33a42edd4fdb81,
+    type: 3}
+  audioManager: {fileID: 8758347865857615345, guid: 87af7a9f90d0b884586124bffb3dc038,
+    type: 3}
   sceneTransition: {fileID: 8696940811952244215, guid: 20cf6f7e6392cc64fae719e1c078c4bf,
     type: 3}
   uiAnimator: {fileID: 1546590672288415898, guid: 7290146321476444abe2d1b66e76be6c,
     type: 3}
-  gameUI: {fileID: 3331185885103300582, guid: 84c887ad78e4d484684623e50236e657, type: 3}
-  gameplayUtility: {fileID: 5867478692182558738, guid: 7d8ce3be67ff2bf40895bd5253472f96,
-    type: 3}
   stages:
-  - {fileID: 3237030485289987566, guid: e52b9cccfc4657a4389f20f6e574b5be, type: 3}
-  - {fileID: 3237030485289987566, guid: abc93b4bbf783c0468a5769188b8759e, type: 3}
-  - {fileID: 3237030485289987566, guid: c1b767a9f49e247458515dc2d0a170c2, type: 3}
-  - {fileID: 3237030485289987566, guid: 029d7c779aae2244aac8262af2ec41a9, type: 3}
+  - {fileID: 11400000, guid: 9bf01c09c51ece54bb9310b30d8224d5, type: 2}
+  - {fileID: 11400000, guid: fd9b1d67360fd6a4f9ced924da4200a8, type: 2}
+  - {fileID: 11400000, guid: 6101ed3d536c9254eb53269caa788317, type: 2}
+  - {fileID: 11400000, guid: 55ec98020e5b965498ee3a4f0895e979, type: 2}
+  game: {fileID: 977705765011780015, guid: a2044bd05ff8c7944a5db5ed0563d25b, type: 3}
   currentStage: 1
   currentLevel: 1

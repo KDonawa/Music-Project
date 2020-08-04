@@ -3,24 +3,25 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    //public const int START_SCENE_INDEX = 1;
-    public static GameManager Instance { get; private set; }
-
+    [Header("Prefabs")]
+    [SerializeField] MenuManager menuManager = null;
+    [SerializeField] AudioManager audioManager = null;
     [SerializeField] SceneTransitions sceneTransition = null;
     [SerializeField] UIAnimator uiAnimator = null;
-    [SerializeField] GameUI gameUI = null;
-    [SerializeField] LevelGameplayUtility gameplayUtility = null;
     [SerializeField] Stage[] stages = null;
+    [SerializeField] Game game = null;
 
-    public GameUI GameUI => gameUI;
-    public LevelGameplayUtility GameplayUtility => gameplayUtility;
     public int NumStages => stages.Length;
+    public static GameManager Instance { get; private set; }
 
-    public int currentStage = 1;
-    public int currentLevel = 1; // put range attr 1 - w/e
+    [Range(1, 5)] public int currentStage = 1;
+    [Range(1, 10)] public int currentLevel = 1;
 
     public const string StartScene = "MenuScene";
     public const string GameScene = "GameScene";
+
+    public static event System.Action<bool> LevelCompleteEvent;
+    public static void LevelComplete(bool isLevelPassed) => LevelCompleteEvent?.Invoke(isLevelPassed);
 
     #region SETUP
     private void Awake()
@@ -32,25 +33,27 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
+        Instantiate(menuManager);
+        Instantiate(audioManager);
         Instantiate(sceneTransition);
         Instantiate(uiAnimator);
+        if (GetCurrentSceneName() == "GameScene") Instantiate(game);
     }
     private void Start()
     {        
+        SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.sceneLoaded += InitializeGame;
-        if(GetCurrentSceneName() == "GameScene") InstantiateGame();
+        
     }
     void InitializeGame(Scene scene, LoadSceneMode loadSceneMode)
     {
         if (scene.name != "GameScene") return;
-        InstantiateGame();
+        Instantiate(game);
     }
     private void OnDestroy()
     {
-        if (Instance == this)
-        {
-            Instance = null;
-        }
+        if (Instance == this) Instance = null;
+        //SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     #endregion
@@ -96,6 +99,10 @@ public class GameManager : MonoBehaviour
     #endregion    
 
     #region SCENE LOADING
+    void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        SceneTransitions.sceneLoadingComplete = true;
+    }
     public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
     public static int GetCurrentSceneIndex() => SceneManager.GetActiveScene().buildIndex;
     public void LoadGameScene() => SceneManager.LoadScene(GameScene);
@@ -106,8 +113,6 @@ public class GameManager : MonoBehaviour
         {
             if(MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
             SceneManager.LoadScene(levelName);
-            //SceneManager.LoadSceneAsync(levelName);
-            SceneTransitions.sceneLoadingComplete = true;
         }
         else
         {
@@ -120,7 +125,6 @@ public class GameManager : MonoBehaviour
         {
             if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
             SceneManager.LoadScene(sceneIndex);
-            SceneTransitions.sceneLoadingComplete = true;
         }
         else
         {
@@ -142,13 +146,13 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region HELPERS
-    public void InstantiateGame()
-    {
-        if (currentStage > 0 && currentStage <= stages.Length)
-        {
-            Instantiate(stages[currentStage - 1]);
-        }
-    }
+    //public void InstantiateGame()
+    //{
+    //    if (currentStage > 0 && currentStage <= stages.Length)
+    //    {
+    //        Instantiate(stages[currentStage - 1]);
+    //    }
+    //}
     public static void QuitGame()
     {
 #if UNITY_EDITOR

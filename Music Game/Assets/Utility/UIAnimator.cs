@@ -14,7 +14,7 @@ public class UIAnimator : MonoBehaviour
 {
     static UIAnimator _instance;
 
-    Coroutine pulseTextCoroutine;
+    //Coroutine pulseTextCoroutine;
 
     private void Awake()
     {
@@ -39,9 +39,13 @@ public class UIAnimator : MonoBehaviour
     #region UTILITY
     public static void ButtonPressEffect(Button b, string soundEffect)
     {
+        ButtonPressEffect(b,soundEffect,Color.white);
+    }
+    public static void ButtonPressEffect(Button b, string soundEffect, Color effectColor)
+    {
         if (b == null) return;
-        ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.5f);
-        FlashColor(b.GetComponent<Image>(), Color.white, 0.5f);
+        ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
+        FlashColor(b.GetComponent<Image>(), effectColor, 0.5f);
         AudioManager.PlaySound(soundEffect, SoundType.UI);
     }
     #endregion
@@ -57,25 +61,20 @@ public class UIAnimator : MonoBehaviour
     }
     public static IEnumerator FlashColorRoutine(Image image, Color color, float duration)
     {
+        duration = Mathf.Clamp(duration, 0.1f, 0.5f);
         Color originalColor = image.color;
+        image.color = color;
 
         float stepSize = duration * 0.5f;
         float lerp = 1 / stepSize * 5f;
+        yield return new WaitForSeconds(stepSize);
 
-        float timeElapsed = 0f;
-        while(timeElapsed < stepSize)
-        {
-            float deltaTime = Time.deltaTime;
-            image.color = Color.Lerp(image.color, color, deltaTime * lerp);
-            timeElapsed += Time.deltaTime;
-            yield return null;
-        }
-
+        float timeElapsed = stepSize;
         while (timeElapsed < duration)
         {
-            float deltaTime = Time.deltaTime;
-            image.color = Color.Lerp(image.color, originalColor, deltaTime * lerp);
-            timeElapsed += Time.deltaTime;
+            float deltaTime = Time.deltaTime * lerp;
+            image.color = Color.Lerp(image.color, originalColor, deltaTime);
+            timeElapsed += deltaTime;
             yield return null;
         }
         image.color = originalColor;
@@ -108,16 +107,33 @@ public class UIAnimator : MonoBehaviour
 
         rect.localScale = originalScale;
     }
-    public static void StopTextPulse()
-    {
-        if(_instance.pulseTextCoroutine != null)
-        {
-            _instance.StopCoroutine(_instance.pulseTextCoroutine);
-        }
-    }
+
     public static void PulseTextSize(TextMeshProUGUI textGUI, float growthAmount, float period)
     {
-        _instance.pulseTextCoroutine = _instance.StartCoroutine(PulseTextSizeRoutine(textGUI, growthAmount, period));
+        _instance.StartCoroutine(PulseTextSizeRoutine(textGUI, growthAmount, period));
+    }
+    public static IEnumerator PulseTextSizeRoutine(TextMeshProUGUI textGUI, float growthAmount, float duration)
+    {
+        Mathf.Clamp(growthAmount, 1f, 5f);
+        Mathf.Clamp(duration, 0.1f, Mathf.Infinity);
+        float minValue = textGUI.fontSize;
+        float maxValue = minValue * growthAmount;
+
+        float lerp = (maxValue - minValue) / duration;
+        while (true)
+        {
+            while (textGUI.fontSize <= maxValue)
+            {
+                textGUI.fontSize += lerp * Time.deltaTime;
+                yield return null;
+            }
+            while (textGUI.fontSize >= minValue)
+            {
+                textGUI.fontSize -= lerp * Time.deltaTime;
+                yield return null;
+            }
+            //textGUI.fontSize = minValue;
+        }
     }
     public static void ShrinkToNothing(RectTransform rect, float duration, float postEffectDelay, Action onCompletedAction)
     {
@@ -233,28 +249,6 @@ public class UIAnimator : MonoBehaviour
         rect.localRotation = Quaternion.Euler(orientation * degrees * sign);
     }
     
-    static IEnumerator PulseTextSizeRoutine(TextMeshProUGUI textGUI, float growthAmount, float duration)
-    {
-        Mathf.Clamp(growthAmount, 1f, 5f);
-        Mathf.Clamp(duration, 0.1f, Mathf.Infinity);
-        float minValue = textGUI.fontSize;
-        float maxValue = minValue * growthAmount;
-
-        float lerp = (maxValue - minValue) / duration;
-        while (true)
-        {            
-            while (textGUI.fontSize <= maxValue)
-            {
-                textGUI.fontSize += lerp * Time.deltaTime;
-                yield return null;
-            }
-            while (textGUI.fontSize >= minValue)
-            {
-                textGUI.fontSize -= lerp * Time.deltaTime;
-                yield return null;
-            }
-            //textGUI.fontSize = minValue;
-        }
-    }
+    
     #endregion
 }
