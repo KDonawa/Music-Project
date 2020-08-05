@@ -16,16 +16,17 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
     [SerializeField] GameObject starsContainer = null;
 
     Image[] stars;
-    protected override void Awake()
-    {
-        base.Awake();
-        if(starsContainer != null) stars = starsContainer.GetComponentsInChildren<Image>();
 
-        //Game.LevelCompleteEvent += DisplayMenu;
-    }
 
 
     #region SETUP
+    protected override void Awake()
+    {
+        base.Awake();
+        if (starsContainer != null) stars = starsContainer.GetComponentsInChildren<Image>();
+
+        Game.LevelCompleteEvent += DisplayMenu;
+    }
     private void Start()
     {
         if (homeButton == null) Debug.LogError("No reference to Home button");
@@ -36,8 +37,6 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 
         if (nextLevelButton == null) Debug.LogError("No reference to Next Lvl button");
         else nextLevelButton.onClick.AddListener(OnNextLevelPressed);
-
-        
     }
     protected override void OnDestroy()
     {
@@ -45,8 +44,6 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         if (homeButton != null) homeButton.onClick.RemoveListener(OnHomeButtonPressed);
         if (restartButton != null) restartButton.onClick.RemoveListener(OnRestartPressed);
         if (nextLevelButton != null) nextLevelButton.onClick.RemoveListener(OnNextLevelPressed);
-
-        //Game.LevelCompleteEvent -= DisplayMenu;
     }
 
     #endregion
@@ -74,7 +71,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 
     public IEnumerator DisplayMenuRoutine(bool isLevelPassed)
     {
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         if (ScoreSystem.Instance != null)
         {
@@ -83,7 +80,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
             // set final score text
             _instance.scoreText.text = finalScore.ToString() + "%";
             //AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
 
             // display stars earned
             int numStars = 0;
@@ -96,13 +93,13 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
             for (int i = 0; i < maxNumStars && i < numStars; i++)
             {
                 _instance.stars[i].gameObject.SetActive(true);
-                AudioManager.PlaySound(AudioManager.chime1, SoundType.UI);
+                AudioManager.PlaySound(AudioManager.chime3, SoundType.UI);
                 yield return new WaitForSeconds(0.5f);
             }
             if(numStars == 3)
             {
-                AudioManager.PlaySound(AudioManager.win, SoundType.UI);
-                yield return new WaitForSeconds(2f);
+                AudioManager.PlaySound(AudioManager.chime1, SoundType.UI);
+                yield return new WaitForSeconds(1f);
             }           
 
         }
@@ -153,7 +150,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
     void LoadLevelsMenu()
     {
         GameManager.LoadStartScene();
-        LevelsMenu.Open();
+        LevelSelectMenu.Open();
     }
 
 }

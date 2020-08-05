@@ -6,8 +6,6 @@ using TMPro;
 using System;
 using System.Text;
 
-// should be responsible for having all game effects and systems
-// should have checks and balances for systems being used
 public class LevelGameplayUtility : MonoBehaviour
 {
     [SerializeField] Timer timerPrefab = null;

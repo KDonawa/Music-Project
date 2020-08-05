@@ -33,9 +33,9 @@ public class MainMenu : /*MenuGeneric<MainMenu>*/Menu<MainMenu>
     {
         UIAnimator.ButtonPressEffect(playButton, AudioManager.buttonChime);     
 
-        UIAnimator.ShrinkToNothing(settingsButton.GetComponent<RectTransform>(), 0.5f, 2f, 
+        UIAnimator.ShrinkToNothing(settingsButton.GetComponent<RectTransform>(), 1f, 2f, 
             () => settingsButton.GetComponent<RectTransform>().gameObject.SetActive(true));
-        UIAnimator.ShrinkToNothing(quitButton.GetComponent<RectTransform>(), 0.5f, 2f,
+        UIAnimator.ShrinkToNothing(quitButton.GetComponent<RectTransform>(), 1f, 2f,
             () => quitButton.GetComponent<RectTransform>().gameObject.SetActive(true));
 
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, StageSelectMenu.Open);

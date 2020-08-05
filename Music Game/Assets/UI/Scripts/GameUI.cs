@@ -81,7 +81,7 @@ public class GameUI : MonoBehaviour
         levelText.text = "Level " + GameManager.Instance.currentLevel;
         levelText.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
 
         AudioManager.PlaySound(AudioManager.swoosh1, SoundType.UI);
         UIAnimator.ShrinkToNothing(levelText.rectTransform, 0.5f);

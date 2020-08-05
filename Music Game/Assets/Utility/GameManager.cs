@@ -20,8 +20,6 @@ public class GameManager : MonoBehaviour
     public const string StartScene = "MenuScene";
     public const string GameScene = "GameScene";
 
-    public static event System.Action<bool> LevelCompleteEvent;
-    public static void LevelComplete(bool isLevelPassed) => LevelCompleteEvent?.Invoke(isLevelPassed);
 
     #region SETUP
     private void Awake()
@@ -40,20 +38,13 @@ public class GameManager : MonoBehaviour
         if (GetCurrentSceneName() == GameScene) Instantiate(game);
     }
     private void Start()
-    {        
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.sceneLoaded += InitializeGame;
-        
-    }
-    void InitializeGame(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.name != GameScene) return;
-        Instantiate(game);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
-        //SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     #endregion
@@ -101,10 +92,6 @@ public class GameManager : MonoBehaviour
     #region SCENE LOADING
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if(scene.name == StartScene)
-        {
-            // open main menu
-        }
         SceneTransitions.sceneLoadingComplete = true;
     }
     public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
@@ -115,9 +102,10 @@ public class GameManager : MonoBehaviour
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
-            MenuManagerUpdated.CloseAllMenus();
+            //MenuManagerUpdated.CloseAllMenus();
+            if (levelName == StartScene) MainMenu.Open();
+            if (levelName == GameScene) Instantiate(Instance.game);
             SceneManager.LoadScene(levelName);
-            MainMenu.Open();
         }
         else
         {
@@ -152,13 +140,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region HELPERS
-    //public void InstantiateGame()
-    //{
-    //    if (currentStage > 0 && currentStage <= stages.Length)
-    //    {
-    //        Instantiate(stages[currentStage - 1]);
-    //    }
-    //}
+
     public static void QuitGame()
     {
 #if UNITY_EDITOR

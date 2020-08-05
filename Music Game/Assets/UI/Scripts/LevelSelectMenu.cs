@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class LevelsMenu : /*MenuGeneric<LevelsMenu>*/Menu<LevelsMenu>
+public class LevelSelectMenu : /*MenuGeneric<LevelsMenu>*/Menu<LevelSelectMenu>
 {
     [Header("Buttons")]    
     [SerializeField] Button mainMenuButton = null;
@@ -74,6 +74,7 @@ public class LevelsMenu : /*MenuGeneric<LevelsMenu>*/Menu<LevelsMenu>
     }
     void OnStageMenuPressed()
     {
+        UIAnimator.ButtonPressEffect(mainMenuButton, AudioManager.click1);
         AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
         SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_LEFT, OutTransition.CIRCLE_WIPE_LEFT, StageSelectMenu.Open);
     }

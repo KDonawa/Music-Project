@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: buttonChime
   audioClip: {fileID: 8300000, guid: 8dd85dd1cb601bf4d94ad2848aa5494d, type: 3}
-  volume: 0.792
+  volume: 0.174
   pitch: 1
   canLoop: 0

@@ -62,6 +62,7 @@ public class TextSystem : MonoBehaviour
         if (textGUI.gameObject.activeSelf) textGUI.text += string.Concat("\n", display);
         else textGUI.text = display;
 
+        yield return new WaitForSeconds(0.5f);
         ShowTextGUI(textGUI);
         yield return new WaitForSeconds(1f);
         ShowTextGUI(textGUI, false);

@@ -31,6 +31,7 @@ public class AudioManager : MonoBehaviour
     public const string chime1 = "chime1";
     public const string win = "win";
     public const string swoosh1 = "swoosh1";
+    public const string chime3 = "chime3";
 
     #region SETUP
     private void Awake()

@@ -91,7 +91,7 @@ public class PauseMenu : Menu<PauseMenu>
     void LoadLevelsMenu()
     {
         GameManager.LoadStartScene();
-        LevelsMenu.Open();        
+        LevelSelectMenu.Open();        
     }
     void LoadStageSelect()
     {

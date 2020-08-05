@@ -45,7 +45,7 @@ public class UIAnimator : MonoBehaviour
     {
         if (b == null) return;
         ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
-        FlashColor(b.GetComponent<Image>(), effectColor, 0.5f);
+        FlashButtonColor(b, effectColor, 2f);
         AudioManager.PlaySound(soundEffect, SoundType.UI);
     }
     #endregion
@@ -55,18 +55,23 @@ public class UIAnimator : MonoBehaviour
     {
         image.color = color;
     }
-    public static void FlashColor(Image image, Color color, float duration)
+    public static void FlashButtonColor(Button b, Color color, float duration)
     {
-        _instance.StartCoroutine(FlashColorRoutine(image, color, duration));
+        _instance.StartCoroutine(FlashButtonColorRoutine(b, color, duration));
     }
-    public static IEnumerator FlashColorRoutine(Image image, Color color, float duration)
+    public static IEnumerator FlashButtonColorRoutine(Button b, Color color, float duration)
     {
-        duration = Mathf.Clamp(duration, 0.1f, 0.5f);
+        Image image = b.GetComponent<Image>();
         Color originalColor = image.color;
         image.color = color;
 
+        TextMeshProUGUI textGUI = b.GetComponentInChildren<TextMeshProUGUI>();
+        Color originalTextColor = textGUI.color;
+        textGUI.color = color;
+
+        duration = Mathf.Clamp(duration, 0.1f, 2f);
         float stepSize = duration * 0.5f;
-        float lerp = 1 / stepSize * 5f;
+        float lerp = 1 / stepSize;
         yield return new WaitForSeconds(stepSize);
 
         float timeElapsed = stepSize;
@@ -74,10 +79,12 @@ public class UIAnimator : MonoBehaviour
         {
             float deltaTime = Time.deltaTime * lerp;
             image.color = Color.Lerp(image.color, originalColor, deltaTime);
+            textGUI.color = Color.Lerp(textGUI.color, originalTextColor, deltaTime);
             timeElapsed += deltaTime;
             yield return null;
         }
         image.color = originalColor;
+        textGUI.color = originalTextColor;
     }
     #endregion
 

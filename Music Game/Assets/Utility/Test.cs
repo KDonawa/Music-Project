@@ -25,6 +25,6 @@ public class Test : MonoBehaviour
         //UIAnimator.ShrinkToNothing(b.GetComponent<RectTransform>(), 5f);
         //UIAnimator.Scale(b.GetComponent<RectTransform>(), 2f, 2f);
         //UITransition.CrossFade(2f);
-        UIAnimator.FlashColor(GetComponent<Image>(), Color.white, 0.5f);
+        //UIAnimator.FlashButtonColor(b, Color.white, 0.5f);
     }
 }

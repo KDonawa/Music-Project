@@ -9,10 +9,12 @@ public class GuessButton : MonoBehaviour
     Image _image;
     Button _button;
  
-    public static event Action<GuessButton> GuessEvent;
+    public static event Action<GuessButton> ButtonPressedEvent;
     public static event Action GuessCorrectEvent;
     public static event Action GuessIncorrectEvent;
-    public event Action GuessRoutineCompletedEvent;
+    public static event Action GuessCheckedEvent;
+
+    public static string correctGuess;
 
     private void Awake()
     {
@@ -24,9 +26,13 @@ public class GuessButton : MonoBehaviour
     {
         _name = name;
     }
-    public void ButtonPressed() => GuessEvent?.Invoke(this);
+    public void ButtonPressed()
+    {
+        ButtonPressedEvent?.Invoke(this);
+        CheckGuess(correctGuess);
+    }
 
-    public void ProcessGuess(string guess)
+    public void CheckGuess(string guess)
     {
         StartCoroutine(ProcessGuessRoutine(guess == _name));
     }
@@ -44,9 +50,9 @@ public class GuessButton : MonoBehaviour
             UIAnimator.ButtonPressEffect(_button, AudioManager.wrongGuess, Color.red);
         }        
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(2f);
 
-        GuessRoutineCompletedEvent?.Invoke();
+        GuessCheckedEvent?.Invoke();
     }
 
     

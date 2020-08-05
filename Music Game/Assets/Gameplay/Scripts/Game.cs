@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 /*
     TODO:    
-    -button press effect also changes text color
     -drone select screen
     -instrument select screen
     -stage complete menu
@@ -32,13 +31,13 @@ public class Game : MonoBehaviour
     List<Button> guessButtons;
     List<string> currentNotes;
     string droneNote;
-    int numNotesPlayedPerGuess;
+    int numGuessesPerRound;
     int currentSubLevel;
     int guessCount;
     List<string> answers;
     List<string> activeNoteSounds;
 
-    //public static event System.Action<bool> LevelCompleteEvent;
+    public static event System.Action<bool> LevelCompleteEvent;
 
     #region SETUP
     private void Awake()
@@ -56,7 +55,8 @@ public class Game : MonoBehaviour
     }
     private void Start()
     {
-        GuessButton.GuessEvent += GuessButtonPressed;
+        GuessButton.ButtonPressedEvent += GuessButtonPressed;
+        GuessButton.GuessCheckedEvent += GuessButtonChecked;
         Timer.TimerExpiredEvent += OnTimerExpired;
         
         Play();
@@ -66,7 +66,8 @@ public class Game : MonoBehaviour
     {
         if (_instance == this) _instance = null;
 
-        GuessButton.GuessEvent -= GuessButtonPressed;
+        GuessButton.ButtonPressedEvent -= GuessButtonPressed;
+        GuessButton.GuessCheckedEvent -= GuessButtonChecked;
         Timer.TimerExpiredEvent -= OnTimerExpired;
     }
    
@@ -78,11 +79,11 @@ public class Game : MonoBehaviour
 
         currentLevel = GameManager.Instance.GetCurrentLevel();
         currentSubLevel = 0;
-        numNotesPlayedPerGuess = currentLevel.numNotesToGuess;
+        numGuessesPerRound = currentLevel.numNotesToGuess;
 
         _gameUI.Inititialize();
-        _gameplayUtility.Timer.Initialize(timeToGuessPerNote * numNotesPlayedPerGuess);
-        _gameplayUtility.ScoreSystem.Initialize(numNotesPlayedPerGuess * currentLevel.subLevels.Length);
+        _gameplayUtility.Timer.Initialize(timeToGuessPerNote * numGuessesPerRound);
+        _gameplayUtility.ScoreSystem.Initialize(numGuessesPerRound * currentLevel.subLevels.Length);
         _gameplayUtility.TextSystem.Initialize();
     }
     void InitializeNotes()
@@ -95,7 +96,7 @@ public class Game : MonoBehaviour
             currentNotes.Add(note);
         }
     }
-    void InitializeGuessOptions()
+    void InitializeGuessButtons()
     {
         foreach (var b in guessButtons) Destroy(b.gameObject);
         guessButtons.Clear();
@@ -112,13 +113,12 @@ public class Game : MonoBehaviour
     public static void Play()
     {
         _instance.InitializeLevel();
-        //StopAllCoroutines();
         _instance.StartCoroutine(_instance.StartLevelRoutine());
     }
     void PlayGameLoop()
     {
         InitializeNotes();
-        InitializeGuessOptions();
+        InitializeGuessButtons();
         guessCount = 0;
         answers.Clear();
         activeNoteSounds.Clear();
@@ -127,23 +127,34 @@ public class Game : MonoBehaviour
         
     void ContinueGameLoop()
     {
-        //_gameplayUtility.HideButtons(guessButtons);
         _gameplayUtility.Timer.ResetGuessTimer();
         currentSubLevel++;
-        // may need to make this a routine eventually
         if (IsLevelComplete())
         {
-            LevelCompleteMenu.DisplayMenu(IsLevelPassed());
-            //LevelCompleteEvent?.Invoke(IsLevelPassed());
+            LevelCompleteEvent?.Invoke(IsLevelPassed());
+            //LevelCompleteMenu.DisplayMenu(IsLevelPassed());
+        }
+        else PlayGameLoop();
+    }
+    void OnTimerExpired() => StartCoroutine(TimerExpiredRoutine());    
+    void GuessButtonPressed(GuessButton guessButton)
+    {
+        _gameplayUtility.Timer.StopGuessTimer();
+        _gameplayUtility.DisableButtons(guessButtons);
+        GuessButton.correctGuess = answers[guessCount++];
+    }
+    void GuessButtonChecked()
+    {
+        if (guessCount == numGuessesPerRound)
+        {
+            ContinueGameLoop();
         }
         else
         {
-            PlayGameLoop();
+            _gameplayUtility.EnableButtons(guessButtons);
+            _gameplayUtility.Timer.StartGuessTimer();
         }
     }
-    void OnTimerExpired() => StartCoroutine(TimerExpiredRoutine());    
-    void GuessButtonPressed(GuessButton guessButton) => StartCoroutine(GuessButtonPressedRoutine(guessButton));
-
     #endregion
 
     #region HELPERS
@@ -151,15 +162,11 @@ public class Game : MonoBehaviour
     {
         //wait until scene is loaded
         while (!SceneTransitions.sceneLoadingComplete) yield return null;
-
         
         yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());
-        
-        //GameMenu.Open();        
+           
         _gameplayUtility.Timer.DisplayTimer();
-
         yield return new WaitForSeconds(0.2f);
-
         _gameplayUtility.Timer.StartCountdown(countdownTime, 0.8f, PlayGameLoop);
     }
     IEnumerator PlayGameLoopRoutine()
@@ -197,7 +204,7 @@ public class Game : MonoBehaviour
         _gameUI.DisplayGameText("Playing Notes");
 
         // play each note consecutively
-        for (int i = 0; i < numNotesPlayedPerGuess; i++)
+        for (int i = 0; i < numGuessesPerRound; i++)
         {
             string note = currentNotes[UnityEngine.Random.Range(0, currentNotes.Count)];
             answers.Add(note);
@@ -205,7 +212,6 @@ public class Game : MonoBehaviour
             _gameUI.DisplayDebugText(_gameplayUtility.GetINFormatted(note)); // testing
 
             yield return new WaitForSeconds(2.5f);
-            //yield return new WaitForSeconds(1f);
             StopNote(_gameplayUtility.GetWesternNotation(note, droneNote));
         }
 
@@ -215,34 +221,12 @@ public class Game : MonoBehaviour
         _gameUI.HideDebugText();
 
         // display guess options
-        yield return StartCoroutine(_gameplayUtility.LoadButtonsRoutine(guessButtons, 0.3f));
-
+        yield return StartCoroutine(_gameplayUtility.LoadButtonsRoutine(guessButtons, 0.2f, false));
+        _gameplayUtility.EnableButtons(guessButtons);
         //start timer
         _gameplayUtility.Timer.StartGuessTimer();
     }
-    IEnumerator GuessButtonPressedRoutine(GuessButton guessButton)
-    {
-        _gameplayUtility.Timer.StopGuessTimer();
-        _gameplayUtility.DisableButtons(guessButtons);
-        guessCount++;
-
-        // check guess
-        guessButton.ProcessGuess(answers[guessCount - 1]);
-
-        yield return new WaitForSeconds(1f);
-
-        // we have no more notes to guess
-        if (guessCount == numNotesPlayedPerGuess)
-        {
-            yield return new WaitForSeconds(1f);
-            ContinueGameLoop();
-        }
-        else
-        {
-            _gameplayUtility.EnableButtons(guessButtons);
-            _gameplayUtility.Timer.StartGuessTimer();
-        }
-    }    
+    
     IEnumerator TimerExpiredRoutine()
     {
         _gameplayUtility.DisableButtons(guessButtons);
