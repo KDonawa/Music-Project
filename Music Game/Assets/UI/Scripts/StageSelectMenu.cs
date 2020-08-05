@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class StageSelectMenu : MenuGeneric<StageSelectMenu>
+public class StageSelectMenu : /*MenuGeneric<StageSelectMenu>*/Menu<StageSelectMenu>
 {
     [Header("References")]
     [SerializeField] GameObject buttonsContainer = null;

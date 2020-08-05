@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 /*
     TODO:    
-    -fix menu system
     -button press effect also changes text color
     -drone select screen
     -instrument select screen
@@ -14,6 +13,8 @@ using TMPro;
 */
 public class Game : MonoBehaviour
 {
+    static Game _instance;
+
     [Header("Prefabs")]
     [SerializeField] GameUI gameUI = null;
     [SerializeField] LevelGameplayUtility gameplayUtility = null;
@@ -42,6 +43,9 @@ public class Game : MonoBehaviour
     #region SETUP
     private void Awake()
     {
+        if (_instance == null) _instance = this;
+        else Destroy(gameObject);
+
         _gameUI = Instantiate(gameUI);
         _gameplayUtility = Instantiate(gameplayUtility);
         guessButtons = new List<Button>();
@@ -54,19 +58,23 @@ public class Game : MonoBehaviour
     {
         GuessButton.GuessEvent += GuessButtonPressed;
         Timer.TimerExpiredEvent += OnTimerExpired;
+        
         Play();
     }
     
     private void OnDestroy()
     {
+        if (_instance == this) _instance = null;
+
         GuessButton.GuessEvent -= GuessButtonPressed;
         Timer.TimerExpiredEvent -= OnTimerExpired;
     }
-  
+   
     void InitializeLevel()
-    {
-        MenuManager.Instance.ClearMenuHistory();
-        AudioManager.StopAllGamplaySounds();        
+    {      
+        MenuManagerUpdated.CloseAllMenus();
+        AudioManager.StopAllGamplaySounds();
+        _gameplayUtility.HideButtons(guessButtons);
 
         currentLevel = GameManager.Instance.GetCurrentLevel();
         currentSubLevel = 0;
@@ -101,10 +109,11 @@ public class Game : MonoBehaviour
 
     #region GAMEPLAY
 
-    void Play()
+    public static void Play()
     {
-        StopAllCoroutines();
-        StartCoroutine(StartLevelRoutine());
+        _instance.InitializeLevel();
+        //StopAllCoroutines();
+        _instance.StartCoroutine(_instance.StartLevelRoutine());
     }
     void PlayGameLoop()
     {
@@ -118,13 +127,14 @@ public class Game : MonoBehaviour
         
     void ContinueGameLoop()
     {
-        _gameplayUtility.HideButtons(guessButtons);
+        //_gameplayUtility.HideButtons(guessButtons);
         _gameplayUtility.Timer.ResetGuessTimer();
         currentSubLevel++;
         // may need to make this a routine eventually
         if (IsLevelComplete())
         {
             LevelCompleteMenu.DisplayMenu(IsLevelPassed());
+            //LevelCompleteEvent?.Invoke(IsLevelPassed());
         }
         else
         {
@@ -142,10 +152,10 @@ public class Game : MonoBehaviour
         //wait until scene is loaded
         while (!SceneTransitions.sceneLoadingComplete) yield return null;
 
-        InitializeLevel();
+        
         yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());
         
-        GameMenu.Open();        
+        //GameMenu.Open();        
         _gameplayUtility.Timer.DisplayTimer();
 
         yield return new WaitForSeconds(0.2f);
@@ -224,8 +234,7 @@ public class Game : MonoBehaviour
         // we have no more notes to guess
         if (guessCount == numNotesPlayedPerGuess)
         {
-            //_gameplayUtility.HideButtons(guessButtons);
-            //yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f);
             ContinueGameLoop();
         }
         else
@@ -269,28 +278,39 @@ public class Game : MonoBehaviour
     #endregion
 
     #region UTILITY
+    public static void Restart()
+    {
+        _instance.StopAllCoroutines();
+        _instance._gameUI.StopAllCoroutines();
+        _instance._gameplayUtility.StopAllCoroutines();
+        _instance._gameplayUtility.Timer.StopAllCoroutines();
+        _instance._gameplayUtility.ScoreSystem.StopAllCoroutines();
+        _instance._gameplayUtility.TextSystem.StopAllCoroutines();     
+    }
     void IncrementGuessCount() => guessCount++;
     protected void ResetGuessCount() => guessCount = 0;
-    public void RestartLevel() => Play();
     public void PlayNextLevel()
     {
         GameManager.Instance.IncrementLevel();
         Play();
     }
-    public void PauseGame()
+    public static void PauseGame()
     {
-        AudioManager.PauseSound(droneNote, SoundType.DRONE);
+        AudioManager.PauseSound(_instance.droneNote, SoundType.DRONE);
 
-        foreach (var sound in activeNoteSounds)
+        foreach (var sound in _instance.activeNoteSounds)
         {
             AudioManager.PauseSound(sound, SoundType.HARMONIUM);
         }
-    }
-    public void ResumeGame()
-    {
-        AudioManager.UnPauseSound(droneNote, SoundType.DRONE);
 
-        foreach (var sound in activeNoteSounds)
+        PauseMenu.Open();
+    }
+    public static void ResumeGame()
+    {
+        MenuManagerUpdated.CloseAllMenus();
+        AudioManager.UnPauseSound(_instance.droneNote, SoundType.DRONE);
+
+        foreach (var sound in _instance.activeNoteSounds)
         {
             AudioManager.UnPauseSound(sound, SoundType.HARMONIUM);
         }

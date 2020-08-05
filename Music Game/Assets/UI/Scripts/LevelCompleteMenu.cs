@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
+public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 {
     [Header("Buttons")]
     [SerializeField] Button homeButton = null;
@@ -53,13 +53,37 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
 
     public static void DisplayMenu(bool isLevelPassed)
     {
-        //Debug.Log("test");
+        // empty text
+        _instance.scoreText.text = string.Empty;
+
+        // deactivate stars
+        for (int i = 0; i < _instance.stars.Length; i++)
+        {
+            _instance.stars[i].gameObject.SetActive(false);
+        }
+
+        // hide buttons
+        _instance.homeButton.gameObject.SetActive(false);
+        _instance.restartButton.gameObject.SetActive(false);
+        _instance.nextLevelButton.gameObject.SetActive(false);
+
+        MenuManagerUpdated.OpenMenu(_instance);
+
+        _instance.StartCoroutine(_instance.DisplayMenuRoutine(isLevelPassed));
+    }
+
+    public IEnumerator DisplayMenuRoutine(bool isLevelPassed)
+    {
+        yield return new WaitForSeconds(0.5f);
+
         if (ScoreSystem.Instance != null)
         {
             int finalScore = ScoreSystem.GetPlayerScorePercentageAsInt();
 
             // set final score text
-            Instance.scoreText.text = finalScore.ToString() + "%";
+            _instance.scoreText.text = finalScore.ToString() + "%";
+            //AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
+            yield return new WaitForSeconds(2f);
 
             // display stars earned
             int numStars = 0;
@@ -67,24 +91,36 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
             if (isLevelPassed) numStars = 2;
             if (finalScore == 100) numStars = 3;
 
-            int maxNumStars = Instance.stars.Length;
-            for (int i = 0; i < maxNumStars; i++)
-            {
-                Instance.stars[i].gameObject.SetActive(false);
-            }
+            int maxNumStars = _instance.stars.Length;
+            
             for (int i = 0; i < maxNumStars && i < numStars; i++)
             {
-                Instance.stars[i].gameObject.SetActive(true);
-            }            
+                _instance.stars[i].gameObject.SetActive(true);
+                AudioManager.PlaySound(AudioManager.chime1, SoundType.UI);
+                yield return new WaitForSeconds(0.5f);
+            }
+            if(numStars == 3)
+            {
+                AudioManager.PlaySound(AudioManager.win, SoundType.UI);
+                yield return new WaitForSeconds(2f);
+            }           
+
         }
+        // display buttons
+        _instance.homeButton.gameObject.SetActive(true);
+        AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
+        yield return new WaitForSeconds(0.2f);
+
+        _instance.restartButton.gameObject.SetActive(true);
+        AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
+        yield return new WaitForSeconds(0.2f);
+
         // next level button
-        Instance.nextLevelButton.gameObject.SetActive(isLevelPassed);
-        if (GameManager.Instance != null && GameManager.Instance.IsFinalLevel())
+        if (isLevelPassed && !GameManager.Instance.IsFinalLevel())
         {
-            Instance.nextLevelButton.gameObject.SetActive(false);
-        }
-        
-        MenuManager.Instance.OpenMenu(Instance);
+            _instance.nextLevelButton.gameObject.SetActive(isLevelPassed);
+            AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
+        }        
     }
 
 
@@ -98,11 +134,10 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
     void OnRestartPressed()
     {
         UIAnimator.ButtonPressEffect(restartButton, AudioManager.click1);
-        Game gameplay = FindObjectOfType<Game>();
-        if (gameplay != null)
-        {
-            SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, gameplay.RestartLevel);
-        }
+
+        Game.Restart();
+
+        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, Game.Play);
     }
     void OnNextLevelPressed()
     {
@@ -117,11 +152,8 @@ public class LevelCompleteMenu : MenuGeneric<LevelCompleteMenu>
 
     void LoadLevelsMenu()
     {
-        if (MenuManager.Instance) MenuManager.Instance.ClearMenuHistory();
         GameManager.LoadStartScene();
         LevelsMenu.Open();
     }
-    // main menu
 
-    // level select
 }

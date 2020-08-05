@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [Header("Prefabs")]
-    [SerializeField] MenuManager menuManager = null;
+    [SerializeField] MenuManagerUpdated menuManager = null;
     [SerializeField] AudioManager audioManager = null;
     [SerializeField] SceneTransitions sceneTransition = null;
     [SerializeField] UIAnimator uiAnimator = null;
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         Instantiate(audioManager);
         Instantiate(sceneTransition);
         Instantiate(uiAnimator);
-        if (GetCurrentSceneName() == "GameScene") Instantiate(game);
+        if (GetCurrentSceneName() == GameScene) Instantiate(game);
     }
     private void Start()
     {        
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
     }
     void InitializeGame(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.name != "GameScene") return;
+        if (scene.name != GameScene) return;
         Instantiate(game);
     }
     private void OnDestroy()
@@ -101,6 +101,10 @@ public class GameManager : MonoBehaviour
     #region SCENE LOADING
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
+        if(scene.name == StartScene)
+        {
+            // open main menu
+        }
         SceneTransitions.sceneLoadingComplete = true;
     }
     public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
@@ -111,8 +115,9 @@ public class GameManager : MonoBehaviour
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
-            if(MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
+            MenuManagerUpdated.CloseAllMenus();
             SceneManager.LoadScene(levelName);
+            MainMenu.Open();
         }
         else
         {
@@ -123,7 +128,8 @@ public class GameManager : MonoBehaviour
     {
         if (sceneIndex >= 0 && sceneIndex < SceneManager.sceneCountInBuildSettings)
         {
-            if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
+            //if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
+            MenuManagerUpdated.CloseAllMenus();
             SceneManager.LoadScene(sceneIndex);
         }
         else

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class LevelsMenu : MenuGeneric<LevelsMenu>
+public class LevelsMenu : /*MenuGeneric<LevelsMenu>*/Menu<LevelsMenu>
 {
     [Header("Buttons")]    
     [SerializeField] Button mainMenuButton = null;

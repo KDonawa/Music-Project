@@ -41,7 +41,7 @@ public class ScoreSystem : MonoBehaviour
 
     public void Initialize(int numGuesses)
     {
-        StopAllCoroutines();
+        //StopAllCoroutines();
         PlayerScore = 0f;
         numCorrectGuesses = 0;
         totalNumGuesses = numGuesses;
@@ -90,7 +90,7 @@ public class ScoreSystem : MonoBehaviour
         float scorePercentage = Instance.numCorrectGuesses / (float)Instance.totalNumGuesses * 100f;
         return (int)scorePercentage;
     }
-    public void UpdatePlayerScore(int pointsGained) => StartCoroutine(UpdatePlayerScoreRoutine(pointsGained));  
+    //public void UpdatePlayerScore(int pointsGained) => StartCoroutine(UpdatePlayerScoreRoutine(pointsGained));  
     public void DisplayScoreSystem(bool canDisplay = true)
     {
         if (scoreTextGUI) ShowTextGUI(scoreTextGUI, canDisplay);

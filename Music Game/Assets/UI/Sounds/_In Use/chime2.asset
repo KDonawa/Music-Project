@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: Wrong Guess
+  m_Name: chime2
   m_EditorClassIdentifier: 
-  name: wrongGuess
-  audioClip: {fileID: 8300000, guid: f2d96523bbffc9b47bf5e4fca4e9450d, type: 3}
-  volume: 0.85
-  pitch: 0.81
+  name: buttonChime
+  audioClip: {fileID: 8300000, guid: 8dd85dd1cb601bf4d94ad2848aa5494d, type: 3}
+  volume: 0.792
+  pitch: 1
   canLoop: 0

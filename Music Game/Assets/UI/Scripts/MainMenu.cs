@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenu : MenuGeneric<MainMenu>
+public class MainMenu : /*MenuGeneric<MainMenu>*/Menu<MainMenu>
 {
     [Header("References")]
     [SerializeField] Button playButton = null;

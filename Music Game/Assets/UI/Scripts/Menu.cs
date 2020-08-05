@@ -2,46 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MenuGeneric<T> : Menu where T: MenuGeneric<T>
+public abstract class Menu : MonoBehaviour
 {
-    //static T instance;
-    public static T Instance { get; private set; }
+    //public abstract void OnBackPressed();
+}
+public abstract class Menu<T> : Menu where T : Menu<T>
+{
+    protected static T _instance;
+
+    MenuManagerUpdated _manager;
     protected virtual void Awake()
     {
-        if (Instance)
-        {
-            Destroy(gameObject);          
-        }
-        else
-        {
-            Instance = (T)this;
-        }
+        if (_instance == null) _instance = (T)this;
+        else Destroy(gameObject);
+
+        _manager = null;
     }
     protected virtual void OnDestroy()
     {
-        if (Instance == this) Instance = null;
+        if (_instance == this) _instance = null;
+    }
+    public void InitializeMenu(MenuManagerUpdated manager)
+    {
+        _manager = manager;
     }
 
     public static void Open()
     {
-        if(MenuManager.Instance && Instance)
-        {
-            MenuManager.Instance.OpenMenu(Instance);
-        }
-    }   
-
-    public override void OnBackPressed()
-    {
-        if (MenuManager.Instance)
-        {
-            MenuManager.Instance.CloseCurrentMenu();
-        }
+        MenuManagerUpdated.OpenMenu(_instance);
     }
-}
 
-[RequireComponent(typeof(Canvas))]
-public abstract class Menu : MonoBehaviour
-{
-    public abstract void OnBackPressed();
-    
 }

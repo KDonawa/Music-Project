@@ -28,6 +28,9 @@ public class AudioManager : MonoBehaviour
     public const string sceneTransition = "sceneTransition";
     public const string buttonChime = "buttonChime";
     public const string timerExpired = "timerExpired";
+    public const string chime1 = "chime1";
+    public const string win = "win";
+    public const string swoosh1 = "swoosh1";
 
     #region SETUP
     private void Awake()

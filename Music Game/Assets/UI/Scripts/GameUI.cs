@@ -6,23 +6,44 @@ using TMPro;
 
 public class GameUI : MonoBehaviour
 {
+    [Header("Buttons")]
+    [SerializeField] Button pauseButton = null;
+
+    [Header("Text")]
     [SerializeField] TextMeshProUGUI levelText = null;
     [SerializeField] TextMeshProUGUI droneText = null;
     [SerializeField] TextMeshProUGUI gameText = null;
     [SerializeField] TextMeshProUGUI debugText = null;
-    [SerializeField] GameObject guessButtonsContainer = null;
+
+    [Header("Prefabs")]
     [SerializeField] Button guessButton = null;
+
+    [Header("Containers")]    
+    [SerializeField] GameObject guessButtonsContainer = null;
+    
 
     float originalDroneTextSize;
 
     IEnumerator dronePulseRoutine;
 
+    #region SETUP
     private void Awake()
     {        
         Inititialize();        
     }
+    private void Start()
+    {
+        if (pauseButton == null) Debug.LogError("No reference to Pause button");
+        else pauseButton.onClick.AddListener(OnPausePressed);
+    }
+    private void OnDestroy()
+    {
+        if (pauseButton != null) pauseButton.onClick.RemoveListener(OnPausePressed);
+    }
+    
     public void Inititialize()
-    {        
+    {
+        //StopAllCoroutines();
         originalDroneTextSize = droneText.fontSize;
         if (levelText != null) levelText.gameObject.SetActive(false);
         HideDroneText();
@@ -42,6 +63,9 @@ public class GameUI : MonoBehaviour
         }
         return null;
     }
+    #endregion
+
+    #region EFFECTS
     public void PulseDroneText()
     {
         StopDronePulse();
@@ -52,7 +76,21 @@ public class GameUI : MonoBehaviour
     {
         if (dronePulseRoutine != null) StopCoroutine(dronePulseRoutine);
     }
+    public IEnumerator DisplayCurrentLevelRoutine()
+    {
+        levelText.text = "Level " + GameManager.Instance.currentLevel;
+        levelText.gameObject.SetActive(true);
 
+        yield return new WaitForSeconds(1.5f);
+
+        AudioManager.PlaySound(AudioManager.swoosh1, SoundType.UI);
+        UIAnimator.ShrinkToNothing(levelText.rectTransform, 0.5f);
+        yield return new WaitForSeconds(0.5f);
+
+    }
+    #endregion
+
+    #region TEXT DISPLAY
     public void DisplayGameText(string textToDisplay)
     {       
         if (gameText == null) return;
@@ -73,7 +111,6 @@ public class GameUI : MonoBehaviour
         debugText.gameObject.SetActive(true);
 
     }
-
     public void HideGameText()
     {
         if (gameText == null) return;
@@ -96,16 +133,14 @@ public class GameUI : MonoBehaviour
     {
         droneText.fontSize = originalDroneTextSize;
     }
+    #endregion
 
-    public IEnumerator DisplayCurrentLevelRoutine()    
-    {       
-        levelText.text = "Level " + GameManager.Instance.currentLevel;
-        levelText.gameObject.SetActive(true);
-        
-        yield return new WaitForSeconds(1.5f);
+    void OnPausePressed()
+    {
+        //UIAnimator.ButtonPressEffect(pauseButton, AudioManager.click1);
+        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        Time.timeScale = 0f;
 
-        UIAnimator.ShrinkToNothing(levelText.rectTransform, 0.5f);
-        yield return new WaitForSeconds(0.5f);    
-        
+        Game.PauseGame();
     }
 }
