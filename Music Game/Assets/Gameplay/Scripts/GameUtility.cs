@@ -6,22 +6,14 @@ using TMPro;
 using System;
 using System.Text;
 
-public class LevelGameplayUtility : MonoBehaviour
+public class GameUtility : MonoBehaviour
 {
-    [SerializeField] Timer timerPrefab = null;
-    [SerializeField] ScoreSystem scoreSystemPrefab = null;
-    [SerializeField] TextSystem textSystemPrefab = null;
-
-    public Timer Timer { get; private set; }
-    public ScoreSystem ScoreSystem { get; private set; }
-    public TextSystem TextSystem { get; private set; }
-
     // lower octaves: .sa .re .ga (must be bold and italicized)
     // higher octaves: 'sa 're 'ga (end in apostrophe and Capitalized)
     // drone: d:C3 -> 3 will tell us the octave
     readonly string[] indianNotes = { "sa", "_re", "re", "_ga", "ga", "ma", "Ma", "pa", "_dha", "dha", "_ni", "ni" };
     readonly string[] westernNotes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    readonly string[] droneNotes = { "d:C", "d:C#", "d:D", "d:D#", "d:E", "d:F", "d:F#", "d:G", "d:G#", "d:A", "d:A#", "d:B", };
+    //readonly string[] droneNotes = { "d:C", "d:C#", "d:D", "d:D#", "d:E", "d:F", "d:F#", "d:G", "d:G#", "d:A", "d:A#", "d:B", };
 
     StringBuilder sb;
     
@@ -29,24 +21,21 @@ public class LevelGameplayUtility : MonoBehaviour
     private void Awake()
     {
         sb = new StringBuilder(30);
-        Timer = Instantiate(timerPrefab);
-        ScoreSystem = Instantiate(scoreSystemPrefab);
-        TextSystem = Instantiate(textSystemPrefab);
     }
     #endregion
 
-    #region FORMAT NOTES
+    #region NOTE FORMATTING
     public string GetIndianNotation(string westernNotation, string droneNote)
     {
         return string.Empty;
     }
-    public string GetDroneNoteFormatted(string droneNote)
-    {
-        int octave = droneNote[droneNote.Length - 1] - '0';
-        droneNote = droneNote.Substring(0, droneNote.Length - 1);
-        return westernNotes[Array.FindIndex(droneNotes, x => x == droneNote)] + octave;
-    }
-    public string GetINFormatted(string indianNotation)
+    //public string GetDroneNoteFormatted(string droneNote)
+    //{
+    //    int octave = droneNote[droneNote.Length - 1] - '0';
+    //    droneNote = droneNote.Substring(0, droneNote.Length - 1);
+    //    return westernNotes[Array.FindIndex(droneNotes, x => x == droneNote)] + octave;
+    //}
+    public string GetNoteFormatted(string indianNotation)
     {
         bool isBoldAndItalicized = false;
         bool isUnderlined = false;
@@ -97,7 +86,7 @@ public class LevelGameplayUtility : MonoBehaviour
         }
         //Debug.Log("octave: " + octave);
 
-        int indexDrone = Array.FindIndex(droneNotes, x => x == droneNote); // find the index of the drone note
+        int indexDrone = Array.FindIndex(westernNotes, x => x == droneNote); // find the index of the drone note
         //Debug.Log("drone note: " + droneNote);
         //Debug.Log("drone index: " + indexDrone);
 
@@ -111,8 +100,12 @@ public class LevelGameplayUtility : MonoBehaviour
     }
     #endregion
 
-    #region UTILITY
+    #region BUTTON UTILITY
 
+    public void LoadButtons(List<Button> buttonsList, float timeBetweenButtons = 0f, bool canEnable = true)
+    {
+        StartCoroutine(LoadButtonsRoutine(buttonsList, timeBetweenButtons, canEnable));
+    }
     public IEnumerator LoadButtonsRoutine(List<Button> buttonsList, float timeBetweenButtons, bool canEnable = true)
     {
         for (int i = 0; i < buttonsList.Count; i++)
@@ -120,16 +113,12 @@ public class LevelGameplayUtility : MonoBehaviour
             LoadButton(buttonsList[i], canEnable);
             yield return new WaitForSeconds(timeBetweenButtons);
         }
-    }
-    public void LoadButtons(List<Button> buttonsList, float timeBetweenButtons = 0f, bool canEnable = true)
+    }   
+    public void LoadButton(Button b, bool canEnable = true, bool playSound = true)
     {
-        StartCoroutine(LoadButtonsRoutine(buttonsList, timeBetweenButtons, canEnable));
-    }
-    public void LoadButton(Button b, bool canEnable = true)
-    {
-        UIAnimator.SetColor(b.GetComponent<Image>(), Color.black);
+        UIAnimator.SetButtonColor(b, Color.black);
         DisplayButton(b, canEnable);
-        AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
+        if(playSound) AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
     }  
     public void HideButtons(List<Button> buttonsList)
     {
@@ -150,19 +139,6 @@ public class LevelGameplayUtility : MonoBehaviour
         EnableButtons(buttonsList, false);
     }
 
-    public void RandomizeList(List<string> currentNotes)
-    {
-        for (int index = currentNotes.Count - 1; index > 0; index--)
-        {
-            // Pick a random index from 0 to length of list
-            int randInt = UnityEngine.Random.Range(0, currentNotes.Count);
-
-            // Swap ith element with the element at random index 
-            string temp = currentNotes[index];
-            currentNotes[index] = currentNotes[randInt];
-            currentNotes[randInt] = temp;
-        }
-    }
     #endregion
 
     #region HELPER METHODS
@@ -185,8 +161,7 @@ public class LevelGameplayUtility : MonoBehaviour
             b.gameObject.SetActive(false);
         }
     }
-    Button FindButtonByName(List<Button> buttonsList, string name) =>
-        buttonsList.Find(button => button.GetComponentInChildren<TextMeshProUGUI>().text == name);
+
     #endregion
 
 }

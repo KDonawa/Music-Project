@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class StageSelectMenu : /*MenuGeneric<StageSelectMenu>*/Menu<StageSelectMenu>
+public class StageSelectMenu : Menu<StageSelectMenu>
 {
     [Header("References")]
     [SerializeField] GameObject buttonsContainer = null;
+    [SerializeField] Button backButton = null;
     [SerializeField] Button mainMenuButton = null;
 
     [Header("UI/Prefabs")]
@@ -15,17 +16,24 @@ public class StageSelectMenu : /*MenuGeneric<StageSelectMenu>*/Menu<StageSelectM
 
     List<Button> stageOptions;
 
-    private void Start()
+    protected override void Awake()
     {
-        if(mainMenuButton == null) Debug.LogError("No reference to Main Menu button");
-        else mainMenuButton.onClick.AddListener(OnMainMenuPressed);
-        
+        base.Awake();
+
+        if (backButton == null) Debug.LogError("No reference to back button");
+        else backButton.onClick.AddListener(BackPressed);
+
+        if (mainMenuButton == null) Debug.LogError("No reference to Main Menu button");
+        else mainMenuButton.onClick.AddListener(MainMenuPressed);
+
         InitializeButtons();
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        if (mainMenuButton != null) mainMenuButton.onClick.RemoveListener(OnMainMenuPressed);
+        if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
+        if (mainMenuButton != null) mainMenuButton.onClick.RemoveListener(MainMenuPressed);
     }
 
     void InitializeButtons()
@@ -42,7 +50,6 @@ public class StageSelectMenu : /*MenuGeneric<StageSelectMenu>*/Menu<StageSelectM
 
             StageSelectButton ssb = b.GetComponent<StageSelectButton>();
             ssb.InitializeButton(i);
-            //b.onClick.AddListener(delegate { ssb.ButtonPressed(OnButtonPressed); });
             b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
         }
     }
@@ -65,10 +72,15 @@ public class StageSelectMenu : /*MenuGeneric<StageSelectMenu>*/Menu<StageSelectM
         rect.gameObject.SetActive(true);
     }
 
-    void OnMainMenuPressed()
+    void BackPressed()
     {
-        UIAnimator.ButtonPressEffect(mainMenuButton, AudioManager.click1);
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, MainMenu.Open);
+        UIAnimator.ButtonPressEffect3(backButton, AudioManager.click1);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, DroneSelectMenu.Instance.Open);
     }
-
+    void MainMenuPressed()
+    {
+        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.click1);
+        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.CIRCLE_SHRINK, MainMenu.Instance.Open);
+    }
 }

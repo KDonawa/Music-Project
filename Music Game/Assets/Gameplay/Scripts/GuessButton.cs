@@ -42,12 +42,12 @@ public class GuessButton : MonoBehaviour
         if (isGuessCorrect)
         {
             GuessCorrectEvent?.Invoke();
-            UIAnimator.ButtonPressEffect(_button, AudioManager.correctGuess, Color.green);
+            UIAnimator.ButtonPressEffect4(_button, AudioManager.correctGuess, Color.green);
         }
         else
         {
             GuessIncorrectEvent?.Invoke();
-            UIAnimator.ButtonPressEffect(_button, AudioManager.wrongGuess, Color.red);
+            UIAnimator.ButtonPressEffect4(_button, AudioManager.wrongGuess, Color.red);
         }        
 
         yield return new WaitForSeconds(2f);

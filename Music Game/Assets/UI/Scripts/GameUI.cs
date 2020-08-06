@@ -9,7 +9,8 @@ public class GameUI : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] Button pauseButton = null;
 
-    [Header("Text")]
+    [Header("UI")]
+    [SerializeField] TextMeshProUGUI countdownTextGUI = null;
     [SerializeField] TextMeshProUGUI levelText = null;
     [SerializeField] TextMeshProUGUI droneText = null;
     [SerializeField] TextMeshProUGUI gameText = null;
@@ -45,7 +46,8 @@ public class GameUI : MonoBehaviour
     {
         //StopAllCoroutines();
         originalDroneTextSize = droneText.fontSize;
-        if (levelText != null) levelText.gameObject.SetActive(false);
+        HideTextGUI(levelText);
+        HideTextGUI(countdownTextGUI);
         HideDroneText();
         HideGameText();
         HideDebugText();
@@ -65,6 +67,29 @@ public class GameUI : MonoBehaviour
     }
     #endregion
 
+    #region COUNTDOWN
+    public void StartCountdown(int startTime, float delay, System.Action endOfCountdownDelegate)
+    {
+        StartCoroutine(CountdownRoutine(startTime, delay, endOfCountdownDelegate));
+    }
+    IEnumerator CountdownRoutine(int startTime, float delay, System.Action endOfCountdownDelegate)
+    {
+        yield return new WaitForSeconds(1f); // this delay is needed for smoother start
+        ShowTextGUI(countdownTextGUI);
+        while (startTime > 0)
+        {
+            countdownTextGUI.text = startTime.ToString();
+            AudioManager.PlaySound(AudioManager.countdown, SoundType.UI);
+            yield return new WaitForSeconds(delay);
+            startTime--;
+        }
+        HideTextGUI(countdownTextGUI);
+        endOfCountdownDelegate?.Invoke();
+    }
+
+    #endregion
+    
+
     #region EFFECTS
     public void PulseDroneText()
     {
@@ -78,69 +103,53 @@ public class GameUI : MonoBehaviour
     }
     public IEnumerator DisplayCurrentLevelRoutine()
     {
-        levelText.text = "Level " + GameManager.Instance.currentLevel;
-        levelText.gameObject.SetActive(true);
+        levelText.text = string.Concat("Level ", GameManager.Instance.CurrentLevelIndex.ToString());
+        ShowTextGUI(levelText);
 
         yield return new WaitForSeconds(2f);
 
         AudioManager.PlaySound(AudioManager.swoosh1, SoundType.UI);
         UIAnimator.ShrinkToNothing(levelText.rectTransform, 0.5f);
         yield return new WaitForSeconds(0.5f);
-
     }
     #endregion
 
     #region TEXT DISPLAY
     public void DisplayGameText(string textToDisplay)
     {       
-        if (gameText == null) return;
         gameText.text = textToDisplay;
-        gameText.gameObject.SetActive(true);
+        ShowTextGUI(gameText);
     }
     public void DisplayDroneText(string textToDisplay)
     {
-        if (droneText == null) return;
+        droneText.fontSize = originalDroneTextSize;
         droneText.text = textToDisplay;
-        droneText.gameObject.SetActive(true);
-
+        ShowTextGUI(droneText);
     }
     public void DisplayDebugText(string textToDisplay)
     {
-        if (debugText == null) return;
-        debugText.text += textToDisplay + ' ';
-        debugText.gameObject.SetActive(true);
+        //debugText.text += textToDisplay + ' ';
+        debugText.text += string.Concat(textToDisplay, ' ');
+        ShowTextGUI(debugText);
+    }
+    public void HideGameText() => HideTextGUI(gameText);
 
-    }
-    public void HideGameText()
-    {
-        if (gameText == null) return;
-        gameText.gameObject.SetActive(false);
-    }
-    public void HideDroneText()
-    {
-        if (droneText == null) return;
-        droneText.gameObject.SetActive(false);
-        ResetDroneText();
-    }
+    public void HideDroneText()=> HideTextGUI(droneText);
     public void HideDebugText()
     {
-        if (debugText == null) return;
-        debugText.gameObject.SetActive(false);
+        HideTextGUI(debugText);
         debugText.text = string.Empty;
     }
 
-    public void ResetDroneText()
-    {
-        droneText.fontSize = originalDroneTextSize;
-    }
     #endregion
 
+    void ShowTextGUI(TextMeshProUGUI textGUI, bool canShow = true) => textGUI.gameObject.SetActive(canShow);
+    void HideTextGUI(TextMeshProUGUI textGUI) => ShowTextGUI(textGUI, false);
     void OnPausePressed()
     {
-        //UIAnimator.ButtonPressEffect(pauseButton, AudioManager.click1);
         AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
-        Time.timeScale = 0f;
-
-        Game.PauseGame();
+        //Time.timeScale = 0f;
+        GameManager.ChangeGameState(GameState.Paused);
+        //Game.PauseGame();
     }
 }

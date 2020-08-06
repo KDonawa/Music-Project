@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 977705765011780014}
   - component: {fileID: 977705765011780015}
+  - component: {fileID: 7719120559087879800}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -44,9 +45,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameUI: {fileID: 3331185885103300582, guid: 84c887ad78e4d484684623e50236e657, type: 3}
-  gameplayUtility: {fileID: 5867478692182558738, guid: 7d8ce3be67ff2bf40895bd5253472f96,
-    type: 3}
   countdownTime: 0
   timeToGuessPerNote: 5
   levelPassPercentage: 80
   playIntro: 0
+  timerPrefab: {fileID: 2331815702461281659, guid: a4a86d2180d2fca4fa55e38695b42502,
+    type: 3}
+  scoreSystemPrefab: {fileID: 1579604373362280786, guid: 414a510741bbd0340b8438692de9c11f,
+    type: 3}
+  textSystemPrefab: {fileID: 3451224029580088093, guid: 629d69fdf67571945b415f4567bdc586,
+    type: 3}
+--- !u!114 &7719120559087879800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977705765011780012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3580371f8cdd8c24797e580184dfaa7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

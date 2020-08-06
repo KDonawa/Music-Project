@@ -13,5 +13,15 @@ MonoBehaviour:
   m_Name: Intermediate2
   m_EditorClassIdentifier: 
   name: Intermediate 2
-  isUnlocked: 0
-  levels: []
+  isUnlocked: 1
+  levels:
+  - {fileID: 11400000, guid: 765fdfc719d7e504187d8d1ad3234d25, type: 2}
+  - {fileID: 11400000, guid: e217b4b39cd0ae84da7aca18352f1206, type: 2}
+  - {fileID: 11400000, guid: 32d89d7e3f75c554abae46844a449109, type: 2}
+  - {fileID: 11400000, guid: b5f2873cc27a8954daf4cdb85ecd4b49, type: 2}
+  - {fileID: 11400000, guid: caf5720a49bc08d4797ab98aac44f2f7, type: 2}
+  - {fileID: 11400000, guid: ddec0cde2593d5849b4caac139aa58ab, type: 2}
+  - {fileID: 11400000, guid: 2cb7eeb381ca03d4fbe3935585c37231, type: 2}
+  - {fileID: 11400000, guid: 41aeb46acf18b944aa4edfe5e2644776, type: 2}
+  - {fileID: 11400000, guid: 2f22fc28d0d30f2408d253639a44700f, type: 2}
+  - {fileID: 11400000, guid: 33598c651c76a3442b2f74630e892ad9, type: 2}

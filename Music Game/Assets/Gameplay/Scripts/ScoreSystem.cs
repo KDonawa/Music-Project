@@ -45,7 +45,7 @@ public class ScoreSystem : MonoBehaviour
         PlayerScore = 0f;
         numCorrectGuesses = 0;
         totalNumGuesses = numGuesses;
-        //numWrongGuesses = 0;
+
         ResetStreakAndMultiplier();
         UpdateScoreText();
         if (scoreTextGUI) ShowTextGUI(scoreTextGUI, false);
@@ -84,10 +84,10 @@ public class ScoreSystem : MonoBehaviour
     #endregion
 
     #region UTILITY
-    public void IncrementNumCorrectGuesses() => numCorrectGuesses++;
-    public static int GetPlayerScorePercentageAsInt()
+    void IncrementNumCorrectGuesses() => numCorrectGuesses++;
+    public int FinalScorePercentage()
     {
-        float scorePercentage = Instance.numCorrectGuesses / (float)Instance.totalNumGuesses * 100f;
+        float scorePercentage = numCorrectGuesses / (float)totalNumGuesses * 100f;
         return (int)scorePercentage;
     }
     //public void UpdatePlayerScore(int pointsGained) => StartCoroutine(UpdatePlayerScoreRoutine(pointsGained));  

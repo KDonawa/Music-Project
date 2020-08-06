@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: C4 Drone
   m_EditorClassIdentifier: 
   name: d:C4
-  audioClip: {fileID: 8300000, guid: 58537df017673e944a3a3d321d13ee0a, type: 3}
+  audioClip: {fileID: 0}
   volume: 0.3
   pitch: 1
   canLoop: 0

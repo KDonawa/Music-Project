@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsMenu : /*MenuGeneric<SettingsMenu>*/Menu<SettingsMenu>
+public class SettingsMenu : Menu<SettingsMenu>
 {
     [Header("Volume Sliders")]
     [SerializeField] Slider masterVolumeSlider = null;
@@ -18,34 +18,28 @@ public class SettingsMenu : /*MenuGeneric<SettingsMenu>*/Menu<SettingsMenu>
     {
         base.Awake();
         dataManager = FindObjectOfType<DataManager>();
+
+        if (backButton == null) Debug.LogError("No reference to Back button");
+        else backButton.onClick.AddListener(BackPressed);
     }
     private void Start()
     {
-        LoadData();
-
-        if (backButton == null) Debug.LogError("No reference to Back button");
-        else backButton.onClick.AddListener(OnMainMenuPressed);
+        LoadData();        
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        if (backButton != null) backButton.onClick.RemoveListener(OnMainMenuPressed);
+        if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
     }
 
-    void OnMainMenuPressed()
+    void BackPressed()
     {
-        UIAnimator.ButtonPressEffect(backButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(backButton, AudioManager.click1);
 
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, MainMenu.Open);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, MainMenu.Instance.Open);
         if (dataManager) dataManager.Save();
     }
-    //public override void OnBackPressed()
-    //{
-    //    UIAnimator.ButtonPressEffect(backButton, AudioManager.click1);
 
-    //    SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, base.OnBackPressed);
-    //    if (dataManager) dataManager.Save();
-    //}
     public void OnMasterVolumeChanged(float volume)
     {
         if (dataManager)

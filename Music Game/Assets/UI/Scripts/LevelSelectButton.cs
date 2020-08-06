@@ -10,11 +10,9 @@ public class LevelSelectButton : MonoBehaviour
 
     public void ButtonPressed(System.Action<Button> buttonPressedAction)
     {
-        UIAnimator.ButtonPressEffect(GetComponent<Button>(), AudioManager.buttonChime);
         buttonPressedAction?.Invoke(GetComponent<Button>());
-
-        GameManager.Instance.SetCurrentLevel(level);
-        // probably play an animation first
+        UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonChime);   
+        GameManager.Instance.CurrentLevelIndex = level;
         SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.CIRCLE_SHRINK, GameManager.Instance.LoadGameScene); 
     }
 }

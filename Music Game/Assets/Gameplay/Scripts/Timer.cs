@@ -5,7 +5,7 @@ using TMPro;
 
 public class Timer : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI countdownTextGUI = null;
+    //[SerializeField] TextMeshProUGUI countdownTextGUI = null;
     [SerializeField]  TextMeshProUGUI timerTextGUI = null;
 
     public float RemainingTime { get; private set; }
@@ -20,8 +20,7 @@ public class Timer : MonoBehaviour
     #region SETUP
     private void Awake()
     {
-        ShowTextGUI(timerTextGUI, false);
-        ShowTextGUI(countdownTextGUI, false);
+        ShowTextGUI(timerTextGUI, false);        
     }
     public void Initialize(float initialTime)
     {       
@@ -33,20 +32,7 @@ public class Timer : MonoBehaviour
     #endregion
 
     #region HELPER METHODS
-    IEnumerator CountdownRoutine(int startTime, float delay, System.Action endOfCountdownDelegate)
-    {
-        yield return new WaitForSeconds(1f); // this delay is needed for smoother start
-        ShowTextGUI(countdownTextGUI);
-        while (startTime > 0)
-        {
-            countdownTextGUI.text = startTime.ToString();
-            AudioManager.PlaySound(AudioManager.countdown, SoundType.UI);
-            yield return new WaitForSeconds(delay);
-            startTime--;
-        }
-        ShowTextGUI(countdownTextGUI, false);
-        endOfCountdownDelegate?.Invoke();
-    }
+    
     IEnumerator TimerRoutine()
     {
         int counter = 0;
@@ -88,14 +74,7 @@ public class Timer : MonoBehaviour
     #endregion
 
     #region UTILITY METHODS
-    public void DisplayTimer(bool isEnabled = true)
-    {
-        ShowTextGUI(timerTextGUI, isEnabled);
-    }
-    public void StartCountdown(int startTime, float delay, System.Action endOfCountdownDelegate)
-    {
-        StartCoroutine(CountdownRoutine(startTime, delay, endOfCountdownDelegate));
-    }
+    //public void DisplayTimer(bool isEnabled = true) => ShowTextGUI(timerTextGUI, isEnabled);
     public void StartGuessTimer()
     {
         StopGuessTimer();
@@ -109,6 +88,7 @@ public class Timer : MonoBehaviour
     }
     public void ResetGuessTimer()
     {
+        ShowTextGUI(timerTextGUI,false);
         StopGuessTimer();
         RemainingTime = maxTime;
 
@@ -116,6 +96,7 @@ public class Timer : MonoBehaviour
         timerTextGUI.fontSize = 65f;
         timerTextGUI.color = Color.white;
         UpdateTimerText();
+        ShowTextGUI(timerTextGUI);
     }
     #endregion
 

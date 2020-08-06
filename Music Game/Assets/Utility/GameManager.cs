@@ -1,8 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
+public enum GameState
+{
+    Running,
+    Paused,
+    Loading,
+}
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
+    public static event Action GamePausedEvent;
+    public static event Action GameUnPausedEvent;
+
+    public int NumStages => stages.Length;
+    public int CurrentStageIndex { get => currentStageIndex; set => currentStageIndex = value; }
+    public int CurrentLevelIndex { get => currentLevelIndex; set => currentLevelIndex = value; }
+    public string DroneNote { get => droneNote; set => droneNote = value; }
+
     [Header("Prefabs")]
     [SerializeField] MenuManagerUpdated menuManager = null;
     [SerializeField] AudioManager audioManager = null;
@@ -11,15 +28,39 @@ public class GameManager : MonoBehaviour
     [SerializeField] Stage[] stages = null;
     [SerializeField] Game game = null;
 
-    public int NumStages => stages.Length;
-    public static GameManager Instance { get; private set; }
-
-    [Range(1, 5)] public int currentStage = 1;
-    [Range(1, 10)] public int currentLevel = 1;
+    [Header("Variables")]
+    [Range(1, 5)] [SerializeField] int currentStageIndex = 1;
+    [Range(1, 10)] [SerializeField] int currentLevelIndex = 1;
+    [SerializeField] string droneNote = "Test";
 
     public const string StartScene = "MenuScene";
     public const string GameScene = "GameScene";
 
+    GameState currentState;
+
+    #region GAME STATE
+    public static void ChangeGameState(GameState gameState)
+    {
+        if (gameState == Instance.currentState) return;
+
+        switch (gameState)
+        {
+            case GameState.Running:
+                Time.timeScale = 1f;
+                if (Instance.currentState == GameState.Paused) GameUnPausedEvent?.Invoke();
+                Instance.currentState = GameState.Running;
+                break;
+            case GameState.Paused:
+                Time.timeScale = 0f;
+                GamePausedEvent?.Invoke();
+                Instance.currentState = GameState.Paused;
+                break;
+
+            default:
+                break;
+        }
+    }
+    #endregion
 
     #region SETUP
     private void Awake()
@@ -30,6 +71,8 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        currentState = GameState.Running;
 
         Instantiate(menuManager);
         Instantiate(audioManager);
@@ -49,36 +92,31 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region STAGE UTILITY
+
+    #region UTILITY
     public Stage[] GetStages() => stages;
-    public void SetCurrentStage(int stage) => currentStage = stage;
     Level[] GetCurrentStageLevels()
     {
-        if (currentStage > 0 && currentStage <= stages.Length)
+        if (currentStageIndex > 0 && currentStageIndex <= stages.Length)
         {
-            return stages[currentStage - 1].Levels;
+            return stages[currentStageIndex - 1].Levels;
         }
         return null;
     }
-    #endregion
-
-    #region LEVEL UTILITY
-    public void SetCurrentLevel(int level) => currentLevel = level;
-
     public void IncrementLevel()
     {
         Level[] levels = GetCurrentStageLevels();
-        if (currentLevel < levels.Length) ++currentLevel;
+        if (currentLevelIndex < levels.Length) ++currentLevelIndex;
     }
     public Level GetCurrentLevel()
     {
         Level[] levels = GetCurrentStageLevels();
-        return currentLevel - 1 < levels.Length ? levels[currentLevel - 1] : levels[0];
+        return currentLevelIndex - 1 < levels.Length ? levels[currentLevelIndex - 1] : levels[0];
     }
     public bool IsFinalLevel()
     {
         //if (GetCurrentStageLevels() == null) return false;
-        return GetCurrentStageLevels().Length == currentLevel;
+        return GetCurrentStageLevels().Length == currentLevelIndex;
     }
     public int GetNumLevelsInCurrentStage()
     {
@@ -97,15 +135,15 @@ public class GameManager : MonoBehaviour
     public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
     public static int GetCurrentSceneIndex() => SceneManager.GetActiveScene().buildIndex;
     public void LoadGameScene() => SceneManager.LoadScene(GameScene);
-    public static void LoadStartScene() => LoadScene(StartScene);
-    public static void LoadScene(string levelName)
+    public static void LoadStartScene(Action action = null) => LoadScene(StartScene, action);
+    public static void LoadScene(string levelName, Action action = null)
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
         {
-            //MenuManagerUpdated.CloseAllMenus();
-            if (levelName == StartScene) MainMenu.Open();
+            if (levelName == StartScene) MainMenu.Instance.Open();
             if (levelName == GameScene) Instantiate(Instance.game);
             SceneManager.LoadScene(levelName);
+            action?.Invoke();
         }
         else
         {
@@ -140,7 +178,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region HELPERS
-
     public static void QuitGame()
     {
 #if UNITY_EDITOR

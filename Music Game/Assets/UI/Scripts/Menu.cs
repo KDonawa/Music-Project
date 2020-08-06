@@ -8,28 +8,27 @@ public abstract class Menu : MonoBehaviour
 }
 public abstract class Menu<T> : Menu where T : Menu<T>
 {
-    protected static T _instance;
+    public static T Instance { get; private set; }
 
-    MenuManagerUpdated _manager;
     protected virtual void Awake()
     {
-        if (_instance == null) _instance = (T)this;
+        if (Instance == null) Instance = (T)this;
         else Destroy(gameObject);
 
-        _manager = null;
     }
     protected virtual void OnDestroy()
     {
-        if (_instance == this) _instance = null;
-    }
-    public void InitializeMenu(MenuManagerUpdated manager)
-    {
-        _manager = manager;
+        if (Instance == this) Instance = null;
     }
 
-    public static void Open()
+
+    public virtual void Open()
     {
-        MenuManagerUpdated.OpenMenu(_instance);
+        MenuManagerUpdated.OpenMenu(Instance);
+    }
+    public virtual void Close()
+    {
+        MenuManagerUpdated.CloseMenu(Instance);
     }
 
 }

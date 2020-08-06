@@ -9,11 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
-  m_Name: bonk
+  m_Script: {fileID: 11500000, guid: d7ed6b0e5be08cf4abdba71d84f6a159, type: 3}
+  m_Name: A
   m_EditorClassIdentifier: 
-  name: wrongGuess
-  audioClip: {fileID: 8300000, guid: f2d96523bbffc9b47bf5e4fca4e9450d, type: 3}
-  volume: 0.85
-  pitch: 0.81
-  canLoop: 0
+  notes:
+  - .pa
+  - ._dha
+  - .dha
+  - ._ni
+  - .ni
+  - sa
+  - _re
+  - re
+  - _ga
+  - ga
+  - ma
+  - Ma
+  - pa

@@ -57,5 +57,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6101ed3d536c9254eb53269caa788317, type: 2}
   - {fileID: 11400000, guid: 55ec98020e5b965498ee3a4f0895e979, type: 2}
   game: {fileID: 977705765011780015, guid: a2044bd05ff8c7944a5db5ed0563d25b, type: 3}
-  currentStage: 1
-  currentLevel: 1
+  currentStageIndex: 1
+  currentLevelIndex: 1
+  droneNote: C4

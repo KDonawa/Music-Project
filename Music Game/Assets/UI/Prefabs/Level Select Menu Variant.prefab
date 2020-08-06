@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c161b74a929116246bd3e7d7a5b81e7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuButton: {fileID: 8981665624241761494}
-  stageMenuButton: {fileID: 6770560239913782178}
+  mainMenuButton: {fileID: 6770560239913782178}
+  backButton: {fileID: 8981665624241761494}
   buttonsContainer: {fileID: 8316883842214781896}
   levelSelectButtonsPrefab: {fileID: 8089921137311245245, guid: b955c1d5601a92c44a67912dec9f8b3b,
     type: 3}
@@ -62,7 +62,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5621294871234111650}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
@@ -150,7 +150,7 @@ PrefabInstance:
     - target: {fileID: 550194469558545399, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_Name
-      value: Main Menu
+      value: Back
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -210,12 +210,12 @@ PrefabInstance:
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 176
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -193.95
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -235,7 +235,7 @@ PrefabInstance:
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -245,7 +245,7 @@ PrefabInstance:
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -286,22 +286,27 @@ PrefabInstance:
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 9
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
+        type: 3}
+      propertyPath: m_text
+      value: Back
       objectReference: {fileID: 0}
     - target: {fileID: 7425867515273900017, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -544,7 +549,7 @@ PrefabInstance:
     - target: {fileID: 550194469558545399, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_Name
-      value: Stage Select
+      value: Main Menu
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -604,12 +609,12 @@ PrefabInstance:
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 896
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -193.95
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -629,7 +634,7 @@ PrefabInstance:
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -639,7 +644,7 @@ PrefabInstance:
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -654,7 +659,7 @@ PrefabInstance:
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 12
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
@@ -679,7 +684,7 @@ PrefabInstance:
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_text
-      value: Stage Select
+      value: Main Menu
       objectReference: {fileID: 0}
     - target: {fileID: 5676678366673897413, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}

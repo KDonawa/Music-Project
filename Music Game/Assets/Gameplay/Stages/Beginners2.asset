@@ -13,5 +13,15 @@ MonoBehaviour:
   m_Name: Beginners2
   m_EditorClassIdentifier: 
   name: Beginners 2
-  isUnlocked: 0
-  levels: []
+  isUnlocked: 1
+  levels:
+  - {fileID: 11400000, guid: 393057e9f88088b41a6cade92a91f5fa, type: 2}
+  - {fileID: 11400000, guid: a704c0148c7423248b40f58e4c1d5de1, type: 2}
+  - {fileID: 11400000, guid: f2ba267f30d575c4a8a67cfedd9287e6, type: 2}
+  - {fileID: 11400000, guid: acbe74dfa130f84498859386621812e1, type: 2}
+  - {fileID: 11400000, guid: ac72bc8837387394ba9dc07d6ed57826, type: 2}
+  - {fileID: 11400000, guid: 48bf3e49ae8570149bc60e8bae94bc86, type: 2}
+  - {fileID: 11400000, guid: 3cabe7f8579a0f845a79edb1ee17726d, type: 2}
+  - {fileID: 11400000, guid: a804de6de5a83894c9a48517e0d08c44, type: 2}
+  - {fileID: 11400000, guid: 6310d755bc385744589f0013597aff18, type: 2}
+  - {fileID: 11400000, guid: 8ba9a9e910a781a4391ec2b471dc6c0b, type: 2}

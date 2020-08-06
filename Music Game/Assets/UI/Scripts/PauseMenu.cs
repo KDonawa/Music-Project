@@ -12,8 +12,10 @@ public class PauseMenu : Menu<PauseMenu>
     [SerializeField] Button mainMenuButton = null;
     [SerializeField] Button stageSelectButton = null;
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (resumeButton == null) Debug.LogError("No reference to resume button");
         else resumeButton.onClick.AddListener(OnResumePressed);
 
@@ -32,6 +34,7 @@ public class PauseMenu : Menu<PauseMenu>
         if (stageSelectButton == null) Debug.LogError("No reference to stage button");
         else stageSelectButton.onClick.AddListener(OnStageSelectPressed);
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -44,59 +47,56 @@ public class PauseMenu : Menu<PauseMenu>
     }
     void OnMainMenuPressed()
     {
-        Time.timeScale = 1f;
-        UIAnimator.ButtonPressEffect(mainMenuButton, AudioManager.click1);
-
-        Game.Restart();
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, GameManager.LoadStartScene);
+        GameManager.ChangeGameState(GameState.Running);
+        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.click1);
+        Game.Stop();
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene());
     }
     void OnStageSelectPressed()
     {
-        Time.timeScale = 1f;
-        UIAnimator.ButtonPressEffect(stageSelectButton, AudioManager.click1);
-        Game.Restart();
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, LoadStageSelect);
+        GameManager.ChangeGameState(GameState.Running);
+        UIAnimator.ButtonPressEffect3(stageSelectButton, AudioManager.click1);
+        Game.Stop();
+        SceneTransitions.PlayTransition
+            (InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene(StageSelectMenu.Instance.Open));
     }
     void OnResumePressed()
     {
-        Time.timeScale = 1f;
-
-        UIAnimator.ButtonPressEffect(resumeButton, AudioManager.click1);
-
-        Game.ResumeGame();
+        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        // delay then do...
+        GameManager.ChangeGameState(GameState.Running);
+        Close();
     }
     void OnRestartPressed()
     {
-        Time.timeScale = 1f;
-
-        UIAnimator.ButtonPressEffect(restartButton, AudioManager.buttonChime);
-
-        Game.Restart();
+        GameManager.ChangeGameState(GameState.Running);
+        UIAnimator.ButtonPressEffect3(restartButton, AudioManager.buttonChime);
+        Game.Stop();
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, Game.Play);
     }
     void OnSettingsPressed()
     {
-        UIAnimator.ButtonPressEffect(settingsButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.click1);
         //SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, SettingsMenu.Open);
-        SettingsMenu.Open();
+        SettingsMenu.Instance.Open();
     }
     void OnExitPressed()
     {
-        Time.timeScale = 1f;
-        UIAnimator.ButtonPressEffect(exitButton, AudioManager.click1);
-
-        Game.Restart();
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, LoadLevelsMenu);        
+        GameManager.ChangeGameState(GameState.Running);
+        UIAnimator.ButtonPressEffect3(exitButton, AudioManager.click1);
+        Game.Stop();
+        SceneTransitions.PlayTransition
+            (InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene(LevelSelectMenu.Instance.Open));        
     }
     void LoadLevelsMenu()
     {
         GameManager.LoadStartScene();
-        LevelSelectMenu.Open();        
+        LevelSelectMenu.Instance.Open();        
     }
     void LoadStageSelect()
     {
         GameManager.LoadStartScene();
-        StageSelectMenu.Open();
+        StageSelectMenu.Instance.Open();
     }
 
 

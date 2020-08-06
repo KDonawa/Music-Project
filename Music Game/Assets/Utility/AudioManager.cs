@@ -70,41 +70,7 @@ public class AudioManager : MonoBehaviour
     #endregion   
     
     #region UTILITY
-    //public void PlaySoundOneShot(string name)
-    //{
-    //    Sound sound = Array.Find(sounds, s => s.name == name);
-    //    if(sound != null)
-    //    {
-    //        sound.Source.PlayOneShot(sound.audioClip);
-    //    }
-    //}
-    public static void StopAllUISounds()
-    {
-        foreach (var sound in Instance.uiSounds)
-        {
-            if (sound != null) sound.Source.Stop();
-        }
-    }
-    public static void StopAllDroneSounds()
-    {
-        foreach (var sound in Instance.droneSounds)
-        {
-            if (sound != null) sound.Source.Stop();
-        }
-    }
-    public static void StopAllHarmoniumSounds()
-    {
-        foreach (var sound in Instance.harmoniumSounds)
-        {
-            if (sound != null) sound.Source.Stop();
-        }
-    }
-    public static void StopAllGamplaySounds()
-    {
-        //StopAllUISounds();
-        StopAllDroneSounds();
-        StopAllHarmoniumSounds();
-    }
+    
     public static void PlaySound(string name, SoundType soundType, bool canPlay = true)
     {
         Sound sound = FindSound(name, soundType);        
@@ -126,10 +92,39 @@ public class AudioManager : MonoBehaviour
             if (isPausing) sound.Source.Pause();
             else sound.Source.UnPause();
         }
-    }
-    public static void UnPauseSound(string name, SoundType soundType)
+    }    
+    public static void UnPauseSound(string name, SoundType soundType) => PauseSound(name, soundType, false);
+    public static void PauseSounds(List<string> sounds, SoundType soundType, bool isPausing = true)
     {
-        PauseSound(name, soundType, false);
+        foreach (var soundName in sounds) PauseSound(soundName, soundType, isPausing);
+    }
+    public static void UnPuaseSounds(List<string> sounds, SoundType soundType) => PauseSounds(sounds, soundType, false);
+    public static void StopAllUISounds()
+    {
+        foreach (var sound in Instance.uiSounds)
+        {
+            if (sound != null) sound.Source.Stop();
+        }
+    }
+    public static void StopAllDroneSounds()
+    {
+        foreach (var sound in Instance.droneSounds)
+        {
+            if (sound != null) sound.Source.Stop();
+        }
+    }
+    public static void StopAllHarmoniumSounds()
+    {
+        foreach (var sound in Instance.harmoniumSounds)
+        {
+            if (sound != null) sound.Source.Stop();
+        }
+    }
+    public static void StopAllNoteSounds()
+    {
+        //StopAllUISounds();
+        StopAllDroneSounds();
+        StopAllHarmoniumSounds();
     }
 
     #endregion

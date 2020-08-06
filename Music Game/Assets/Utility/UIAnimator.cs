@@ -37,11 +37,29 @@ public class UIAnimator : MonoBehaviour
     }
 
     #region UTILITY
-    public static void ButtonPressEffect(Button b, string soundEffect)
+    
+    /// impact effect. no color change
+    public static void ButtonPressEffect1(Button b, string soundEffect)
     {
-        ButtonPressEffect(b,soundEffect,Color.white);
+        if (b == null) return;
+        ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
+        AudioManager.PlaySound(soundEffect, SoundType.UI);
     }
-    public static void ButtonPressEffect(Button b, string soundEffect, Color effectColor)
+    /// impact effect. Set button text color 
+    public static void ButtonPressEffect2(Button b, string soundEffect, Color effectColor)
+    {
+        if (b == null) return;
+        ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
+        SetButtonTextColor(b, effectColor);
+        AudioManager.PlaySound(soundEffect, SoundType.UI);
+    }
+    /// impact effect. Flash button color white
+    public static void ButtonPressEffect3(Button b, string soundEffect)
+    {
+        ButtonPressEffect4(b, soundEffect, Color.white);
+    }
+    /// impact effect. Flash button color to desired color
+    public static void ButtonPressEffect4(Button b, string soundEffect, Color effectColor)
     {
         if (b == null) return;
         ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
@@ -51,9 +69,16 @@ public class UIAnimator : MonoBehaviour
     #endregion
 
     #region COLOR
-    public static void SetColor(Image image, Color color)
+    public static void SetButtonTextColor(Button b, Color color)
     {
-        image.color = color;
+        if (b == null) return;
+        b.GetComponentInChildren<TextMeshProUGUI>().color = color;
+    }
+    public static void SetButtonColor(Button b, Color color)
+    {
+        if (b == null) return;
+        b.GetComponent<Image>().color = color;
+        b.GetComponentInChildren<TextMeshProUGUI>().color = color;
     }
     public static void FlashButtonColor(Button b, Color color, float duration)
     {
@@ -69,7 +94,7 @@ public class UIAnimator : MonoBehaviour
         Color originalTextColor = textGUI.color;
         textGUI.color = color;
 
-        duration = Mathf.Clamp(duration, 0.1f, 2f);
+        duration = Mathf.Clamp(duration, 0.1f, 1.5f);
         float stepSize = duration * 0.5f;
         float lerp = 1 / stepSize;
         yield return new WaitForSeconds(stepSize);
@@ -83,8 +108,8 @@ public class UIAnimator : MonoBehaviour
             timeElapsed += deltaTime;
             yield return null;
         }
-        image.color = originalColor;
-        textGUI.color = originalTextColor;
+        if(image) image.color = originalColor;
+        if(textGUI)textGUI.color = originalTextColor;
     }
     #endregion
 

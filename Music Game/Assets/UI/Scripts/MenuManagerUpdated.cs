@@ -31,6 +31,7 @@ public class MenuManagerUpdated : MonoBehaviour
             if(menu != null)
             {               
                 Menu newMenu = Instantiate(menu, transform);
+                //newMenu.Init()
                 newMenu.gameObject.SetActive(false);
                 menus.Add(newMenu);
 
@@ -62,6 +63,12 @@ public class MenuManagerUpdated : MonoBehaviour
             menuToOpen.gameObject.SetActive(true);
             _instance._currentMenu = menuToOpen;
         }
+    }
+    public static void CloseMenu(Menu menu)
+    {
+        if (menu == null || _instance == null) return;
+
+        if (menu == _instance._currentMenu) _instance.CloseCurrentMenu();
     }
     void CloseCurrentMenu()
     {
