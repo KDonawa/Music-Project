@@ -7,16 +7,17 @@ using TMPro;
 public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 {
     [Header("Buttons")]
+    //[SerializeField] Button mainMenuButton = null;
     [SerializeField] Button homeButton = null;
     [SerializeField] Button restartButton = null;
     [SerializeField] Button nextLevelButton = null;
 
     [Header("UI")]
+    [SerializeField] TextMeshProUGUI headerText = null;
     [SerializeField] TextMeshProUGUI scoreText = null;
     [SerializeField] GameObject starsContainer = null;
 
     Image[] stars;
-
 
 
     #region SETUP
@@ -34,8 +35,11 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         if (nextLevelButton == null) Debug.LogError("No reference to Next Lvl button");
         else nextLevelButton.onClick.AddListener(OnNextLevelPressed);
 
+        //mainMenuButton.onClick.AddListener(MainMenuPressed);
+
         Game.LevelCompleteEvent += DisplayMenu;
     }
+    
 
     protected override void OnDestroy()
     {
@@ -43,14 +47,18 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         if (homeButton != null) homeButton.onClick.RemoveListener(OnHomeButtonPressed);
         if (restartButton != null) restartButton.onClick.RemoveListener(OnRestartPressed);
         if (nextLevelButton != null) nextLevelButton.onClick.RemoveListener(OnNextLevelPressed);
+        //mainMenuButton.onClick.RemoveListener(MainMenuPressed);
+
+        Game.LevelCompleteEvent -= DisplayMenu;
     }
 
     #endregion
 
     public static void DisplayMenu(int finalScore, bool isLevelPassed)
     {
-        // empty text
-        Instance.scoreText.text = string.Empty;
+        Instance.headerText.text = isLevelPassed ? "Level Complete!" : "Try Again";
+
+        Instance.scoreText.gameObject.SetActive(false);
 
         // deactivate stars
         for (int i = 0; i < Instance.stars.Length; i++)
@@ -63,7 +71,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         Instance.restartButton.gameObject.SetActive(false);
         Instance.nextLevelButton.gameObject.SetActive(false);
 
-        MenuManagerUpdated.OpenMenu(Instance);
+        Instance.Open();
 
         Instance.StartCoroutine(Instance.DisplayMenuRoutine(finalScore, isLevelPassed));
     }
@@ -77,7 +85,9 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
             int finalScore = score;
 
             // set final score text
+            // make this into a routine where it increases score by one point until final score
             Instance.scoreText.text = finalScore.ToString() + "%";
+            Instance.scoreText.gameObject.SetActive(true);
             //AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
             yield return new WaitForSeconds(1f);
 
@@ -88,48 +98,71 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
             if (finalScore == 100) numStars = 3;
 
             int maxNumStars = Instance.stars.Length;
-            
+
             for (int i = 0; i < maxNumStars && i < numStars; i++)
             {
                 Instance.stars[i].gameObject.SetActive(true);
-                AudioManager.PlaySound(AudioManager.chime3, SoundType.UI);
+                AudioManager.PlaySound(AudioManager.starDisplay, SoundType.UI);
                 yield return new WaitForSeconds(0.5f);
             }
-            if(numStars == 3)
+            if (numStars == 3)
             {
-                AudioManager.PlaySound(AudioManager.chime1, SoundType.UI);
-                yield return new WaitForSeconds(1f);
-            }           
+                //AudioManager.PlaySound(AudioManager.win, SoundType.UI);
+                //yield return new WaitForSeconds(1f);
+            }
 
         }
-        // display buttons
-        Instance.homeButton.gameObject.SetActive(true);
-        AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(1f);
 
-        Instance.restartButton.gameObject.SetActive(true);
-        AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
-        yield return new WaitForSeconds(0.2f);
-
-        // next level button
-        if (isLevelPassed && !GameManager.Instance.IsFinalLevel())
+        // open stage complete menu
+        if (isLevelPassed && GameManager.Instance.IsFinalLevel() /*&& !GameManager.Instance.IsCurrentStageCompleted()*/)
         {
-            Instance.nextLevelButton.gameObject.SetActive(isLevelPassed);
-            AudioManager.PlaySound(AudioManager.buttonLoad, SoundType.UI);
-        }        
+            GameManager.Instance.UnlockNextStage();
+            yield return new WaitForSeconds(1f);
+            StageCompleteMenu.Instance.Open();           
+        }
+        // display buttons
+        else
+        {
+            homeButton.gameObject.SetActive(true);
+            homeButton.interactable = false;
+            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+            yield return new WaitForSeconds(0.2f);
+
+            restartButton.gameObject.SetActive(true);
+            restartButton.interactable = false;
+            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+            yield return new WaitForSeconds(0.2f);
+
+            if (isLevelPassed && !GameManager.Instance.IsFinalLevel())
+            {
+                GameManager.Instance.UnlockNextLevel();
+                nextLevelButton.gameObject.SetActive(true);
+                AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+            }
+
+            homeButton.interactable = true;
+            restartButton.interactable = true;
+        }
     }
 
 
     #region BUTTON EVENTS
+    //void MainMenuPressed()
+    //{
+    //    UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
+    //    SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.CIRCLE_SHRINK, MainMenu.Instance.Open);
+    //}
 
     void OnHomeButtonPressed()
     {
-        UIAnimator.ButtonPressEffect3(homeButton, AudioManager.click1);
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_LEFT, LoadLevelsMenu);
+        UIAnimator.ButtonPressEffect3(homeButton, AudioManager.buttonSelect2);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_LEFT, 
+            () => GameManager.LoadStartScene(LevelSelectMenu.Instance.Open));
     }
     void OnRestartPressed()
     {
-        UIAnimator.ButtonPressEffect3(restartButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(restartButton, AudioManager.buttonSelect2);
 
         Game.Stop();
 
@@ -137,15 +170,9 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
     }
     void OnNextLevelPressed()
     {
-        UIAnimator.ButtonPressEffect3(nextLevelButton, AudioManager.buttonChime);
+        UIAnimator.ButtonPressEffect3(nextLevelButton, AudioManager.buttonSelect1);
         SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.CIRCLE_SHRINK, Game.PlayNextLevel);
     }
     #endregion
-
-    void LoadLevelsMenu()
-    {
-        GameManager.LoadStartScene();
-        LevelSelectMenu.Instance.Open();
-    }
 
 }

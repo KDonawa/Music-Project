@@ -63,7 +63,7 @@ public class UIAnimator : MonoBehaviour
     {
         if (b == null) return;
         ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
-        FlashButtonColor(b, effectColor, 2f);
+        FlashButtonColor(b, effectColor, .3f);
         AudioManager.PlaySound(soundEffect, SoundType.UI);
     }
     #endregion

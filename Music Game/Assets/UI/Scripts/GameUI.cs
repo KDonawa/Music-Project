@@ -147,7 +147,7 @@ public class GameUI : MonoBehaviour
     void HideTextGUI(TextMeshProUGUI textGUI) => ShowTextGUI(textGUI, false);
     void OnPausePressed()
     {
-        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);
         //Time.timeScale = 0f;
         GameManager.ChangeGameState(GameState.Paused);
         //Game.PauseGame();

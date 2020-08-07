@@ -20,13 +20,13 @@ public class StageSelectMenu : Menu<StageSelectMenu>
     {
         base.Awake();
 
+        stageOptions = new List<Button>();
+
         if (backButton == null) Debug.LogError("No reference to back button");
         else backButton.onClick.AddListener(BackPressed);
 
         if (mainMenuButton == null) Debug.LogError("No reference to Main Menu button");
         else mainMenuButton.onClick.AddListener(MainMenuPressed);
-
-        InitializeButtons();
     }
 
     protected override void OnDestroy()
@@ -35,21 +35,43 @@ public class StageSelectMenu : Menu<StageSelectMenu>
         if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
         if (mainMenuButton != null) mainMenuButton.onClick.RemoveListener(MainMenuPressed);
     }
-
+    public override void Open()
+    {
+        LoadData();
+        base.Open();
+        InitializeButtons();
+    }
+    void LoadData()
+    {
+        StageData data = BinarySaveSystem.LoadStageData();
+        Stage[] stages = GameManager.Instance.GetStages();
+        if (stages != null && data != null)
+        {
+            for (int i = 0; i < GameManager.Instance.GetNumStages() && i < data.unlockedStages.Length; i++)
+            {
+                if (data != null) stages[i].isUnlocked = data.unlockedStages[i];
+                else stages[i].isUnlocked = true; // maybe
+            }
+        }        
+    }
     void InitializeButtons()
     {
-        stageOptions = new List<Button>();
+        foreach (var b in stageOptions) Destroy(b.gameObject);
+        stageOptions.Clear();        
 
         Stage[] stages = GameManager.Instance.GetStages();
-        for (int i = 1; i <= GameManager.Instance.NumStages; i++)
+        for (int i = 1; i <= GameManager.Instance.GetNumStages(); i++)
         {
             Button b = Instantiate(stageSelectButtonsPrefab, buttonsContainer.transform);
             stageOptions.Add(b);
+                      
+            if (i == 1) stages[i - 1].isUnlocked = true;
             b.interactable = stages[i-1].isUnlocked;
+
             b.GetComponentInChildren<TextMeshProUGUI>().text = stages[i-1].name.ToString();
 
             StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-            ssb.InitializeButton(i);
+            ssb.Init(i);
             b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
         }
     }
@@ -74,13 +96,12 @@ public class StageSelectMenu : Menu<StageSelectMenu>
 
     void BackPressed()
     {
-        UIAnimator.ButtonPressEffect3(backButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
         SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, DroneSelectMenu.Instance.Open);
     }
     void MainMenuPressed()
     {
-        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.click1);
-        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.CIRCLE_SHRINK, MainMenu.Instance.Open);
     }
 }

@@ -8,14 +8,14 @@ public class StageSelectButton : MonoBehaviour
 
     int stage = 1;
 
-    public void InitializeButton(int val)
+    public void Init(int val)
     {
         stage = val;
     }
 
     public void ButtonPressed(System.Action<Button> buttonPressedAction)
     {
-        UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonChime);
+        UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonSelect1);
         buttonPressedAction?.Invoke(GetComponent<Button>());
         GameManager.Instance.CurrentStageIndex = stage;
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, LevelSelectMenu.Instance.Open);

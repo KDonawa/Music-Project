@@ -43,6 +43,15 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
         isOctaveSelected = false;
         noteChoice = string.Empty;
         octaveChoice = string.Empty;
+
+        foreach (var button in noteChoices)
+        {
+            UIAnimator.SetButtonTextColor(button, Color.black);
+        }
+        foreach (var button in octaveChoices)
+        {
+            UIAnimator.SetButtonTextColor(button, Color.black);
+        }
     }    
 
     void InitNoteChoices()
@@ -65,11 +74,15 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
     }
     void CheckIfAllSelected()
     {
-        if (isNoteSelected && isOctaveSelected) confirmButton.gameObject.SetActive(true);
+        if (isNoteSelected && isOctaveSelected)
+        {
+            confirmButton.gameObject.SetActive(true);
+            // Play noteChoice + octaveChoice from drone notes for 3s
+        }
     }
     void NoteSelected(Button b)
     {
-        UIAnimator.ButtonPressEffect2(b, AudioManager.chime3, Color.white);
+        UIAnimator.ButtonPressEffect2(b, AudioManager.buttonSelect2, Color.white);
         noteChoice = b.GetComponentInChildren<TextMeshProUGUI>().text;
         isNoteSelected = true;
 
@@ -81,7 +94,7 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
     }
     void OctaveSelected(Button b)
     {
-        UIAnimator.ButtonPressEffect2(b, AudioManager.chime3, Color.white);
+        UIAnimator.ButtonPressEffect2(b, AudioManager.buttonSelect2, Color.white);
         octaveChoice = b.GetComponentInChildren<TextMeshProUGUI>().text;
         isOctaveSelected = true;
 
@@ -94,14 +107,14 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
 
     void CorfirmButtonPressed()
     {
-        UIAnimator.ButtonPressEffect3(confirmButton, AudioManager.chime3);
+        UIAnimator.ButtonPressEffect3(confirmButton, AudioManager.buttonSelect1);
         GameManager.Instance.DroneNote = string.Concat(noteChoice, octaveChoice);
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, StageSelectMenu.Instance.Open);
     }
 
     void BackButtonPressed()
     {
-        UIAnimator.ButtonPressEffect3(backButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
         SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, MainMenu.Instance.Open);
     }
     

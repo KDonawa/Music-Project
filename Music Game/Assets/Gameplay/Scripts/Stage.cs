@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Level", menuName = "Game/Stage")]
+[CreateAssetMenu(menuName = "Game/Stage")]
 public class Stage : ScriptableObject
 {
     public new string name = "New Stage";
-    public bool isUnlocked = false;
+    public bool isUnlocked;
     [SerializeField] Level[] levels = null;
 
     public Level[] Levels => levels;

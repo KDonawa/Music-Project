@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Intermediate1
   m_EditorClassIdentifier: 
   name: Intermediate 1
-  isUnlocked: 1
+  isUnlocked: 0
   levels:
   - {fileID: 11400000, guid: 899ce73caa8428c4dbab28b0c0876cb6, type: 2}
   - {fileID: 11400000, guid: 9b7d905a180706e4badd5cddcaf96739, type: 2}

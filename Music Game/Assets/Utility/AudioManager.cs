@@ -8,7 +8,7 @@ public enum SoundType
 {
     UI,
     DRONE,
-    HARMONIUM,
+    INSTRUMENT,
 }
 public class AudioManager : MonoBehaviour
 {
@@ -23,57 +23,54 @@ public class AudioManager : MonoBehaviour
     public const string timer = "timer";
     public const string correctGuess = "correctGuess";
     public const string wrongGuess = "wrongGuess";
-    public const string click1 = "click1";
-    public const string buttonLoad = "buttonLoad";
-    public const string sceneTransition = "sceneTransition";
-    public const string buttonChime = "buttonChime";
+    public const string buttonSelect2 = "buttonSelect2";
+    public const string buttonLoad1 = "buttonLoad1";
+    public const string buttonSelect1 = "buttonSelect1";
     public const string timerExpired = "timerExpired";
-    public const string chime1 = "chime1";
-    public const string win = "win";
+    public const string starDisplay = "starDisplay";
     public const string swoosh1 = "swoosh1";
-    public const string chime3 = "chime3";
+    public const string success = "success";
+
+    //List<AudioSource> audioSources;
 
     #region SETUP
     private void Awake()
     {
-        if (Instance) { Destroy(gameObject); }
+        if (Instance != null) { Destroy(gameObject); }
         else
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            
-            // ui sounds
-            foreach (var sound in uiSounds) 
-            {
-                if(sound != null) sound.InitializeAudioSource(gameObject.AddComponent<AudioSource>());
-            }
-            // drone sounds
-            foreach (var sound in droneSounds)
-            {
-                if (sound != null) sound.InitializeAudioSource(gameObject.AddComponent<AudioSource>());
-            }
-            // harmonium sounds
-            foreach (var sound in harmoniumSounds)
-            {
-                if (sound != null) sound.InitializeAudioSource(gameObject.AddComponent<AudioSource>());
-            }
 
+            //audioSources = new List<AudioSource>();
+
+            foreach (var sound in uiSounds) AddAudioSource(sound);
+            foreach (var sound in droneSounds) AddAudioSource(sound);
+            foreach (var sound in harmoniumSounds) AddAudioSource(sound);
         }
+    }
+    void AddAudioSource(Sound sound)
+    {
+        if (sound == null) return;
+        //AudioSource source = new AudioSource();
+        //audioSources.Add(source);
+        //sound.InitializeAudioSource(source);
+        sound.InitializeAudioSource(gameObject.AddComponent<AudioSource>());
     }
     private void OnDestroy()
     {
         if (Instance == this)
         {
             Instance = null;
+            //audioSources.Clear();
         }
     }
     #endregion   
     
     #region UTILITY
-    
     public static void PlaySound(string name, SoundType soundType, bool canPlay = true)
     {
-        Sound sound = FindSound(name, soundType);        
+        Sound sound = Instance.FindSound(name, soundType);        
         if (sound != null)
         {
             if(canPlay) sound.Source.Play();
@@ -86,7 +83,7 @@ public class AudioManager : MonoBehaviour
     }
     public static void PauseSound(string name, SoundType soundType, bool isPausing = true)
     {
-        Sound sound = FindSound(name, soundType);
+        Sound sound = Instance.FindSound(name, soundType);
         if (sound != null)
         {
             if (isPausing) sound.Source.Pause();
@@ -122,7 +119,6 @@ public class AudioManager : MonoBehaviour
     }
     public static void StopAllNoteSounds()
     {
-        //StopAllUISounds();
         StopAllDroneSounds();
         StopAllHarmoniumSounds();
     }
@@ -130,22 +126,23 @@ public class AudioManager : MonoBehaviour
     #endregion
 
     #region HELPERS
-    private static Sound FindSound(string name, SoundType soundType)
+    private Sound FindSound(string name, SoundType soundType)
     {
-        Sound sound = null;
         switch (soundType)
         {
-            case SoundType.UI:
-                sound = Array.Find(Instance.uiSounds, s => s.name == name);
-                break;
-            case SoundType.DRONE:
-                sound = Array.Find(Instance.droneSounds, s => s.name == name);
-                break;
-            case SoundType.HARMONIUM:
-                sound = Array.Find(Instance.harmoniumSounds, s => s.name == name);
-                break;
+            case SoundType.UI: return Array.Find(uiSounds, s => s.name == name);
+            case SoundType.DRONE: return Array.Find(droneSounds, s => s.name == name);
+            case SoundType.INSTRUMENT: return FindInstrumentSound(name);
+            default: return null;
         }
-        return sound;
+    }
+    private Sound FindInstrumentSound(string name)
+    {
+        switch (GameManager.Instance.Instrument)
+        {
+            case InstrumentType.HARMONIUM: return Array.Find(harmoniumSounds, s => s.name == name);
+            default: return null;
+        }
     }
     #endregion
 }

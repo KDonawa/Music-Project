@@ -20,13 +20,14 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     {
         base.Awake();
 
+        levelOptions = new List<Button>();
+
         if (mainMenuButton == null) Debug.LogError("No reference to Main Menu button");
         else mainMenuButton.onClick.AddListener(MainMenuPressed);
 
         if (backButton == null) Debug.LogError("No reference to back button");
         else backButton.onClick.AddListener(BackPressed);
 
-        InitializeButtons();
     }
     protected override void OnDestroy()
     {
@@ -34,16 +35,39 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         if (mainMenuButton != null) mainMenuButton.onClick.RemoveListener(MainMenuPressed);
         if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
     }
-
+    public override void Open()
+    {
+        LoadData();
+        base.Open();
+        InitializeButtons();
+    }
+    void LoadData()
+    {
+        LevelData data = BinarySaveSystem.LoadLevelData(GameManager.Instance.CurrentStageIndex);
+        Level[] levels = GameManager.Instance.GetLevelsInCurrentStage();
+        if(levels != null && data != null)
+        {
+            for (int i = 0; i < levels.Length && i < data.unlockedLevels.Length; i++)
+            {
+                levels[i].isUnlocked = data.unlockedLevels[i];
+            }
+        }        
+    }
     void InitializeButtons()
     {
-        levelOptions = new List<Button>();
+        foreach (var b in levelOptions) Destroy(b.gameObject);
+        levelOptions.Clear();
 
-        int numLevels = GameManager.Instance.GetNumLevelsInCurrentStage();
-        for (int i = 1; i <= numLevels; i++)
+        Level[] levels = GameManager.Instance.GetLevelsInCurrentStage();
+        if (levels == null) return;
+        
+        for (int i = 1; i <= GameManager.Instance.GetNumLevelsInCurrentStage(); i++)
         {
             Button b = Instantiate(levelSelectButtonsPrefab, buttonsContainer.transform);
             levelOptions.Add(b);
+
+            if (i == 1) levels[i - 1].isUnlocked = true;
+            b.interactable = levels[i - 1].isUnlocked;
             b.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
 
             LevelSelectButton lsb = b.GetComponent<LevelSelectButton>();
@@ -70,14 +94,12 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     }
     void MainMenuPressed()
     {
-        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.click1);
-        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
         SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.OPEN_HORIZONTAL, MainMenu.Instance.Open);
     }
     void BackPressed()
     {
-        UIAnimator.ButtonPressEffect3(backButton, AudioManager.click1);
-        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
         SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_LEFT, OutTransition.CIRCLE_WIPE_LEFT, StageSelectMenu.Instance.Open);
     }
     

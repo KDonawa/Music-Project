@@ -4,9 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 /*
     TODO:    
-    -drone select menu
+    -label level select menu with stage name
+    -improve lvl complete: spawn text, then score, etc in intervals
     -instrument select screen
-    -stage complete menu
+    -locked level and stages icons
+    -stars earned for levels will show up
     -make transitions where the buttons fly off the screen
 */
 [RequireComponent(typeof(GameUtility))]
@@ -41,7 +43,7 @@ public class Game : MonoBehaviour
     List<string> currentNotes;
     string droneNote;
     int numGuessesPerRound;
-    int currentSubLevel;
+    int currentSubLevelIndex;
     int guessCount;
     List<string> answers;
     List<string> activeNoteSounds;
@@ -89,26 +91,30 @@ public class Game : MonoBehaviour
         Timer.TimerExpiredEvent -= OnTimerExpired;
     }
    
-    void InitializeLevel()
+    bool InitializeLevel()
     {      
         MenuManagerUpdated.CloseAllMenus();
         AudioManager.StopAllNoteSounds();
         _utility.HideButtons(guessButtons);
 
         currentLevel = GameManager.Instance.GetCurrentLevel();
-        currentSubLevel = 0;
+        if (currentLevel == null) return false; // debug.logwarning
+
+        currentSubLevelIndex = 0;
         numGuessesPerRound = currentLevel.numNotesToGuess;
 
         _gameUI.Inititialize();
         _timer.Initialize(timeToGuessPerNote * numGuessesPerRound);
         _scoreSystem.Initialize(numGuessesPerRound * currentLevel.subLevels.Length);
         _textSystem.Initialize();
+
+        return true;
     }
     void InitializeNotes()
     {
         droneNote = GameManager.Instance.DroneNote;
         currentNotes.Clear();
-        foreach (var note in currentLevel.subLevels[currentSubLevel].notes) currentNotes.Add(note);
+        foreach (var note in currentLevel.subLevels[currentSubLevelIndex].notes) currentNotes.Add(note);
     }
     void InitializeGuessButtons()
     {
@@ -122,23 +128,21 @@ public class Game : MonoBehaviour
 
     public static void Play()
     {
-        _instance.InitializeLevel();
-        _instance.StartCoroutine(_instance.StartLevelRoutine());
+        if(_instance.InitializeLevel()) _instance.StartCoroutine(_instance.StartLevelRoutine());
     }
     IEnumerator StartLevelRoutine()
     {
         while (!SceneTransitions.sceneLoadingComplete) yield return null; //wait until scene is loaded
 
         yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());
-        //_gameplayUtility.Timer.DisplayTimer();
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.5f);
         _gameUI.StartCountdown(countdownTime, 0.8f, PlayGameLoop);
     }
     void PlayGameLoop()
-    {
-        _timer.ResetGuessTimer();
+    {      
         InitializeNotes();
         InitializeGuessButtons();
+        _timer.ResetGuessTimer();
         guessCount = 0;
         answers.Clear();
         activeNoteSounds.Clear();
@@ -158,7 +162,7 @@ public class Game : MonoBehaviour
                 yield return new WaitForSeconds(0.5f);
 
                 UIAnimator.FlashButtonColor(b, Color.magenta, 2f);
-                AudioManager.PlaySound(_utility.GetWesternNotation(currentNotes[i], droneNote), SoundType.HARMONIUM);
+                AudioManager.PlaySound(_utility.GetWesternNotation(currentNotes[i], droneNote), SoundType.INSTRUMENT);
 
                 yield return new WaitForSeconds(2f);
             }
@@ -186,11 +190,11 @@ public class Game : MonoBehaviour
         {
             string note = currentNotes[UnityEngine.Random.Range(0, currentNotes.Count)];
             answers.Add(note);
-            PlayNote(_utility.GetWesternNotation(note, droneNote));
+            PlayInstrumentNote(_utility.GetWesternNotation(note, droneNote));
             _gameUI.DisplayDebugText(_utility.GetNoteFormatted(note)); // testing
 
             yield return new WaitForSeconds(2.5f);
-            StopNote(_utility.GetWesternNotation(note, droneNote));
+            StopInstrumentNote(_utility.GetWesternNotation(note, droneNote));
         }
 
         StopDroneNoteEffect();
@@ -208,12 +212,12 @@ public class Game : MonoBehaviour
     {
         _gameUI.HideDebugText();
         _timer.StopGuessTimer();
-        currentSubLevel++;
+        currentSubLevelIndex++;
 
         if (IsLevelComplete()) LevelCompleteEvent?.Invoke(_scoreSystem.FinalScorePercentage(), IsLevelPassed());
         else PlayGameLoop();
     }
-    public bool IsLevelComplete() => currentSubLevel == currentLevel.subLevels.Length;
+    public bool IsLevelComplete() => currentSubLevelIndex == currentLevel.subLevels.Length;
     public bool IsLevelPassed() => _scoreSystem.FinalScorePercentage() >= levelPassPercentage;
     #endregion
 
@@ -251,27 +255,27 @@ public class Game : MonoBehaviour
     void OnGamePaused()
     {
         AudioManager.PauseSound(droneNote, SoundType.DRONE);
-        AudioManager.PauseSounds(activeNoteSounds, SoundType.HARMONIUM);
+        AudioManager.PauseSounds(activeNoteSounds, SoundType.INSTRUMENT);
         PauseMenu.Instance.Open();
     }
     void OnGameResumed()
     {
         AudioManager.UnPauseSound(droneNote, SoundType.DRONE);
-        AudioManager.UnPuaseSounds(activeNoteSounds, SoundType.HARMONIUM);
+        AudioManager.UnPuaseSounds(activeNoteSounds, SoundType.INSTRUMENT);
     }
     #endregion
 
     #region HELPERS   
 
-    void PlayNote(string note)
+    void PlayInstrumentNote(string note)
     {
         activeNoteSounds.Add(note);
-        AudioManager.PlaySound(note, SoundType.HARMONIUM);
+        AudioManager.PlaySound(note, SoundType.INSTRUMENT);
     }
-    void StopNote(string note)
+    void StopInstrumentNote(string note)
     {
         activeNoteSounds.Remove(note);
-        AudioManager.StopSound(note, SoundType.HARMONIUM);
+        AudioManager.StopSound(note, SoundType.INSTRUMENT);
     }
     void PlayDroneNoteEffect()
     {

@@ -33,24 +33,24 @@ public class MainMenu : Menu<MainMenu>
 
     void OnPlayPressed()
     {
-        UIAnimator.ButtonPressEffect3(playButton, AudioManager.buttonChime);     
+        UIAnimator.ButtonPressEffect3(playButton, AudioManager.buttonSelect1);     
 
         UIAnimator.ShrinkToNothing(settingsButton.GetComponent<RectTransform>(), 1f, 2f, 
             () => settingsButton.GetComponent<RectTransform>().gameObject.SetActive(true));
         UIAnimator.ShrinkToNothing(quitButton.GetComponent<RectTransform>(), 1f, 2f,
             () => quitButton.GetComponent<RectTransform>().gameObject.SetActive(true));
 
-        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, DroneSelectMenu.Instance.Open);
+        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, StageSelectMenu.Instance.Open);
     }
     void OnSettingsPressed()
     {
-        UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.buttonSelect2);
 
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, SettingsMenu.Instance.Open);
     }
     void OnQuitPressed()
     {
-        UIAnimator.ButtonPressEffect3(quitButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(quitButton, AudioManager.buttonSelect2);
 
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, GameManager.QuitGame);
     }

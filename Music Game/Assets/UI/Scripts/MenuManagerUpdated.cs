@@ -62,6 +62,7 @@ public class MenuManagerUpdated : MonoBehaviour
             _instance.CloseCurrentMenu();
             menuToOpen.gameObject.SetActive(true);
             _instance._currentMenu = menuToOpen;
+            SceneTransitions.sceneLoadingComplete = true;
         }
     }
     public static void CloseMenu(Menu menu)

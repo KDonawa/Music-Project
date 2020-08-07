@@ -48,21 +48,21 @@ public class PauseMenu : Menu<PauseMenu>
     void OnMainMenuPressed()
     {
         GameManager.ChangeGameState(GameState.Running);
-        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
         Game.Stop();
         SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene());
     }
     void OnStageSelectPressed()
     {
         GameManager.ChangeGameState(GameState.Running);
-        UIAnimator.ButtonPressEffect3(stageSelectButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(stageSelectButton, AudioManager.buttonSelect2);
         Game.Stop();
         SceneTransitions.PlayTransition
             (InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene(StageSelectMenu.Instance.Open));
     }
     void OnResumePressed()
     {
-        AudioManager.PlaySound(AudioManager.click1, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);
         // delay then do...
         GameManager.ChangeGameState(GameState.Running);
         Close();
@@ -70,34 +70,22 @@ public class PauseMenu : Menu<PauseMenu>
     void OnRestartPressed()
     {
         GameManager.ChangeGameState(GameState.Running);
-        UIAnimator.ButtonPressEffect3(restartButton, AudioManager.buttonChime);
+        UIAnimator.ButtonPressEffect3(restartButton, AudioManager.buttonSelect1);
         Game.Stop();
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, Game.Play);
     }
     void OnSettingsPressed()
     {
-        UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.buttonSelect2);
         //SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, SettingsMenu.Open);
         SettingsMenu.Instance.Open();
     }
     void OnExitPressed()
     {
         GameManager.ChangeGameState(GameState.Running);
-        UIAnimator.ButtonPressEffect3(exitButton, AudioManager.click1);
+        UIAnimator.ButtonPressEffect3(exitButton, AudioManager.buttonSelect2);
         Game.Stop();
         SceneTransitions.PlayTransition
             (InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene(LevelSelectMenu.Instance.Open));        
     }
-    void LoadLevelsMenu()
-    {
-        GameManager.LoadStartScene();
-        LevelSelectMenu.Instance.Open();        
-    }
-    void LoadStageSelect()
-    {
-        GameManager.LoadStartScene();
-        StageSelectMenu.Instance.Open();
-    }
-
-
 }

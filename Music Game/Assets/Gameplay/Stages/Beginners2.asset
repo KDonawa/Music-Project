@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Beginners2
   m_EditorClassIdentifier: 
   name: Beginners 2
-  isUnlocked: 1
+  isUnlocked: 0
   levels:
   - {fileID: 11400000, guid: 393057e9f88088b41a6cade92a91f5fa, type: 2}
   - {fileID: 11400000, guid: a704c0148c7423248b40f58e4c1d5de1, type: 2}

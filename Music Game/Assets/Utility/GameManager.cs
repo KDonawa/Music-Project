@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 
@@ -15,10 +16,10 @@ public class GameManager : MonoBehaviour
     public static event Action GamePausedEvent;
     public static event Action GameUnPausedEvent;
 
-    public int NumStages => stages.Length;
     public int CurrentStageIndex { get => currentStageIndex; set => currentStageIndex = value; }
     public int CurrentLevelIndex { get => currentLevelIndex; set => currentLevelIndex = value; }
     public string DroneNote { get => droneNote; set => droneNote = value; }
+    public InstrumentType Instrument { get => instrument; set => instrument = value; }
 
     [Header("Prefabs")]
     [SerializeField] MenuManagerUpdated menuManager = null;
@@ -31,12 +32,14 @@ public class GameManager : MonoBehaviour
     [Header("Variables")]
     [Range(1, 5)] [SerializeField] int currentStageIndex = 1;
     [Range(1, 10)] [SerializeField] int currentLevelIndex = 1;
-    [SerializeField] string droneNote = "Test";
+    [SerializeField] string droneNote = "C4";
+    [SerializeField] InstrumentType instrument = InstrumentType.HARMONIUM;
 
     public const string StartScene = "MenuScene";
     public const string GameScene = "GameScene";
 
     GameState currentState;
+
 
     #region GAME STATE
     public static void ChangeGameState(GameState gameState)
@@ -92,37 +95,70 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-
     #region UTILITY
-    public Stage[] GetStages() => stages;
-    Level[] GetCurrentStageLevels()
+    public void UnlockNextStage()
     {
-        if (currentStageIndex > 0 && currentStageIndex <= stages.Length)
+        if (!IsFinalLevel() || IsFinalStage()) return;
+
+        Stage nextStage = GetStage(currentStageIndex + 1);
+        if (nextStage != null && !nextStage.isUnlocked)
         {
-            return stages[currentStageIndex - 1].Levels;
+            nextStage.isUnlocked = true;
+            BinarySaveSystem.SaveStageData();
         }
-        return null;
+    }
+    public void UnlockNextLevel()
+    {
+        if (IsFinalLevel()) return;
+        Level nextLevel = GetLevel(currentLevelIndex + 1);
+        if (nextLevel != null && !nextLevel.isUnlocked)
+        {
+            nextLevel.isUnlocked = true;
+            BinarySaveSystem.SaveLevelData();
+        }        
+    }
+    public bool IsCurrentStageCompleted()
+    {
+        if (currentStageIndex > GetNumStages()) return false;
+        Stage currentStage = GetStages()[currentStageIndex - 1];
+        //if (currentStage != null) return currentStage.isCompleted;
+        return false;
+    }
+    
+    public void IncrementStage()
+    {
+        if (currentStageIndex < GetNumStages()) currentStageIndex++;
+    }
+    public Stage[] GetStages() => stages;
+    public int GetNumStages() => stages != null ? stages.Length : 0;
+    public Level[] GetLevelsInCurrentStage()
+    {
+        return currentStageIndex > 0 && currentStageIndex <= stages.Length ? stages[currentStageIndex - 1].Levels : null;
     }
     public void IncrementLevel()
     {
-        Level[] levels = GetCurrentStageLevels();
-        if (currentLevelIndex < levels.Length) ++currentLevelIndex;
+        Level[] levels = GetLevelsInCurrentStage();
+        if (levels != null && currentLevelIndex < levels.Length) currentLevelIndex++;
     }
-    public Level GetCurrentLevel()
+    public bool IsFinalStage() => GetNumStages() == currentStageIndex;
+    public bool IsFinalLevel() => GetNumLevelsInCurrentStage() == currentLevelIndex;
+    public Level GetCurrentLevel() => GetLevel(currentLevelIndex);
+    public Level GetLevel(int levelIndex)
     {
-        Level[] levels = GetCurrentStageLevels();
-        return currentLevelIndex - 1 < levels.Length ? levels[currentLevelIndex - 1] : levels[0];
+        Level[] levels = GetLevelsInCurrentStage();
+        if (levels == null) return null;
+        return levelIndex > 0 && levelIndex <= levels.Length ? levels[levelIndex - 1] : null;
     }
-    public bool IsFinalLevel()
+    public Stage GetStage(int stageIndex)
     {
-        //if (GetCurrentStageLevels() == null) return false;
-        return GetCurrentStageLevels().Length == currentLevelIndex;
+        Stage[] stages = GetStages();
+        if (stages == null) return null;
+        return stageIndex > 0 && stageIndex <= stages.Length ? stages[stageIndex - 1] : null;
     }
     public int GetNumLevelsInCurrentStage()
     {
-        Level[] levels = GetCurrentStageLevels();
-        if (levels != null) return levels.Length;
-        else return 0;
+        Level[] levels = GetLevelsInCurrentStage();
+        return levels != null ? levels.Length : 0;
     }
 
     #endregion    

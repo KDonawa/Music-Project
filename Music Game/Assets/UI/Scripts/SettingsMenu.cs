@@ -6,18 +6,21 @@ using UnityEngine.UI;
 public class SettingsMenu : Menu<SettingsMenu>
 {
     [Header("Volume Sliders")]
-    [SerializeField] Slider masterVolumeSlider = null;
-    [SerializeField] Slider sfxVolumeSlider = null;
-    [SerializeField] Slider musicVolumeSlider = null;
+    [SerializeField] Slider slider1 = null;
+    [SerializeField] Slider slider2 = null;
+    [SerializeField] Slider slider3 = null;
 
     [Header("Buttons")]
     [SerializeField] Button backButton = null;
 
-    DataManager dataManager;
+    // save data
+    public float Value1 => slider1.value;
+    public float Value2 => slider2.value;
+    public float Value3 => slider3.value;
+
     protected override void Awake()
     {
         base.Awake();
-        dataManager = FindObjectOfType<DataManager>();
 
         if (backButton == null) Debug.LogError("No reference to Back button");
         else backButton.onClick.AddListener(BackPressed);
@@ -34,43 +37,20 @@ public class SettingsMenu : Menu<SettingsMenu>
 
     void BackPressed()
     {
-        UIAnimator.ButtonPressEffect3(backButton, AudioManager.click1);
+        BinarySaveSystem.SaveSettings();
+
+        UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
 
         SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, MainMenu.Instance.Open);
-        if (dataManager) dataManager.Save();
-    }
-
-    public void OnMasterVolumeChanged(float volume)
-    {
-        if (dataManager)
-        {
-            dataManager.MasterVolume = volume;
-        }
-    }
-    public void OnSFXVolumeChanged(float volume)
-    {
-        if (dataManager)
-        {
-            dataManager.SFXVolume = volume;
-        }
-    }
-    public void OnMusicVolumeChanged(float volume)
-    {
-        if (dataManager)
-        {
-            dataManager.MusicVolume = volume;
-        }
     }
     void LoadData()
     {
-        if(!dataManager || !masterVolumeSlider || !sfxVolumeSlider || !musicVolumeSlider)
+        SettingsData data = BinarySaveSystem.LoadSettingsData();
+        if(data != null)
         {
-            return;
+            slider1.value = data.value1;
+            slider2.value = data.value2;
+            slider3.value = data.value3;
         }
-        dataManager.Load();
-
-        masterVolumeSlider.value = dataManager.MasterVolume;
-        sfxVolumeSlider.value = dataManager.SFXVolume;
-        musicVolumeSlider.value = dataManager.MusicVolume;
     }
 }

@@ -507,9 +507,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dff47db36b28fc141b7b856a5efff2f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterVolumeSlider: {fileID: 1197404067317347376}
-  sfxVolumeSlider: {fileID: 8864782670027614842}
-  musicVolumeSlider: {fileID: 4181260835275603132}
+  slider1: {fileID: 1197404067317347376}
+  slider2: {fileID: 8864782670027614842}
+  slider3: {fileID: 4181260835275603132}
   backButton: {fileID: 2162541318742207772}
 --- !u!1 &3351789229973808195
 GameObject:
@@ -1325,21 +1325,10 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnMusicVolumeChanged
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &7103777885342321461
 GameObject:
   m_ObjectHideFlags: 0
@@ -1534,21 +1523,10 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnSFXVolumeChanged
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &8465887425890853855
 GameObject:
   m_ObjectHideFlags: 0
@@ -1634,21 +1612,10 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnMasterVolumeChanged
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &8495369898060995490
 GameObject:
   m_ObjectHideFlags: 0
@@ -1999,12 +1966,12 @@ PrefabInstance:
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 124
+      value: 67
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 156
+      value: 95
       objectReference: {fileID: 0}
     - target: {fileID: 3072716036994093305, guid: bf22540e6c297da4ca42c86314ae34f3,
         type: 3}
