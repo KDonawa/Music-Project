@@ -4,11 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 /*
     TODO:    
-    -stages show number of levels passed
+    -improve lvl complete: spawn text, then score, etc in intervals
     -button loads expand in
     -buttons not selected turn off or shrink
-    -wrong guess camera shake
-    -improve lvl complete: spawn text, then score, etc in intervals
+    -wrong guess camera shake    
     -instrument select screen
     -make transitions where the buttons fly off the screen
 */

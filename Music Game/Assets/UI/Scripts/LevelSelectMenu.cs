@@ -30,6 +30,8 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         if (backButton == null) Debug.LogError("No reference to back button");
         else backButton.onClick.AddListener(BackPressed);
 
+        BinarySaveSystem.SaveLevelData();
+
     }
     protected override void OnDestroy()
     {
@@ -39,10 +41,9 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     }
     public override void Open()
     {
-        LoadData();
-        headerText.text = GameManager.Instance.GetStage(GameManager.Instance.CurrentStageIndex).name;
+                 
+        InitializeMenu();
         base.Open();
-        InitializeButtons();
     }
     void LoadData()
     {
@@ -57,8 +58,12 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
             }
         }        
     }
-    void InitializeButtons()
+    void InitializeMenu()
     {
+        LoadData();
+
+        headerText.text = GameManager.Instance.GetStage(GameManager.Instance.CurrentStageIndex).name;
+
         foreach (var b in levelOptions) Destroy(b.gameObject);
         levelOptions.Clear();
 

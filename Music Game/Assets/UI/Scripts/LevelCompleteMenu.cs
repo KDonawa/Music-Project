@@ -99,8 +99,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 
             // earned stars in lvl data
             Level currentLevel = GameManager.Instance.GetCurrentLevel();
-            if (numStars > currentLevel.numStarsEarned) currentLevel.numStarsEarned = numStars;
-            BinarySaveSystem.SaveLevelData(); // temporary
+            if (numStars > currentLevel.numStarsEarned) currentLevel.numStarsEarned = numStars;           
 
             // display stars
             numStars = Mathf.Clamp(numStars, 0, Instance.stars.Length);
@@ -110,7 +109,8 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
                 AudioManager.PlaySound(AudioManager.starDisplay, SoundType.UI);
                 yield return new WaitForSeconds(0.5f);
             }
-        }
+        }        
+
         yield return new WaitForSeconds(1f);
 
         // open stage complete menu
@@ -143,6 +143,9 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
             homeButton.interactable = true;
             restartButton.interactable = true;
         }
+
+        BinarySaveSystem.SaveLevelData(); // temporary
+        BinarySaveSystem.SaveStageData();
     }
 
 

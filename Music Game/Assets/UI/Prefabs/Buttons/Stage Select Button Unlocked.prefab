@@ -320,6 +320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageName: {fileID: 2226515195839186710}
+  levelsUnlockedText: {fileID: 8385255150790699274}
 --- !u!114 &4742920734226057809
 MonoBehaviour:
   m_ObjectHideFlags: 0

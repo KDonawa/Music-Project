@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
         if (nextStage != null && !nextStage.isUnlocked)
         {
             nextStage.isUnlocked = true;
-            BinarySaveSystem.SaveStageData();
+            //BinarySaveSystem.SaveStageData();
         }
     }
     public void UnlockNextLevel()
@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
         if (nextLevel != null && !nextLevel.isUnlocked)
         {
             nextLevel.isUnlocked = true;
-            BinarySaveSystem.SaveLevelData();
+            //BinarySaveSystem.SaveLevelData();
         }        
     }
     public bool IsCurrentStageCompleted()
@@ -142,6 +142,7 @@ public class GameManager : MonoBehaviour
     }
     public bool IsFinalStage() => GetNumStages() == currentStageIndex;
     public bool IsFinalLevel() => GetNumLevelsInCurrentStage() == currentLevelIndex;
+    public Stage GetCurrentStage() => GetStage(currentStageIndex);
     public Level GetCurrentLevel() => GetLevel(currentLevelIndex);
     public Level GetLevel(int levelIndex)
     {

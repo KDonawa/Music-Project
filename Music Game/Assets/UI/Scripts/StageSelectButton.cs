@@ -7,12 +7,15 @@ using TMPro;
 public class StageSelectButton : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI stageName = null;
+    [SerializeField] TextMeshProUGUI levelsUnlockedText = null;
     int stage = 1;
 
-    public void Init(int val, string text)
+    public void Init(int val, string text, int numUnlockedLevels)
     {
         stage = val;
         stageName.text = val + ". " + text;
+        if (levelsUnlockedText == null) return;
+        levelsUnlockedText.text = numUnlockedLevels.ToString() + "/" + GameManager.Instance.GetNumLevelsInCurrentStage().ToString();
     }
 
     public void ButtonPressed(System.Action<Button> buttonPressedAction)
