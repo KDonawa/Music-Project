@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StageSelectButton : MonoBehaviour
 {
-
+    [SerializeField] TextMeshProUGUI stageName = null;
     int stage = 1;
 
-    public void Init(int val)
+    public void Init(int val, string text)
     {
         stage = val;
+        stageName.text = val + ". " + text;
     }
 
     public void ButtonPressed(System.Action<Button> buttonPressedAction)

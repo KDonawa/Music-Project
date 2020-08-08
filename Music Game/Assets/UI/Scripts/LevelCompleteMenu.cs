@@ -78,7 +78,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 
     public IEnumerator DisplayMenuRoutine(int score, bool isLevelPassed)
     {
-        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f);
 
         if (ScoreSystem.Instance != null)
         {
@@ -97,20 +97,19 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
             if (isLevelPassed) numStars = 2;
             if (finalScore == 100) numStars = 3;
 
-            int maxNumStars = Instance.stars.Length;
+            // earned stars in lvl data
+            Level currentLevel = GameManager.Instance.GetCurrentLevel();
+            if (numStars > currentLevel.numStarsEarned) currentLevel.numStarsEarned = numStars;
+            BinarySaveSystem.SaveLevelData(); // temporary
 
-            for (int i = 0; i < maxNumStars && i < numStars; i++)
+            // display stars
+            numStars = Mathf.Clamp(numStars, 0, Instance.stars.Length);
+            for (int i = 0; i < numStars && i < numStars; i++)
             {
                 Instance.stars[i].gameObject.SetActive(true);
                 AudioManager.PlaySound(AudioManager.starDisplay, SoundType.UI);
                 yield return new WaitForSeconds(0.5f);
             }
-            if (numStars == 3)
-            {
-                //AudioManager.PlaySound(AudioManager.win, SoundType.UI);
-                //yield return new WaitForSeconds(1f);
-            }
-
         }
         yield return new WaitForSeconds(1f);
 

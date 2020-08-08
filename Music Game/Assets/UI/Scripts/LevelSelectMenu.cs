@@ -6,13 +6,15 @@ using TMPro;
 
 public class LevelSelectMenu : Menu<LevelSelectMenu>
 {
-    [Header("Buttons")]    
+    [Header("UI")]
+    [SerializeField] TextMeshProUGUI headerText = null;
     [SerializeField] Button mainMenuButton = null;
     [SerializeField] Button backButton = null;
     [SerializeField] GameObject buttonsContainer = null;
 
     [Header("Prefabs")]
-    [SerializeField] Button levelSelectButtonsPrefab = null;
+    [SerializeField] Button unlockedButtonPrefab = null;
+    [SerializeField] Button lockedButtonPrefab = null;
 
     List<Button> levelOptions;
 
@@ -38,6 +40,7 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     public override void Open()
     {
         LoadData();
+        headerText.text = GameManager.Instance.GetStage(GameManager.Instance.CurrentStageIndex).name;
         base.Open();
         InitializeButtons();
     }
@@ -50,6 +53,7 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
             for (int i = 0; i < levels.Length && i < data.unlockedLevels.Length; i++)
             {
                 levels[i].isUnlocked = data.unlockedLevels[i];
+                levels[i].numStarsEarned = data.starsEarned[i];
             }
         }        
     }
@@ -63,15 +67,16 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         
         for (int i = 1; i <= GameManager.Instance.GetNumLevelsInCurrentStage(); i++)
         {
-            Button b = Instantiate(levelSelectButtonsPrefab, buttonsContainer.transform);
-            levelOptions.Add(b);
+            Button b;            
 
             if (i == 1) levels[i - 1].isUnlocked = true;
+            if (levels[i - 1].isUnlocked) b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
+            else b = Instantiate(lockedButtonPrefab, buttonsContainer.transform);
             b.interactable = levels[i - 1].isUnlocked;
-            b.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
+            levelOptions.Add(b);            
 
             LevelSelectButton lsb = b.GetComponent<LevelSelectButton>();
-            lsb.InitializeButton(i);
+            lsb.InitializeButton(i,levels[i-1].numStarsEarned);
             b.onClick.AddListener(() => lsb.ButtonPressed(ButtonPressedEffect));
         }
     }

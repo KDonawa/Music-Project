@@ -6,7 +6,7 @@ using UnityEngine;
 public class LevelData
 {
     public bool[] unlockedLevels;
-    //public int[] starsEarned;
+    public int[] starsEarned;
 
     public LevelData()
     {
@@ -14,9 +14,14 @@ public class LevelData
         if (levels != null)
         {
             unlockedLevels = new bool[levels.Length];
+            starsEarned = new int[levels.Length];
             for (int i = 0; i < levels.Length; i++)
             {
-                if(levels[i] != null) unlockedLevels[i] = levels[i];
+                if(levels[i] != null)
+                {
+                    unlockedLevels[i] = levels[i].isUnlocked;
+                    starsEarned[i] = levels[i].numStarsEarned;
+                } 
             }
         }
     }

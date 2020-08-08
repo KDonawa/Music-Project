@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 /*
     TODO:    
-    -label level select menu with stage name
+    -stages show number of levels passed
+    -button loads expand in
+    -buttons not selected turn off or shrink
+    -wrong guess camera shake
     -improve lvl complete: spawn text, then score, etc in intervals
     -instrument select screen
-    -locked level and stages icons
-    -stars earned for levels will show up
     -make transitions where the buttons fly off the screen
 */
 [RequireComponent(typeof(GameUtility))]
@@ -200,12 +201,10 @@ public class Game : MonoBehaviour
         StopDroneNoteEffect();
         _gameUI.HideGameText();
         _gameUI.HideDroneText();
-        //_gameUI.HideDebugText();
 
         // display guess options
         yield return StartCoroutine(_utility.LoadButtonsRoutine(guessButtons, 0.2f, false));
         _utility.EnableButtons(guessButtons);
-        //start timer
         _timer.StartGuessTimer();
     }
     void ContinueGameLoop()

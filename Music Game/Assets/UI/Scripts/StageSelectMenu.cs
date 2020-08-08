@@ -12,7 +12,8 @@ public class StageSelectMenu : Menu<StageSelectMenu>
     [SerializeField] Button mainMenuButton = null;
 
     [Header("UI/Prefabs")]
-    [SerializeField] Button stageSelectButtonsPrefab = null;
+    [SerializeField] Button unlockedButtonPrefab = null;
+    [SerializeField] Button lockedButtonPrefab = null;
 
     List<Button> stageOptions;
 
@@ -62,23 +63,23 @@ public class StageSelectMenu : Menu<StageSelectMenu>
         Stage[] stages = GameManager.Instance.GetStages();
         for (int i = 1; i <= GameManager.Instance.GetNumStages(); i++)
         {
-            Button b = Instantiate(stageSelectButtonsPrefab, buttonsContainer.transform);
-            stageOptions.Add(b);
+            Button b;           
                       
             if (i == 1) stages[i - 1].isUnlocked = true;
-            b.interactable = stages[i-1].isUnlocked;
-
-            b.GetComponentInChildren<TextMeshProUGUI>().text = stages[i-1].name.ToString();
-
+            if(stages[i - 1].isUnlocked) b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
+            else b = Instantiate(lockedButtonPrefab, buttonsContainer.transform);
+            stageOptions.Add(b);
+            b.interactable = stages[i - 1].isUnlocked;
+            //b.GetComponentInChildren<TextMeshProUGUI>().text = i + ". " + stages[i-1].name;
             StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-            ssb.Init(i);
+            ssb.Init(i, stages[i - 1].name);
             b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
         }
     }
     
     void ButtonPressedEffect(Button button)
     {
-        buttonsContainer.GetComponent<VerticalLayoutGroup>().enabled = false;
+        buttonsContainer.GetComponent<GridLayoutGroup>().enabled = false;
         foreach (var b in stageOptions)
         {
             if (b != button)
@@ -90,7 +91,7 @@ public class StageSelectMenu : Menu<StageSelectMenu>
     }
     void ButtonPressEffectCompleted(RectTransform rect)
     {
-        buttonsContainer.GetComponent<VerticalLayoutGroup>().enabled = true;
+        buttonsContainer.GetComponent<GridLayoutGroup>().enabled = true;
         rect.gameObject.SetActive(true);
     }
 
