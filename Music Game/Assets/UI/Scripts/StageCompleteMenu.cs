@@ -37,7 +37,7 @@ public class StageCompleteMenu : Menu<StageCompleteMenu>
 
     IEnumerator DisplayMenuRoutine()
     {
-        AudioManager.PlaySound(AudioManager.success, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.stageComplete, SoundType.UI);
 
         yield return new WaitForSeconds(2f);
 
@@ -45,7 +45,7 @@ public class StageCompleteMenu : Menu<StageCompleteMenu>
         AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
         yield return new WaitForSeconds(0.2f);
 
-        if (!GameManager.Instance.IsFinalStage())
+        if (!GameManager.IsFinalStage())
         {
             Instance.nextButton.gameObject.SetActive(true);
             AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
@@ -63,7 +63,7 @@ public class StageCompleteMenu : Menu<StageCompleteMenu>
     void NextButtonPressed()
     {       
         UIAnimator.ButtonPressEffect3(nextButton, AudioManager.buttonSelect1);
-        GameManager.Instance.IncrementStage();
+        GameManager.IncrementStage();
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT,
             () => GameManager.LoadStartScene(LevelSelectMenu.Instance.Open));
     }

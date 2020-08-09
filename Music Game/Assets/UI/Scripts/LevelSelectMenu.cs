@@ -30,8 +30,6 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         if (backButton == null) Debug.LogError("No reference to back button");
         else backButton.onClick.AddListener(BackPressed);
 
-        BinarySaveSystem.SaveLevelData();
-
     }
     protected override void OnDestroy()
     {
@@ -40,15 +38,14 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
     }
     public override void Open()
-    {
-                 
+    {               
         InitializeMenu();
         base.Open();
     }
     void LoadData()
     {
-        LevelData data = BinarySaveSystem.LoadLevelData(GameManager.Instance.CurrentStageIndex);
-        Level[] levels = GameManager.Instance.GetLevelsInCurrentStage();
+        LevelSaveData data = BinarySaveSystem.LoadLevelData(GameManager.CurrentStageIndex);
+        Level[] levels = GameManager.CurrentLevels;
         if(levels != null && data != null)
         {
             for (int i = 0; i < levels.Length && i < data.unlockedLevels.Length; i++)
@@ -58,19 +55,20 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
             }
         }        
     }
+
     void InitializeMenu()
     {
         LoadData();
 
-        headerText.text = GameManager.Instance.GetStage(GameManager.Instance.CurrentStageIndex).name;
+        headerText.text = GameManager.CurrentStage.name;
 
         foreach (var b in levelOptions) Destroy(b.gameObject);
         levelOptions.Clear();
 
-        Level[] levels = GameManager.Instance.GetLevelsInCurrentStage();
+        Level[] levels = GameManager.CurrentLevels;
         if (levels == null) return;
         
-        for (int i = 1; i <= GameManager.Instance.GetNumLevelsInCurrentStage(); i++)
+        for (int i = 1; i <= GameManager.CurrentLevels.Length; i++)
         {
             Button b;            
 

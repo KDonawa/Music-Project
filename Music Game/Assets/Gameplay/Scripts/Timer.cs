@@ -75,6 +75,7 @@ public class Timer : MonoBehaviour
 
     #region UTILITY METHODS
     //public void DisplayTimer(bool isEnabled = true) => ShowTextGUI(timerTextGUI, isEnabled);
+    public void HideTimer() => ShowTextGUI(timerTextGUI, false);
     public void StartGuessTimer()
     {
         StopGuessTimer();

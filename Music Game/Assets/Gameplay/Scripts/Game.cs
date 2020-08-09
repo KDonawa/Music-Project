@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 /*
     TODO:    
-    -improve lvl complete: spawn text, then score, etc in intervals
+    -new game and continue game buttons on main menu (continue game is greyed out if no save data)
+    -audio mixer   
+    -remove audio source from each sound file and just have sources for sound types: SFX, drone, note
     -button loads expand in
     -buttons not selected turn off or shrink
     -wrong guess camera shake    
@@ -22,7 +24,7 @@ public class Game : MonoBehaviour
     [Header("Variables")]
     [Range(0, 5)] [SerializeField] int countdownTime = 0;
     [Range(0, 10f)] [SerializeField] float timeToGuessPerNote = 5f;
-    [Range(0, 100)] [SerializeField] int levelPassPercentage = 80;
+    [Range(0, 100)] [SerializeField] int levelPassPercentage = 50;
     [SerializeField] bool playIntro = true;
 
     [Header("Systems")]
@@ -48,7 +50,7 @@ public class Game : MonoBehaviour
     List<string> answers;
     List<string> activeNoteSounds;
 
-    public static event System.Action<int, bool> LevelCompleteEvent;
+    public static event System.Action LevelPassedEvent;
 
     #region SETUP
     private void Awake()
@@ -97,7 +99,7 @@ public class Game : MonoBehaviour
         AudioManager.StopAllNoteSounds();
         _utility.HideButtons(guessButtons);
 
-        currentLevel = GameManager.Instance.GetCurrentLevel();
+        currentLevel = GameManager.CurrentLevel;
         if (currentLevel == null) return false; // debug.logwarning
 
         currentSubLevelIndex = 0;
@@ -112,7 +114,7 @@ public class Game : MonoBehaviour
     }
     void InitializeNotes()
     {
-        droneNote = GameManager.Instance.DroneNote;
+        droneNote = GameManager.DroneNote;
         currentNotes.Clear();
         foreach (var note in currentLevel.subLevels[currentSubLevelIndex].notes) currentNotes.Add(note);
     }
@@ -180,7 +182,7 @@ public class Game : MonoBehaviour
         _gameUI.DisplayDroneText("Drone: " + droneNote); 
         yield return new WaitForSeconds(1f);
         PlayDroneNoteEffect();
-        //yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(1f);
 
         // game messages
         _gameUI.DisplayGameText("Playing Notes");
@@ -200,6 +202,7 @@ public class Game : MonoBehaviour
         StopDroneNoteEffect();
         _gameUI.HideGameText();
         _gameUI.HideDroneText();
+        yield return new WaitForSeconds(1f);
 
         // display guess options
         yield return StartCoroutine(_utility.LoadButtonsRoutine(guessButtons, 0.2f, false));
@@ -208,14 +211,45 @@ public class Game : MonoBehaviour
     }
     void ContinueGameLoop()
     {
+        _utility.HideButtons(guessButtons);
         _gameUI.HideDebugText();
         _timer.StopGuessTimer();
         currentSubLevelIndex++;
 
-        if (IsLevelComplete()) LevelCompleteEvent?.Invoke(_scoreSystem.FinalScorePercentage(), IsLevelPassed());
+        if (HasLevelEnded()) StartCoroutine(LevelEndedRoutine());
         else PlayGameLoop();
     }
-    public bool IsLevelComplete() => currentSubLevelIndex == currentLevel.subLevels.Length;
+    IEnumerator LevelEndedRoutine()
+    {
+        _gameUI.HidePauseButton();
+        _timer.HideTimer();
+
+        if (IsLevelPassed())
+        {
+            LevelPassedEvent?.Invoke();
+            if (!currentLevel.isPassed)
+            {
+                currentLevel.isPassed = true;
+                GameManager.CurrentStage.numPassedLevels += 1;
+            }
+        }
+
+        // calculate stars earned
+        int finalScore = _scoreSystem.FinalScorePercentage();
+        int numStars = 0;
+        if (finalScore >= 50) numStars = 1;
+        if (finalScore >= 75) numStars = 2;
+        if (finalScore == 100) numStars = 3;
+        if (numStars > currentLevel.numStarsEarned) currentLevel.numStarsEarned = numStars;
+
+        // save progress
+        BinarySaveSystem.SaveLevelData(GameManager.CurrentStageIndex);
+        BinarySaveSystem.SaveStageData();
+
+        yield return new WaitForSeconds(1f);
+        LevelCompleteMenu.DisplayMenu(finalScore, currentLevel.isPassed, numStars);
+    }
+    public bool HasLevelEnded() => currentSubLevelIndex == currentLevel.subLevels.Length;
     public bool IsLevelPassed() => _scoreSystem.FinalScorePercentage() >= levelPassPercentage;
     #endregion
 
@@ -254,12 +288,14 @@ public class Game : MonoBehaviour
     {
         AudioManager.PauseSound(droneNote, SoundType.DRONE);
         AudioManager.PauseSounds(activeNoteSounds, SoundType.INSTRUMENT);
+        _gameUI.HidePauseButton();
         PauseMenu.Instance.Open();
     }
     void OnGameResumed()
     {
         AudioManager.UnPauseSound(droneNote, SoundType.DRONE);
         AudioManager.UnPuaseSounds(activeNoteSounds, SoundType.INSTRUMENT);
+        _gameUI.ShowPauseButton();
     }
     #endregion
 
@@ -302,7 +338,7 @@ public class Game : MonoBehaviour
     }
     public static void PlayNextLevel()
     {
-        GameManager.Instance.IncrementLevel();
+        GameManager.IncrementLevel();
         Play();
     }
     

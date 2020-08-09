@@ -15,5 +15,5 @@ MonoBehaviour:
   name: starDisplay
   audioClip: {fileID: 8300000, guid: 8dd85dd1cb601bf4d94ad2848aa5494d, type: 3}
   volume: 1
-  pitch: 1.9
+  pitch: 2
   canLoop: 0

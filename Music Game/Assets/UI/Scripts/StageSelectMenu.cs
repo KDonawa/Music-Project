@@ -30,7 +30,6 @@ public class StageSelectMenu : Menu<StageSelectMenu>
         if (mainMenuButton == null) Debug.LogError("No reference to Main Menu button");
         else mainMenuButton.onClick.AddListener(MainMenuPressed);
 
-        BinarySaveSystem.SaveStageData();
     }
 
     protected override void OnDestroy()
@@ -46,16 +45,16 @@ public class StageSelectMenu : Menu<StageSelectMenu>
     }
     void LoadData()
     {
-        StageData data = BinarySaveSystem.LoadStageData();
-        Stage[] stages = GameManager.Instance.GetStages();
+        StageSaveData data = BinarySaveSystem.LoadStageData();
+        Stage[] stages = GameManager.Stages;
         if (stages != null && data != null)
         {
-            for (int i = 0; i < GameManager.Instance.GetNumStages() && i < data.unlockedStages.Length; i++)
+            for (int i = 0; i < GameManager.NumStages && i < data.unlockedStages.Length; i++)
             {
                 if (data != null && stages[i] != null)
                 {
                     stages[i].isUnlocked = data.unlockedStages[i];
-                    stages[i].numUnlockedLevels = data.numUnlockedLevels[i];
+                    stages[i].numPassedLevels = data.numPassedLevels[i];
                 }
             }
         }        
@@ -67,8 +66,8 @@ public class StageSelectMenu : Menu<StageSelectMenu>
         foreach (var b in stageOptions) Destroy(b.gameObject);
         stageOptions.Clear();        
 
-        Stage[] stages = GameManager.Instance.GetStages();
-        for (int i = 1; i <= GameManager.Instance.GetNumStages(); i++)
+        Stage[] stages = GameManager.Stages;
+        for (int i = 1; i <= GameManager.NumStages; i++)
         {
             Button b;           
                       
@@ -79,7 +78,7 @@ public class StageSelectMenu : Menu<StageSelectMenu>
             b.interactable = stages[i - 1].isUnlocked;
             //b.GetComponentInChildren<TextMeshProUGUI>().text = i + ". " + stages[i-1].name;
             StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-            ssb.Init(i, stages[i - 1].name, stages[i-1].numUnlockedLevels);
+            ssb.Init(i, stages[i - 1].name, stages[i-1].numPassedLevels);
             b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
         }
     }

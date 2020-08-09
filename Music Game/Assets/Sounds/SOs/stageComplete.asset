@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74509fb684e6d764ca930a52f9f2840e, type: 3}
-  m_Name: Level4
+  m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
+  m_Name: stageComplete
   m_EditorClassIdentifier: 
-  isUnlocked: 0
-  isPassed: 0
-  numStarsEarned: 0
-  numNotesToGuess: 1
-  subLevels:
-  - {fileID: 11400000, guid: 0d9123febcdbd6c4e91f3629f7860771, type: 2}
+  name: stageComplete
+  audioClip: {fileID: 8300000, guid: 52320e590bf774734a288886eba557ba, type: 3}
+  volume: 0.307
+  pitch: 1
+  canLoop: 0

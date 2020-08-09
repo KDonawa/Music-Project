@@ -59,3 +59,4 @@ MonoBehaviour:
   currentLevelIndex: 1
   droneNote: C4
   instrument: 0
+  resetData: 0

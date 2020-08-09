@@ -116,7 +116,7 @@ public class GameUtility : MonoBehaviour
     }   
     public void LoadButton(Button b, bool canEnable = true, bool playSound = true)
     {
-        UIAnimator.SetButtonColor(b, Color.black);
+        //UIAnimator.SetButtonColor(b, Color.black);
         DisplayButton(b, canEnable);
         if(playSound) AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
     }  

@@ -32,12 +32,12 @@ public class GuessButton : MonoBehaviour
     public void ButtonPressed()
     {
         ButtonPressedEvent?.Invoke(this);
-        CheckGuess(correctGuess);
+        CheckGuess();
     }
 
-    public void CheckGuess(string guess)
+    public void CheckGuess()
     {
-        StartCoroutine(ProcessGuessRoutine(guess == _name));
+        StartCoroutine(ProcessGuessRoutine(_name == correctGuess));
     }
 
     IEnumerator ProcessGuessRoutine(bool isGuessCorrect)

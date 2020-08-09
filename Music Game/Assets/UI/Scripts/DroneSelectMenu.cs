@@ -12,6 +12,8 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
     [SerializeField] Button confirmButton = null;
     [SerializeField] Button backButton = null;
 
+    [SerializeField] Color originalSelectionColor = new Color();
+
     List<Button> noteChoices;
     List<Button> octaveChoices;
 
@@ -19,6 +21,8 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
     bool isNoteSelected;    
     string octaveChoice;
     bool isOctaveSelected;
+
+    
 
     protected override void Awake()
     {
@@ -46,11 +50,11 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
 
         foreach (var button in noteChoices)
         {
-            UIAnimator.SetButtonTextColor(button, Color.black);
+            UIAnimator.SetButtonTextColor(button, originalSelectionColor);
         }
         foreach (var button in octaveChoices)
         {
-            UIAnimator.SetButtonTextColor(button, Color.black);
+            UIAnimator.SetButtonTextColor(button, originalSelectionColor);
         }
     }    
 
@@ -88,7 +92,7 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
 
         foreach (var button in noteChoices)
         {
-            if (button != b) UIAnimator.SetButtonTextColor(button, Color.black);
+            if (button != b) UIAnimator.SetButtonTextColor(button, originalSelectionColor);
         }
         CheckIfAllSelected();
     }
@@ -100,7 +104,7 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
 
         foreach (var button in octaveChoices)
         {
-            if (button != b) UIAnimator.SetButtonTextColor(button, Color.black);
+            if (button != b) UIAnimator.SetButtonTextColor(button, originalSelectionColor);
         }
         CheckIfAllSelected();
     }
@@ -108,7 +112,7 @@ public class DroneSelectMenu : Menu<DroneSelectMenu>
     void CorfirmButtonPressed()
     {
         UIAnimator.ButtonPressEffect3(confirmButton, AudioManager.buttonSelect1);
-        GameManager.Instance.DroneNote = string.Concat(noteChoice, octaveChoice);
+        GameManager.DroneNote = string.Concat(noteChoice, octaveChoice);
         SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, StageSelectMenu.Instance.Open);
     }
 

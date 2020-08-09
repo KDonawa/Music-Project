@@ -14,9 +14,9 @@ public class SettingsMenu : Menu<SettingsMenu>
     [SerializeField] Button backButton = null;
 
     // save data
-    public float Value1 => slider1.value;
-    public float Value2 => slider2.value;
-    public float Value3 => slider3.value;
+    public static Slider Slider1 => Instance.slider1;
+    public static Slider Slider2 => Instance.slider2;
+    public static Slider Slider3 => Instance.slider3;
 
     protected override void Awake()
     {
@@ -39,13 +39,26 @@ public class SettingsMenu : Menu<SettingsMenu>
     {
         BinarySaveSystem.SaveSettings();
 
-        UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
+        
 
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, MainMenu.Instance.Open);
+        ReturnToPreviousMenu();
+    }
+    void ReturnToPreviousMenu()
+    {
+        if (GameManager.GetCurrentSceneName() == GameManager.StartScene)
+        {
+            UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
+            SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, MainMenu.Instance.Open);
+        }
+        else if(GameManager.GetCurrentSceneName() == GameManager.GameScene)
+        {
+            AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);
+            PauseMenu.Instance.Open();
+        }
     }
     void LoadData()
     {
-        SettingsData data = BinarySaveSystem.LoadSettingsData();
+        SettingsSaveData data = BinarySaveSystem.LoadSettingsData();
         if(data != null)
         {
             slider1.value = data.value1;

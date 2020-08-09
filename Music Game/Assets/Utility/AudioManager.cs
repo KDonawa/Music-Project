@@ -28,15 +28,18 @@ public class AudioManager : MonoBehaviour
     public const string buttonSelect1 = "buttonSelect1";
     public const string timerExpired = "timerExpired";
     public const string starDisplay = "starDisplay";
+    public const string badgeDisplay = "badgeDisplay";
+    public const string stageComplete = "stageComplete";
     public const string swoosh1 = "swoosh1";
     public const string success = "success";
+    public const string finalScoreUpdate = "finalScoreUpdate";
 
     //List<AudioSource> audioSources;
 
     #region SETUP
     private void Awake()
     {
-        if (Instance != null) { Destroy(gameObject); }
+        if (Instance != null) Destroy(gameObject);
         else
         {
             Instance = this;
@@ -138,7 +141,7 @@ public class AudioManager : MonoBehaviour
     }
     private Sound FindInstrumentSound(string name)
     {
-        switch (GameManager.Instance.Instrument)
+        switch (GameManager.Instrument)
         {
             case InstrumentType.HARMONIUM: return Array.Find(harmoniumSounds, s => s.name == name);
             default: return null;

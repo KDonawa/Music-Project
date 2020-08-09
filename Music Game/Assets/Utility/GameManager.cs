@@ -16,10 +16,25 @@ public class GameManager : MonoBehaviour
     public static event Action GamePausedEvent;
     public static event Action GameUnPausedEvent;
 
-    public int CurrentStageIndex { get => currentStageIndex; set => currentStageIndex = value; }
-    public int CurrentLevelIndex { get => currentLevelIndex; set => currentLevelIndex = value; }
-    public string DroneNote { get => droneNote; set => droneNote = value; }
-    public InstrumentType Instrument { get => instrument; set => instrument = value; }
+    #region PROPERTIES
+    public static int CurrentStageIndex 
+    { 
+        get => Instance.currentStageIndex; 
+        set => Instance.currentStageIndex = value > 0 && value <= Stages.Length ? value : 1; 
+    }
+    public static int CurrentLevelIndex 
+    { 
+        get => Instance.currentLevelIndex; 
+        set => Instance.currentLevelIndex = value > 0 && value <= CurrentLevels.Length ? value : 1; 
+    }
+    public static string DroneNote { get => Instance.droneNote; set => Instance.droneNote = value; }
+    public static InstrumentType Instrument { get => Instance.instrument; set => Instance.instrument = value; }
+    public static Stage[] Stages => Instance.stages;
+    public static int NumStages => Instance.stages.Length;
+    public static Stage CurrentStage => Instance.stages[Instance.currentStageIndex - 1];
+    public static Level CurrentLevel => CurrentLevels[Instance.currentLevelIndex - 1];
+    public static Level[] CurrentLevels => CurrentStage.Levels;
+    #endregion
 
     [Header("Prefabs")]
     [SerializeField] MenuManagerUpdated menuManager = null;
@@ -30,7 +45,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Game game = null;
 
     [Header("Variables")]
-    [Range(1, 5)] [SerializeField] int currentStageIndex = 1;
+    [Range(1, 4)] [SerializeField] int currentStageIndex = 1;
     [Range(1, 10)] [SerializeField] int currentLevelIndex = 1;
     [SerializeField] string droneNote = "C4";
     [SerializeField] InstrumentType instrument = InstrumentType.HARMONIUM;
@@ -39,6 +54,9 @@ public class GameManager : MonoBehaviour
     public const string GameScene = "GameScene";
 
     GameState currentState;
+
+    [Header("Testing")]
+    [SerializeField] bool resetData = false;
 
 
     #region GAME STATE
@@ -68,118 +86,144 @@ public class GameManager : MonoBehaviour
     #region SETUP
     private void Awake()
     {
-        if (Instance) { Destroy(gameObject); }
+        if (Instance != null) Destroy(gameObject);
         else
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-        }
 
-        currentState = GameState.Running;
+            if (resetData) ResetSaveData();
 
-        Instantiate(menuManager);
-        Instantiate(audioManager);
-        Instantiate(sceneTransition);
-        Instantiate(uiAnimator);
-        if (GetCurrentSceneName() == GameScene) Instantiate(game);
+            currentState = GameState.Running;
+
+            Instantiate(menuManager);
+            Instantiate(audioManager);
+            Instantiate(sceneTransition);
+            Instantiate(uiAnimator);
+            if (GetCurrentSceneName() == GameScene) Instantiate(game);
+        }      
     }
     private void Start()
     {
+        //Debug.Log("test");
         SceneManager.sceneLoaded += OnSceneLoaded;
+        Game.LevelPassedEvent += UnlockNextStage;
+        Game.LevelPassedEvent += UnlockNextLevel;
     }
     private void OnDestroy()
     {
-        if (Instance == this) Instance = null;
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (Instance == this)
+        {
+            Instance = null;
+            //Debug.Log("test");
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            Game.LevelPassedEvent -= UnlockNextStage;
+            Game.LevelPassedEvent -= UnlockNextLevel;
+        }
+    }
+
+    #endregion
+
+    #region SAVE DATA
+    public static void ResetSaveData()
+    {
+        Instance.ResetStageAndLevelData();
+        Instance.ResetSettingsData();
+    }
+    void ResetStageAndLevelData()
+    {
+        for (int i = 0; i < stages.Length; i++)
+        {
+            if (stages[i] != null)
+            {
+                stages[i].isUnlocked = false;
+                stages[i].numPassedLevels = 0;                
+                ResetLevelData(stages[i], i + 1);
+            }
+        }
+        BinarySaveSystem.SaveStageData();
+    }
+    void ResetLevelData(Stage stage, int stageIndex)
+    {
+        Level[] levels = stage.Levels;
+        foreach (var level in levels)
+        {
+            if (level != null)
+            {
+                level.isPassed = false;
+                level.isUnlocked = false;
+                level.numStarsEarned = 0;
+                BinarySaveSystem.SaveLevelData(stageIndex);
+            }
+        }
+    }
+    void ResetSettingsData()
+    {
+        SettingsMenu.Slider1.value = 0.5f;
+        SettingsMenu.Slider1.value = 0.5f;
+        SettingsMenu.Slider1.value = 0.5f;
+
+        BinarySaveSystem.SaveSettings();
     }
 
     #endregion
 
     #region UTILITY
-    public void UnlockNextStage()
+    public static void UnlockNextStage()
     {
+        //Debug.Log("attempt unlock next stage");
         if (!IsFinalLevel() || IsFinalStage()) return;
 
-        Stage nextStage = GetStage(currentStageIndex + 1);
+        Stage nextStage = Stages[Instance.currentStageIndex];
         if (nextStage != null && !nextStage.isUnlocked)
         {
             nextStage.isUnlocked = true;
-            //BinarySaveSystem.SaveStageData();
         }
     }
-    public void UnlockNextLevel()
+    public static void UnlockNextLevel()
     {
+        //Debug.Log("attempt unlock next level");
         if (IsFinalLevel()) return;
-        Level nextLevel = GetLevel(currentLevelIndex + 1);
+        Level nextLevel = CurrentLevels[Instance.currentLevelIndex];
         if (nextLevel != null && !nextLevel.isUnlocked)
         {
             nextLevel.isUnlocked = true;
-            //BinarySaveSystem.SaveLevelData();
         }        
     }
-    public bool IsCurrentStageCompleted()
+    public static Level[] GetLevelsInStage(int stageIndex)
     {
-        if (currentStageIndex > GetNumStages()) return false;
-        Stage currentStage = GetStages()[currentStageIndex - 1];
-        //if (currentStage != null) return currentStage.isCompleted;
-        return false;
+        return stageIndex > 0 && stageIndex <= NumStages ? Instance.stages[stageIndex - 1].Levels : null; ;
     }
-    
-    public void IncrementStage()
+    public static void IncrementStage()
     {
-        if (currentStageIndex < GetNumStages()) currentStageIndex++;
+        if (Instance.currentStageIndex < NumStages) Instance.currentStageIndex++;
     }
-    public Stage[] GetStages() => stages;
-    public int GetNumStages() => stages != null ? stages.Length : 0;
-    public Level[] GetLevelsInCurrentStage()
+    public static void IncrementLevel()
     {
-        return currentStageIndex > 0 && currentStageIndex <= stages.Length ? stages[currentStageIndex - 1].Levels : null;
+        if (Instance.currentLevelIndex < CurrentLevels.Length) Instance.currentLevelIndex++;
     }
-    public void IncrementLevel()
-    {
-        Level[] levels = GetLevelsInCurrentStage();
-        if (levels != null && currentLevelIndex < levels.Length) currentLevelIndex++;
-    }
-    public bool IsFinalStage() => GetNumStages() == currentStageIndex;
-    public bool IsFinalLevel() => GetNumLevelsInCurrentStage() == currentLevelIndex;
-    public Stage GetCurrentStage() => GetStage(currentStageIndex);
-    public Level GetCurrentLevel() => GetLevel(currentLevelIndex);
-    public Level GetLevel(int levelIndex)
-    {
-        Level[] levels = GetLevelsInCurrentStage();
-        if (levels == null) return null;
-        return levelIndex > 0 && levelIndex <= levels.Length ? levels[levelIndex - 1] : null;
-    }
-    public Stage GetStage(int stageIndex)
-    {
-        Stage[] stages = GetStages();
-        if (stages == null) return null;
-        return stageIndex > 0 && stageIndex <= stages.Length ? stages[stageIndex - 1] : null;
-    }
-    public int GetNumLevelsInCurrentStage()
-    {
-        Level[] levels = GetLevelsInCurrentStage();
-        return levels != null ? levels.Length : 0;
-    }
+    public static bool IsFinalStage() => NumStages == Instance.currentStageIndex;
+    public static bool IsFinalLevel() => CurrentStage.Levels.Length == Instance.currentLevelIndex;    
 
     #endregion    
 
     #region SCENE LOADING
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
+        if(scene.name == GameScene) Instantiate(game);
+        //if (scene.name == StartScene) MainMenu.Instance.Open();
         SceneTransitions.sceneLoadingComplete = true;
     }
     public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
     public static int GetCurrentSceneIndex() => SceneManager.GetActiveScene().buildIndex;
-    public void LoadGameScene() => SceneManager.LoadScene(GameScene);
+    public static void LoadGameScene() => SceneManager.LoadScene(GameScene);
     public static void LoadStartScene(Action action = null) => LoadScene(StartScene, action);
     public static void LoadScene(string levelName, Action action = null)
     {
         if (Application.CanStreamedLevelBeLoaded(levelName))
-        {
-            if (levelName == StartScene) MainMenu.Instance.Open();
-            if (levelName == GameScene) Instantiate(Instance.game);
+        {          
             SceneManager.LoadScene(levelName);
+            if (levelName == StartScene) MainMenu.Instance.Open();
             action?.Invoke();
         }
         else

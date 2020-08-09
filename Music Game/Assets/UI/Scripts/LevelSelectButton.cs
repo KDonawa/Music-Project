@@ -26,7 +26,7 @@ public class LevelSelectButton : MonoBehaviour
     {
         buttonPressedAction?.Invoke(GetComponent<Button>());
         UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonSelect1);   
-        GameManager.Instance.CurrentLevelIndex = levelIndex;
-        SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.CIRCLE_SHRINK, GameManager.Instance.LoadGameScene); 
+        GameManager.CurrentLevelIndex = levelIndex;
+        SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.CIRCLE_SHRINK, GameManager.LoadGameScene); 
     }
 }

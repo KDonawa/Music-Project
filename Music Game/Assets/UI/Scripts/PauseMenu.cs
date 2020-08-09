@@ -62,9 +62,8 @@ public class PauseMenu : Menu<PauseMenu>
     }
     void OnResumePressed()
     {
-        AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);
-        // delay then do...
         GameManager.ChangeGameState(GameState.Running);
+        AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);        
         Close();
     }
     void OnRestartPressed()
@@ -76,8 +75,9 @@ public class PauseMenu : Menu<PauseMenu>
     }
     void OnSettingsPressed()
     {
-        UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.buttonSelect2);
+        //UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.buttonSelect2);
         //SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, SettingsMenu.Open);
+        AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);
         SettingsMenu.Instance.Open();
     }
     void OnExitPressed()

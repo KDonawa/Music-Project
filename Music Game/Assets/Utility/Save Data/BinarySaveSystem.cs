@@ -15,13 +15,13 @@ public static class BinarySaveSystem
     public static void SaveSettings()
     {
         string path = Application.persistentDataPath + settingsfilePath + filePathEnd;
-        SaveData(path, new SettingsData());
+        SaveData(path, new SettingsSaveData());
     }
-    public static SettingsData LoadSettingsData()
+    public static SettingsSaveData LoadSettingsData()
     {       
         string path = Application.persistentDataPath + settingsfilePath + filePathEnd;
         object data = LoadData(path);
-        return data != null ? (SettingsData)data : null;
+        return data != null ? (SettingsSaveData)data : null;
     }
     #endregion
 
@@ -29,28 +29,27 @@ public static class BinarySaveSystem
     public static void SaveStageData()
     {
         string path = Application.persistentDataPath + stageDatafilePath + filePathEnd;
-        SaveData(path, new StageData());
+        SaveData(path, new StageSaveData());
     }
-    public static StageData LoadStageData()
+    public static StageSaveData LoadStageData()
     {
         string path = Application.persistentDataPath + stageDatafilePath + filePathEnd;
         object data = LoadData(path);
-        return data != null ? (StageData)data : null;
+        return data != null ? (StageSaveData)data : null;
     }
     #endregion
 
     #region LEVEL DATA
-    public static void SaveLevelData()
+    public static void SaveLevelData(int stageIndex)
     {
-        int stageIndex = GameManager.Instance.CurrentStageIndex;
         string path = Application.persistentDataPath + stageDatafilePath + stageIndex.ToString() + levelDatafilePath + filePathEnd;
-        SaveData(path, new LevelData());
+        SaveData(path, new LevelSaveData(stageIndex));
     }
-    public static LevelData LoadLevelData(int stageIndex)
+    public static LevelSaveData LoadLevelData(int stageIndex)
     {
         string path = Application.persistentDataPath + stageDatafilePath + stageIndex.ToString() + levelDatafilePath + filePathEnd;
         object data = LoadData(path);
-        return data != null ? (LevelData)data : null;
+        return data != null ? (LevelSaveData)data : null;
     }
     #endregion
 

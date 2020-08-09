@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Test1
   m_EditorClassIdentifier: 
   name: Test 1
-  isUnlocked: 1
-  numUnlockedLevels: 2
+  isUnlocked: 0
+  numPassedLevels: 0
   levels:
   - {fileID: 11400000, guid: 0c0680697f16957439a54f51d3ec069b, type: 2}
   - {fileID: 11400000, guid: 3db40f65d60fcaa428de5b1dd2bd6aec, type: 2}

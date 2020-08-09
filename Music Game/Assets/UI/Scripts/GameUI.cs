@@ -46,11 +46,20 @@ public class GameUI : MonoBehaviour
     {
         //StopAllCoroutines();
         originalDroneTextSize = droneText.fontSize;
+        ShowPauseButton();
         HideTextGUI(levelText);
         HideTextGUI(countdownTextGUI);
         HideDroneText();
         HideGameText();
         HideDebugText();
+    }
+    public void HidePauseButton()
+    {
+        pauseButton.gameObject.SetActive(false);
+    }
+    public void ShowPauseButton()
+    {
+        pauseButton.gameObject.SetActive(true);
     }
     public Button InitGuessButton(string name, string textToDisplay)
     {
@@ -74,7 +83,7 @@ public class GameUI : MonoBehaviour
     }
     IEnumerator CountdownRoutine(int startTime, float delay, System.Action endOfCountdownDelegate)
     {
-        yield return new WaitForSeconds(1f); // this delay is needed for smoother start
+        yield return new WaitForSeconds(0.5f); // this delay is needed for smoother start
         ShowTextGUI(countdownTextGUI);
         while (startTime > 0)
         {
@@ -103,7 +112,7 @@ public class GameUI : MonoBehaviour
     }
     public IEnumerator DisplayCurrentLevelRoutine()
     {
-        levelText.text = string.Concat("Level ", GameManager.Instance.CurrentLevelIndex.ToString());
+        levelText.text = string.Concat("Level ", GameManager.CurrentLevelIndex.ToString());
         ShowTextGUI(levelText);
 
         yield return new WaitForSeconds(2f);
