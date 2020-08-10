@@ -88,7 +88,7 @@ public class GameUI : MonoBehaviour
         while (startTime > 0)
         {
             countdownTextGUI.text = startTime.ToString();
-            AudioManager.PlaySound(AudioManager.countdown, SoundType.UI);
+            AudioManager.PlaySound(AudioManager.countdown, SoundType.SFX);
             yield return new WaitForSeconds(delay);
             startTime--;
         }
@@ -117,7 +117,7 @@ public class GameUI : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        AudioManager.PlaySound(AudioManager.swoosh1, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.swoosh1, SoundType.SFX);
         UIAnimator.ShrinkToNothing(levelText.rectTransform, 0.5f);
         yield return new WaitForSeconds(0.5f);
     }
@@ -156,7 +156,7 @@ public class GameUI : MonoBehaviour
     void HideTextGUI(TextMeshProUGUI textGUI) => ShowTextGUI(textGUI, false);
     void OnPausePressed()
     {
-        AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.SFX);
         //Time.timeScale = 0f;
         GameManager.ChangeGameState(GameState.Paused);
         //Game.PauseGame();

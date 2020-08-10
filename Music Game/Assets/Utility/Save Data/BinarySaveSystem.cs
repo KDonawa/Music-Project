@@ -6,10 +6,25 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public static class BinarySaveSystem
 {
+    private const string gamefilePath = "/game";
     private const string settingsfilePath = "/settings";
     private const string stageDatafilePath = "/stage";
     private const string levelDatafilePath = "levels";
     private const string filePathEnd = ".sav";
+
+    #region GAME DATA
+    public static void SaveGameData()
+    {
+        string path = Application.persistentDataPath + gamefilePath + filePathEnd;
+        SaveData(path, new GameSaveData());
+    }
+    public static GameSaveData LoadGameData()
+    {
+        string path = Application.persistentDataPath + gamefilePath + filePathEnd;
+        object data = LoadData(path);
+        return data != null ? (GameSaveData)data : null;
+    }
+    #endregion
 
     #region SETTINGS
     public static void SaveSettings()

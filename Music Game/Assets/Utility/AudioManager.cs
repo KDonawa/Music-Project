@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-//using UnityEngine.Audio;
+using UnityEngine.Audio;
 
 public enum SoundType
 {
-    UI,
+    NONE,
+    SFX,
     DRONE,
     INSTRUMENT,
 }
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    
+
+    [SerializeField] AudioMixer audioMixer = null;
+    [SerializeField] AudioMixerGroup droneMixerGroup = null;
+    [SerializeField] AudioMixerGroup instrumentMixerGroup = null;
+    [SerializeField] AudioMixerGroup sfxMixerGroup = null;
+
 
     [SerializeField] Sound[] uiSounds = null;
     [SerializeField] Sound[] droneSounds = null;
@@ -46,19 +54,17 @@ public class AudioManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
 
             //audioSources = new List<AudioSource>();
-
-            foreach (var sound in uiSounds) AddAudioSource(sound);
-            foreach (var sound in droneSounds) AddAudioSource(sound);
-            foreach (var sound in harmoniumSounds) AddAudioSource(sound);
+            //sfxMixerGroup.audioMixer.SetFloat();
+            
+            foreach (var sound in uiSounds) AddAudioSource(sound, sfxMixerGroup);
+            foreach (var sound in droneSounds) AddAudioSource(sound, droneMixerGroup);
+            foreach (var sound in harmoniumSounds) AddAudioSource(sound, instrumentMixerGroup);
         }
     }
-    void AddAudioSource(Sound sound)
+    void AddAudioSource(Sound sound, AudioMixerGroup mixerGroup)
     {
         if (sound == null) return;
-        //AudioSource source = new AudioSource();
-        //audioSources.Add(source);
-        //sound.InitializeAudioSource(source);
-        sound.InitializeAudioSource(gameObject.AddComponent<AudioSource>());
+        sound.InitializeAudioSource(gameObject.AddComponent<AudioSource>(), mixerGroup);
     }
     private void OnDestroy()
     {
@@ -68,22 +74,40 @@ public class AudioManager : MonoBehaviour
             //audioSources.Clear();
         }
     }
-    #endregion   
-    
+    #endregion
+
     #region UTILITY
+    public static void SetVolume(SoundType soundType, float volume)
+    {
+        volume = 20f * Mathf.Log10(volume);
+        switch (soundType)
+        {
+            case SoundType.NONE:
+                Instance.audioMixer.SetFloat("masterVolume", volume);
+                break;
+            case SoundType.SFX:
+                Instance.audioMixer.SetFloat("sfxVolume", volume);
+                break;
+            case SoundType.DRONE:
+                Instance.audioMixer.SetFloat("droneVolume", volume);
+                break;
+            case SoundType.INSTRUMENT:
+                Instance.audioMixer.SetFloat("instrumentVolume", volume);
+                break;
+            default:
+                break;
+        }
+    }
     public static void PlaySound(string name, SoundType soundType, bool canPlay = true)
     {
-        Sound sound = Instance.FindSound(name, soundType);        
+        Sound sound = Instance.FindSound(name, soundType);    
         if (sound != null)
         {
             if(canPlay) sound.Source.Play();
             else sound.Source.Stop();
         }
     }
-    public static void StopSound(string name, SoundType soundType)
-    {
-        PlaySound(name, soundType, false);
-    }
+    public static void StopSound(string name, SoundType soundType) => PlaySound(name, soundType, false);
     public static void PauseSound(string name, SoundType soundType, bool isPausing = true)
     {
         Sound sound = Instance.FindSound(name, soundType);
@@ -133,7 +157,7 @@ public class AudioManager : MonoBehaviour
     {
         switch (soundType)
         {
-            case SoundType.UI: return Array.Find(uiSounds, s => s.name == name);
+            case SoundType.SFX: return Array.Find(uiSounds, s => s.name == name);
             case SoundType.DRONE: return Array.Find(droneSounds, s => s.name == name);
             case SoundType.INSTRUMENT: return FindInstrumentSound(name);
             default: return null;

@@ -118,7 +118,7 @@ public class GameUtility : MonoBehaviour
     {
         //UIAnimator.SetButtonColor(b, Color.black);
         DisplayButton(b, canEnable);
-        if(playSound) AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+        if(playSound) AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.SFX);
     }  
     public void HideButtons(List<Button> buttonsList)
     {

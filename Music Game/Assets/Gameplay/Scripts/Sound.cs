@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 [CreateAssetMenu(menuName ="Sound")]
 public class Sound : ScriptableObject
@@ -13,13 +14,14 @@ public class Sound : ScriptableObject
 
     [HideInInspector] public AudioSource Source { get; private set; }
 
-    public void InitializeAudioSource(AudioSource source)
+    public void InitializeAudioSource(AudioSource source, AudioMixerGroup mixerGroup)
     {
         Source = source; // might need to check if it already has one first
         source.clip = audioClip;
         source.volume = volume;
         source.pitch = pitch;
         source.loop = canLoop;
+        source.outputAudioMixerGroup = mixerGroup;
     }
 
     public void RemoveAudioSource()

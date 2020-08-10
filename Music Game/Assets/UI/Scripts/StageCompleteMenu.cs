@@ -37,18 +37,18 @@ public class StageCompleteMenu : Menu<StageCompleteMenu>
 
     IEnumerator DisplayMenuRoutine()
     {
-        AudioManager.PlaySound(AudioManager.stageComplete, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.stageComplete, SoundType.SFX);
 
         yield return new WaitForSeconds(2f);
 
         Instance.homeButton.gameObject.SetActive(true);
-        AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.SFX);
         yield return new WaitForSeconds(0.2f);
 
         if (!GameManager.IsFinalStage())
         {
             Instance.nextButton.gameObject.SetActive(true);
-            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.SFX);
         }       
     }
 

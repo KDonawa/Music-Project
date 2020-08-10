@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class Test : MonoBehaviour
 {
     Button b;
+    [SerializeField] AudioMixer audioMixer = null;
     [SerializeField] Test_SO testSO = null;
 
     private void Awake()
@@ -28,5 +30,6 @@ public class Test : MonoBehaviour
         //UITransition.CrossFade(2f);
         //UIAnimator.FlashButtonColor(b, Color.white, 0.5f);
         testSO.DoSomething();
+        audioMixer.SetFloat("sfxVolume", -40f);
     }
 }

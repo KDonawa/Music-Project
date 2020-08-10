@@ -87,7 +87,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         // set header text
         if(isLevelPassed) winText.gameObject.SetActive(true);
         else loseText.gameObject.SetActive(true);
-        if (isLevelPassed) AudioManager.PlaySound(AudioManager.success, SoundType.UI);
+        if (isLevelPassed) AudioManager.PlaySound(AudioManager.success, SoundType.SFX);
         yield return new WaitForSeconds(1f);
 
         // set final score text routine     
@@ -99,7 +99,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         int increaingScore = 0;
         int counter = 0;
         int updateFrequency = 2;
-        AudioManager.PlaySound(AudioManager.finalScoreUpdate, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.finalScoreUpdate, SoundType.SFX);
         while (increaingScore <= finalScore)
         {
             if (counter % updateFrequency == 0)
@@ -110,7 +110,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
             counter++;
             yield return null;
         }
-        AudioManager.StopSound(AudioManager.finalScoreUpdate, SoundType.UI);
+        AudioManager.StopSound(AudioManager.finalScoreUpdate, SoundType.SFX);
         yield return new WaitForSeconds(0.5f);
 
 
@@ -120,13 +120,13 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         for (int i = 0; i < numStars; i++)
         {
             stars[i].gameObject.SetActive(true);
-            AudioManager.PlaySound(AudioManager.starDisplay, SoundType.UI);
+            AudioManager.PlaySound(AudioManager.starDisplay, SoundType.SFX);
             yield return new WaitForSeconds(0.5f);
         }
         if (numStars == 3)
         {
             badgeIcon.gameObject.SetActive(true);
-            AudioManager.PlaySound(AudioManager.badgeDisplay, SoundType.UI);
+            AudioManager.PlaySound(AudioManager.badgeDisplay, SoundType.SFX);
         }
         yield return new WaitForSeconds(1f);
 
@@ -142,19 +142,19 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
         {
             homeButton.gameObject.SetActive(true);
             homeButton.interactable = false;
-            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.SFX);
             yield return new WaitForSeconds(0.2f);
 
             restartButton.gameObject.SetActive(true);
             restartButton.interactable = false;
-            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+            AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.SFX);
             yield return new WaitForSeconds(0.2f);
 
             if (isLevelPassed && !GameManager.IsFinalLevel())
             {
                 //GameManager.Instance.UnlockNextLevel();
                 nextLevelButton.gameObject.SetActive(true);
-                AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.UI);
+                AudioManager.PlaySound(AudioManager.buttonLoad1, SoundType.SFX);
             }
 
             homeButton.interactable = true;

@@ -55,8 +55,7 @@ public class GameManager : MonoBehaviour
 
     GameState currentState;
 
-    [Header("Testing")]
-    [SerializeField] bool resetData = false;
+    public bool isNewGame = true;
 
 
     #region GAME STATE
@@ -92,20 +91,23 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            if (resetData) ResetSaveData();
-
+            GameSaveData data = BinarySaveSystem.LoadGameData();
+            if (data != null) isNewGame = data.isNewGame;
+            else isNewGame = true;
+            
             currentState = GameState.Running;
 
             Instantiate(menuManager);
             Instantiate(audioManager);
             Instantiate(sceneTransition);
             Instantiate(uiAnimator);
-            if (GetCurrentSceneName() == GameScene) Instantiate(game);
+
+            if (GetCurrentSceneName() == GameScene) Instantiate(game); // for testing
+            
         }      
     }
     private void Start()
     {
-        //Debug.Log("test");
         SceneManager.sceneLoaded += OnSceneLoaded;
         Game.LevelPassedEvent += UnlockNextStage;
         Game.LevelPassedEvent += UnlockNextLevel;
@@ -125,20 +127,16 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region SAVE DATA
-    public static void ResetSaveData()
+
+    public static void ResetStageAndLevelData()
     {
-        Instance.ResetStageAndLevelData();
-        Instance.ResetSettingsData();
-    }
-    void ResetStageAndLevelData()
-    {
-        for (int i = 0; i < stages.Length; i++)
+        for (int i = 0; i < Instance.stages.Length; i++)
         {
-            if (stages[i] != null)
+            if (Instance.stages[i] != null)
             {
-                stages[i].isUnlocked = false;
-                stages[i].numPassedLevels = 0;                
-                ResetLevelData(stages[i], i + 1);
+                Instance.stages[i].isUnlocked = false;
+                Instance.stages[i].numPassedLevels = 0;
+                Instance.ResetLevelData(Instance.stages[i], i + 1);
             }
         }
         BinarySaveSystem.SaveStageData();
@@ -157,14 +155,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    void ResetSettingsData()
-    {
-        SettingsMenu.Slider1.value = 0.5f;
-        SettingsMenu.Slider1.value = 0.5f;
-        SettingsMenu.Slider1.value = 0.5f;
-
-        BinarySaveSystem.SaveSettings();
-    }
+    
 
     #endregion
 

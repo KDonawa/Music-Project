@@ -17,6 +17,10 @@ public class MenuManagerUpdated : MonoBehaviour
 
         DontDestroyOnLoad(_instance);
 
+        
+    }
+    private void Start()
+    {
         InitializeMenus();
     }
 
@@ -30,14 +34,16 @@ public class MenuManagerUpdated : MonoBehaviour
         {
             if(menu != null)
             {               
-                Menu newMenu = Instantiate(menu, transform);
-                //newMenu.Init()
-                newMenu.gameObject.SetActive(false);
+                Menu newMenu = Instantiate(menu, transform);                
                 menus.Add(newMenu);
 
                 if (menu is MainMenu && GameManager.GetCurrentSceneName() == GameManager.StartScene)
                 {
                     OpenMenu(newMenu);
+                }
+                else
+                {
+                    newMenu.gameObject.SetActive(false);
                 }
             }            
         }

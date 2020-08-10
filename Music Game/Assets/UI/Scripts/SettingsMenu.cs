@@ -9,6 +9,7 @@ public class SettingsMenu : Menu<SettingsMenu>
     [SerializeField] Slider slider1 = null;
     [SerializeField] Slider slider2 = null;
     [SerializeField] Slider slider3 = null;
+    [SerializeField] Slider slider4 = null;
 
     [Header("Buttons")]
     [SerializeField] Button backButton = null;
@@ -17,6 +18,7 @@ public class SettingsMenu : Menu<SettingsMenu>
     public static Slider Slider1 => Instance.slider1;
     public static Slider Slider2 => Instance.slider2;
     public static Slider Slider3 => Instance.slider3;
+    public static Slider Slider4 => Instance.slider4;
 
     protected override void Awake()
     {
@@ -24,11 +26,29 @@ public class SettingsMenu : Menu<SettingsMenu>
 
         if (backButton == null) Debug.LogError("No reference to Back button");
         else backButton.onClick.AddListener(BackPressed);
+
+        slider1.onValueChanged.AddListener((value) => AudioManager.SetVolume(SoundType.NONE, slider1.value));
+        slider2.onValueChanged.AddListener((value) => AudioManager.SetVolume(SoundType.DRONE, slider2.value));
+        slider3.onValueChanged.AddListener((value) => AudioManager.SetVolume(SoundType.INSTRUMENT, slider3.value));
+        slider4.onValueChanged.AddListener((value) => AudioManager.SetVolume(SoundType.SFX, slider4.value));
+
+        LoadData();
     }
-    private void Start()
+    public override void Open()
     {
-        LoadData();        
+        LoadData();
+        base.Open();
     }
+    public static void ResetSettingsData()
+    {
+        Instance.slider1.value = 1f;
+        Instance.slider2.value = 1f;
+        Instance.slider3.value = 1f;
+        Instance.slider4.value = 1f;
+
+        BinarySaveSystem.SaveSettings();
+    }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -38,8 +58,6 @@ public class SettingsMenu : Menu<SettingsMenu>
     void BackPressed()
     {
         BinarySaveSystem.SaveSettings();
-
-        
 
         ReturnToPreviousMenu();
     }
@@ -52,18 +70,21 @@ public class SettingsMenu : Menu<SettingsMenu>
         }
         else if(GameManager.GetCurrentSceneName() == GameManager.GameScene)
         {
-            AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.UI);
+            AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.SFX);
             PauseMenu.Instance.Open();
         }
     }
-    void LoadData()
+
+    public static void LoadData()
     {
         SettingsSaveData data = BinarySaveSystem.LoadSettingsData();
         if(data != null)
         {
-            slider1.value = data.value1;
-            slider2.value = data.value2;
-            slider3.value = data.value3;
+            Instance.slider1.value = data.value1;
+            Instance.slider2.value = data.value2;
+            Instance.slider3.value = data.value3;
+            Instance.slider4.value = data.value4;
         }
+        //SetVolume();
     }
 }

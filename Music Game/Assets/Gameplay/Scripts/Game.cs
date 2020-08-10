@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 /*
-    TODO:    
-    -new game and continue game buttons on main menu (continue game is greyed out if no save data)
-    -audio mixer   
-    -remove audio source from each sound file and just have sources for sound types: SFX, drone, note
+    TODO:       
+    -make transitions darker
+    -fade out is ambiguous - it's hard to tell when effect ends. either fix or remove
+    -update splash screen: welcome to the Hindustani classical music ear trainer!\n press to continue..
+    -new game button (when not new game) needs to have a confirm popup saying "Game data will be reset. Are you sure?" : Y/N
+        -will be a popup ui attached to the main menu ui
+    -put the new sound files in
     -button loads expand in
     -buttons not selected turn off or shrink
     -wrong guess camera shake    
@@ -259,7 +262,7 @@ public class Game : MonoBehaviour
     {
         _utility.DisableButtons(guessButtons);
 
-        AudioManager.PlaySound(AudioManager.timerExpired, SoundType.UI);
+        AudioManager.PlaySound(AudioManager.timerExpired, SoundType.SFX);
 
         yield return new WaitForSeconds(1f);
         _utility.HideButtons(guessButtons);

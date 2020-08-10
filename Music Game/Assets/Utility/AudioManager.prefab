@@ -43,6 +43,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 326b81f3c1af5e64bad927244516642c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: 1c6a53e19c3bedc46822067f5f0092d3, type: 2}
+  droneMixerGroup: {fileID: -3186091374690178903, guid: 1c6a53e19c3bedc46822067f5f0092d3,
+    type: 2}
+  instrumentMixerGroup: {fileID: 8696330555250007531, guid: 1c6a53e19c3bedc46822067f5f0092d3,
+    type: 2}
+  sfxMixerGroup: {fileID: -3309796242142646380, guid: 1c6a53e19c3bedc46822067f5f0092d3,
+    type: 2}
   uiSounds:
   - {fileID: 11400000, guid: 9500f4a4d6bf37f4ab431758a7872ec6, type: 2}
   - {fileID: 11400000, guid: 6d401dfd47394f04ebe9993bc4c2f3c5, type: 2}

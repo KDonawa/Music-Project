@@ -43,7 +43,7 @@ public class UIAnimator : MonoBehaviour
     {
         if (b == null) return;
         ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
-        AudioManager.PlaySound(soundEffect, SoundType.UI);
+        AudioManager.PlaySound(soundEffect, SoundType.SFX);
     }
     /// impact effect. Set button text color 
     public static void ButtonPressEffect2(Button b, string soundEffect, Color effectColor)
@@ -51,7 +51,7 @@ public class UIAnimator : MonoBehaviour
         if (b == null) return;
         ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
         SetButtonTextColor(b, effectColor);
-        AudioManager.PlaySound(soundEffect, SoundType.UI);
+        AudioManager.PlaySound(soundEffect, SoundType.SFX);
     }
     /// impact effect. Flash button color white
     public static void ButtonPressEffect3(Button b, string soundEffect)
@@ -64,7 +64,7 @@ public class UIAnimator : MonoBehaviour
         if (b == null) return;
         ShrinkAndExpand(b.GetComponent<RectTransform>(), 0.9f, 0.3f);
         FlashButtonColor(b, effectColor, .3f);
-        AudioManager.PlaySound(soundEffect, SoundType.UI);
+        AudioManager.PlaySound(soundEffect, SoundType.SFX);
     }
     #endregion
 

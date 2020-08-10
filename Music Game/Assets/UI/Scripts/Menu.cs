@@ -23,7 +23,7 @@ public abstract class Menu<T> : Menu where T : Menu<T>
 
 
     public virtual void Open()
-    {
+    {       
         MenuManagerUpdated.OpenMenu(Instance);
     }
     public virtual void Close()
