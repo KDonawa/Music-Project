@@ -109,6 +109,6 @@ public class StageSelectMenu : Menu<StageSelectMenu>
     void MainMenuPressed()
     {
         UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
-        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.CIRCLE_SHRINK, MainMenu.Instance.Open);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, MainMenu.Instance.Open);
     }
 }

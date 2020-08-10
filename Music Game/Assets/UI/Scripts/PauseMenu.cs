@@ -50,7 +50,7 @@ public class PauseMenu : Menu<PauseMenu>
         GameManager.ChangeGameState(GameState.Running);
         UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
         Game.Stop();
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene());
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, () => GameManager.LoadStartScene());
     }
     void OnStageSelectPressed()
     {
@@ -58,7 +58,7 @@ public class PauseMenu : Menu<PauseMenu>
         UIAnimator.ButtonPressEffect3(stageSelectButton, AudioManager.buttonSelect2);
         Game.Stop();
         SceneTransitions.PlayTransition
-            (InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene(StageSelectMenu.Instance.Open));
+            (InTransition.CIRCLE_EXPAND, OutTransition.OPEN_HORIZONTAL, () => GameManager.LoadStartScene(StageSelectMenu.Instance.Open));
     }
     void OnResumePressed()
     {
@@ -71,12 +71,10 @@ public class PauseMenu : Menu<PauseMenu>
         GameManager.ChangeGameState(GameState.Running);
         UIAnimator.ButtonPressEffect3(restartButton, AudioManager.buttonSelect1);
         Game.Stop();
-        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, Game.Play);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, Game.Play);
     }
     void OnSettingsPressed()
     {
-        //UIAnimator.ButtonPressEffect3(settingsButton, AudioManager.buttonSelect2);
-        //SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, SettingsMenu.Open);
         AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.SFX);
         SettingsMenu.Instance.Open();
     }
@@ -86,6 +84,6 @@ public class PauseMenu : Menu<PauseMenu>
         UIAnimator.ButtonPressEffect3(exitButton, AudioManager.buttonSelect2);
         Game.Stop();
         SceneTransitions.PlayTransition
-            (InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_UP, () => GameManager.LoadStartScene(LevelSelectMenu.Instance.Open));        
+            (InTransition.CIRCLE_EXPAND, OutTransition.OPEN_VERTICAL, () => GameManager.LoadStartScene(LevelSelectMenu.Instance.Open));        
     }
 }

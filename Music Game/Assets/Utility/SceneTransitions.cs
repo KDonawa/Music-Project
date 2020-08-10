@@ -89,32 +89,32 @@ public class SceneTransitions : MonoBehaviour
                 yield return _instance.StartCoroutine(FadeInRoutine(duration, fadeCG));
                 break;
             case InTransition.CLOSE_VERTICAL:
-                _instance.StartCoroutine(FadeInRoutine(duration, closeOpenCG));
-                yield return _instance.StartCoroutine(CloseRoutine(CloseVertically, duration));
+                _instance.StartCoroutine(CloseRoutine(CloseVertically, duration));                
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, closeOpenCG));
                 break;
             case InTransition.CLOSE_HORIZONTAL:
-                _instance.StartCoroutine(FadeInRoutine(duration, closeOpenCG));
-                yield return _instance.StartCoroutine(CloseRoutine(CloseHorizontally, duration));
+                _instance.StartCoroutine(CloseRoutine(CloseHorizontally, duration));             
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, closeOpenCG));
                 break;
             case InTransition.CIRCLE_EXPAND:
-                //_instance.StartCoroutine(FadeInRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleExpandRoutine(duration));
+                _instance.StartCoroutine(CircleExpandRoutine(duration));
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, circleCG));                 
                 break;
             case InTransition.CIRCLE_WIPE_LEFT:
-                //_instance.StartCoroutine(FadeInRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.left));
+                _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.left));
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, circleCG));
                 break;
             case InTransition.CIRCLE_WIPE_RIGHT:
-               // _instance.StartCoroutine(FadeInRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.right));
+                _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.right)); 
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, circleCG));
                 break;
             case InTransition.CIRCLE_WIPE_UP:
-                //_instance.StartCoroutine(FadeInRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.up));
+                _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.up));
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, circleCG));
                 break;
             case InTransition.CIRCLE_WIPE_DOWN:
-                //_instance.StartCoroutine(FadeInRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.down));
+                _instance.StartCoroutine(CircleWipeInRoutine(duration, Vector2.down));
+                yield return _instance.StartCoroutine(FadeInRoutine(duration, circleCG));
                 break;
             default:
                 break;
@@ -160,24 +160,24 @@ public class SceneTransitions : MonoBehaviour
                 yield return _instance.StartCoroutine(OpenRoutine(OpenHorizontally, duration));
                 break;
             case OutTransition.CIRCLE_SHRINK:
-                //_instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleShrinkRoutine(duration));
+                _instance.StartCoroutine(CircleShrinkRoutine(duration));
+                yield return _instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
                 break;
             case OutTransition.CIRCLE_WIPE_LEFT:
-                //_instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.left));
+                _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.left));
+                yield return _instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
                 break;
             case OutTransition.CIRCLE_WIPE_RIGHT:
-                //_instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.right));
+                _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.right));
+                yield return _instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
                 break;
             case OutTransition.CIRCLE_WIPE_UP:
-                //_instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.up));
+                _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.up));
+                yield return _instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
                 break;
             case OutTransition.CIRCLE_WIPE_DOWN:
-                //_instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
-                yield return _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.down));
+                _instance.StartCoroutine(CircleWipeOutRoutine(duration, Vector2.down));
+                yield return _instance.StartCoroutine(FadeOutRoutine(duration, circleCG));
                 break;
             default:
                 break;
@@ -189,16 +189,6 @@ public class SceneTransitions : MonoBehaviour
     #region IN TRANSITIONS
     IEnumerator FadeInRoutine(float duration, CanvasGroup cg)
     {
-        //inTransitonCG = fadeCG;
-        //fadeCG.alpha = 0f;
-
-        //float lerp = 1 / duration;
-        //while (fadeCG.alpha < 1f)
-        //{
-        //    fadeCG.alpha += Time.deltaTime * lerp;
-        //    yield return null;
-        //}
-
         inTransitonCG = cg;
         cg.alpha = 0f;
 
@@ -286,16 +276,6 @@ public class SceneTransitions : MonoBehaviour
     IEnumerator FadeOutRoutine(float duration, CanvasGroup cg)
     {
         if (inTransitonCG != null) inTransitonCG.alpha = 0f;
-
-        //fadeCG.alpha = 1f;
-
-        //float lerp = 1 / duration;
-        //while (fadeCG.alpha > 0f)
-        //{
-        //    fadeCG.alpha -= Time.deltaTime * lerp;
-        //    yield return null;
-        //}
-        //_instance.fadeCG.alpha = 0f;
 
         cg.alpha = 1f;
 

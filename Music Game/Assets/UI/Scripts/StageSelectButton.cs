@@ -23,6 +23,6 @@ public class StageSelectButton : MonoBehaviour
         UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonSelect1);
         buttonPressedAction?.Invoke(GetComponent<Button>());
         GameManager.CurrentStageIndex = stage;
-        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, LevelSelectMenu.Instance.Open);
+        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_VERTICAL, LevelSelectMenu.Instance.Open);
     }
 }

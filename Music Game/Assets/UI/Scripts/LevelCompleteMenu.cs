@@ -173,7 +173,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
     void OnHomeButtonPressed()
     {
         UIAnimator.ButtonPressEffect3(homeButton, AudioManager.buttonSelect2);
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.CIRCLE_WIPE_LEFT, 
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_UP, OutTransition.OPEN_VERTICAL, 
             () => GameManager.LoadStartScene(LevelSelectMenu.Instance.Open));
     }
     void OnRestartPressed()
@@ -182,7 +182,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 
         Game.Stop();
 
-        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, Game.Play);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_EXPAND, OutTransition.FADE_OUT, Game.Play);
     }
     void OnNextLevelPressed()
     {

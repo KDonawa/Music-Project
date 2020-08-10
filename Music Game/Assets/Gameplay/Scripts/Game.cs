@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 /*
     TODO:       
-    -make transitions darker
-    -fade out is ambiguous - it's hard to tell when effect ends. either fix or remove
-    -update splash screen: welcome to the Hindustani classical music ear trainer!\n press to continue..
     -new game button (when not new game) needs to have a confirm popup saying "Game data will be reset. Are you sure?" : Y/N
         -will be a popup ui attached to the main menu ui
     -put the new sound files in
@@ -15,6 +12,7 @@ using UnityEngine.UI;
     -wrong guess camera shake    
     -instrument select screen
     -make transitions where the buttons fly off the screen
+    -namespaces
 */
 [RequireComponent(typeof(GameUtility))]
 public class Game : MonoBehaviour

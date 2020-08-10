@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     [Header("Prefabs")]
+    [SerializeField] WelcomeScreen welcomeScreen = null;
     [SerializeField] MenuManagerUpdated menuManager = null;
     [SerializeField] AudioManager audioManager = null;
     [SerializeField] SceneTransitions sceneTransition = null;
@@ -50,8 +51,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] string droneNote = "C4";
     [SerializeField] InstrumentType instrument = InstrumentType.HARMONIUM;
 
-    public const string StartScene = "MenuScene";
+    public const string StartScene = "StartScene";
     public const string GameScene = "GameScene";
+    public const string WelcomeScene = "WelcomeScene";
 
     GameState currentState;
 
@@ -102,6 +104,14 @@ public class GameManager : MonoBehaviour
             Instantiate(sceneTransition);
             Instantiate(uiAnimator);
 
+            if(GetCurrentSceneName() == WelcomeScene)
+            {
+                WelcomeScreen newWelcomescreen = Instantiate(welcomeScreen);
+                newWelcomescreen.gameObject.SetActive(false);
+                SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, 
+                    () => newWelcomescreen.gameObject.SetActive(true));
+
+            }
             if (GetCurrentSceneName() == GameScene) Instantiate(game); // for testing
             
         }      
@@ -127,7 +137,12 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region SAVE DATA
-
+    public static void StartNewGame()
+    {
+        Instance.isNewGame = false;
+        BinarySaveSystem.SaveGameData();
+        ResetStageAndLevelData();
+    }
     public static void ResetStageAndLevelData()
     {
         for (int i = 0; i < Instance.stages.Length; i++)

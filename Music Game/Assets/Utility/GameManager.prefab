@@ -43,6 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0231aac68032f4bab82093b03fb7bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  welcomeScreen: {fileID: 4829036730129053888, guid: 0ee8d870889984148b4a3a44c4c7994f,
+    type: 3}
   menuManager: {fileID: 3427400166071824819, guid: b952b2a40fa2c5540afef79bca64eff5,
     type: 3}
   audioManager: {fileID: 8758347865857615345, guid: 87af7a9f90d0b884586124bffb3dc038,

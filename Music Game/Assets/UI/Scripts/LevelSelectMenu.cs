@@ -103,12 +103,12 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     void MainMenuPressed()
     {
         UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
-        SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.OPEN_HORIZONTAL, MainMenu.Instance.Open);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, MainMenu.Instance.Open);
     }
     void BackPressed()
     {
         UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_LEFT, OutTransition.CIRCLE_WIPE_LEFT, StageSelectMenu.Instance.Open);
+        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, StageSelectMenu.Instance.Open);
     }
     
 }
