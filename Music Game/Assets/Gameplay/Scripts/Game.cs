@@ -4,11 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 /*
     TODO:       
-    -new game button (when not new game) needs to have a confirm popup saying "Game data will be reset. Are you sure?" : Y/N
-        -will be a popup ui attached to the main menu ui
-    -put the new sound files in
     -button loads expand in
-    -buttons not selected turn off or shrink
     -wrong guess camera shake    
     -instrument select screen
     -make transitions where the buttons fly off the screen
@@ -139,7 +135,7 @@ public class Game : MonoBehaviour
 
         yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());
         yield return new WaitForSeconds(0.5f);
-        _gameUI.StartCountdown(countdownTime, 0.8f, PlayGameLoop);
+        _gameUI.StartCountdown(countdownTime, 0.75f, PlayGameLoop);
     }
     void PlayGameLoop()
     {      
@@ -153,40 +149,51 @@ public class Game : MonoBehaviour
     }
     IEnumerator PlayGameLoopRoutine()
     {
-        yield return new WaitForSeconds(0.5f);
-
+        
         // Play Intro
         if (playIntro)
         {
+            yield return new WaitForSeconds(1f);
+
+            _gameUI.DisplayDroneText("Drone: " + droneNote);
+            _gameUI.DisplayGameText("Playing Intro");
+            yield return new WaitForSeconds(0.5f);
+
             for (int i = 0; i < currentNotes.Count; i++)
             {
                 Button b = guessButtons[i];
                 _utility.LoadButton(b, false, false);
-                yield return new WaitForSeconds(0.5f);
+                //yield return new WaitForSeconds(0.5f);
+                PlayInstrumentNote(_utility.GetWesternNotation(currentNotes[i], droneNote));
+                //AudioManager.PlaySound(_utility.GetWesternNotation(currentNotes[i], droneNote), SoundType.INSTRUMENT);
+                yield return new WaitForSeconds(0.3f);
+                UIAnimator.FlashButtonColor(b, Color.white, 2f);
 
-                UIAnimator.FlashButtonColor(b, Color.magenta, 2f);
-                AudioManager.PlaySound(_utility.GetWesternNotation(currentNotes[i], droneNote), SoundType.INSTRUMENT);
-
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(1.5f);
+                StopInstrumentNote(_utility.GetWesternNotation(currentNotes[i], droneNote));
             }
+            yield return new WaitForSeconds(0.5f);
+            _gameUI.HideGameText();
+            _gameUI.HideDroneText();            
             _utility.HideButtons(guessButtons);
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
 
         // Play Notes
         StartCoroutine(PlayNotesRoutine());
     }
     IEnumerator PlayNotesRoutine()
     {
-        // drone effects
-        _gameUI.DisplayDroneText("Drone: " + droneNote); 
-        yield return new WaitForSeconds(1f);
+        _gameUI.DisplayDroneText("Drone: " + droneNote);
+        AudioManager.PlaySound(droneNote, SoundType.DRONE);
+        yield return new WaitForSeconds(0.5f);
         PlayDroneNoteEffect();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3.5f);
 
-        // game messages
-        _gameUI.DisplayGameText("Playing Notes");
+        string plurality = numGuessesPerRound > 1 ? " Notes" : " Note";
+        _gameUI.DisplayGameText("Playing " + numGuessesPerRound + plurality);
+        StartCoroutine(_utility.LoadButtonsRoutine(guessButtons, 0.2f, false));
 
         // play each note consecutively
         for (int i = 0; i < numGuessesPerRound; i++)
@@ -194,19 +201,17 @@ public class Game : MonoBehaviour
             string note = currentNotes[UnityEngine.Random.Range(0, currentNotes.Count)];
             answers.Add(note);
             PlayInstrumentNote(_utility.GetWesternNotation(note, droneNote));
-            _gameUI.DisplayDebugText(_utility.GetNoteFormatted(note)); // testing
+            //_gameUI.DisplayDebugText(_utility.GetNoteFormatted(note)); // testing
 
-            yield return new WaitForSeconds(2.5f);
+            yield return new WaitForSeconds(1.5f);
             StopInstrumentNote(_utility.GetWesternNotation(note, droneNote));
         }
-
+        
+        yield return new WaitForSeconds(0.5f);
         StopDroneNoteEffect();
         _gameUI.HideGameText();
         _gameUI.HideDroneText();
-        yield return new WaitForSeconds(1f);
 
-        // display guess options
-        yield return StartCoroutine(_utility.LoadButtonsRoutine(guessButtons, 0.2f, false));
         _utility.EnableButtons(guessButtons);
         _timer.StartGuessTimer();
     }
@@ -247,8 +252,8 @@ public class Game : MonoBehaviour
         BinarySaveSystem.SaveLevelData(GameManager.CurrentStageIndex);
         BinarySaveSystem.SaveStageData();
 
-        yield return new WaitForSeconds(1f);
-        LevelCompleteMenu.DisplayMenu(finalScore, currentLevel.isPassed, numStars);
+        yield return new WaitForSeconds(2f);
+        LevelCompleteMenu.DisplayMenu(finalScore, IsLevelPassed(), numStars);
     }
     public bool HasLevelEnded() => currentSubLevelIndex == currentLevel.subLevels.Length;
     public bool IsLevelPassed() => _scoreSystem.FinalScorePercentage() >= levelPassPercentage;
@@ -310,11 +315,11 @@ public class Game : MonoBehaviour
     void StopInstrumentNote(string note)
     {
         activeNoteSounds.Remove(note);
-        AudioManager.StopSound(note, SoundType.INSTRUMENT);
+        //AudioManager.StopSound(note, SoundType.INSTRUMENT);
     }
     void PlayDroneNoteEffect()
     {
-        AudioManager.PlaySound(droneNote, SoundType.DRONE);
+        //AudioManager.PlaySound(droneNote, SoundType.DRONE);
         _gameUI.PulseDroneText();
     }
     void StopDroneNoteEffect()

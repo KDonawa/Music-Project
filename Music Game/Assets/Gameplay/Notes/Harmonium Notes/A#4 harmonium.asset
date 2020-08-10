@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A#4 harmonium
   m_EditorClassIdentifier: 
   name: A#4
-  audioClip: {fileID: 0}
+  audioClip: {fileID: 8300000, guid: d65aa314f49e18d4680a3a66056e5d31, type: 3}
   volume: 0.6
   pitch: 1
   canLoop: 0

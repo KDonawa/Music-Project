@@ -98,7 +98,7 @@ public class LevelCompleteMenu : Menu<LevelCompleteMenu>
 
         int increaingScore = 0;
         int counter = 0;
-        int updateFrequency = 2;
+        int updateFrequency = 1;
         AudioManager.PlaySound(AudioManager.finalScoreUpdate, SoundType.SFX);
         while (increaingScore <= finalScore)
         {

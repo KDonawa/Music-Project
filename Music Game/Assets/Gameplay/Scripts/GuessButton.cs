@@ -53,7 +53,7 @@ public class GuessButton : MonoBehaviour
             UIAnimator.ButtonPressEffect2(_button, AudioManager.wrongGuess, Color.red);
         }        
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.5f);
         UIAnimator.SetButtonTextColor(_button, _originalTextColor);
 
         GuessCheckedEvent?.Invoke();

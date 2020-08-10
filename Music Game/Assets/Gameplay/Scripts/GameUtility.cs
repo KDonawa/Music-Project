@@ -110,7 +110,7 @@ public class GameUtility : MonoBehaviour
     {
         for (int i = 0; i < buttonsList.Count; i++)
         {
-            LoadButton(buttonsList[i], canEnable);
+            LoadButton(buttonsList[i], canEnable, false);
             yield return new WaitForSeconds(timeBetweenButtons);
         }
     }   

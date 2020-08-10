@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: C4 harmonium
   m_EditorClassIdentifier: 
   name: C4
-  audioClip: {fileID: 0}
+  audioClip: {fileID: 8300000, guid: a7de58f7864214841856bd0f61c47964, type: 3}
   volume: 0.6
   pitch: 1
   canLoop: 0

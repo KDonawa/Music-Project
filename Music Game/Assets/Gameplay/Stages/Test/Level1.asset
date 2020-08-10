@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74509fb684e6d764ca930a52f9f2840e, type: 3}
   m_Name: Level1
   m_EditorClassIdentifier: 
-  isUnlocked: 0
-  isPassed: 0
-  numStarsEarned: 0
+  isUnlocked: 1
+  isPassed: 1
+  numStarsEarned: 3
   numNotesToGuess: 1
   subLevels:
-  - {fileID: 11400000, guid: 0d9123febcdbd6c4e91f3629f7860771, type: 2}
+  - {fileID: 11400000, guid: ef28bccfed3365d42a37074b5ef08b70, type: 2}

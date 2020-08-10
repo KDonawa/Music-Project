@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: finalScoreUpdate
   m_EditorClassIdentifier: 
   name: finalScoreUpdate
-  audioClip: {fileID: 8300000, guid: 048f011e91240ff4d8b37033cd085589, type: 3}
+  audioClip: {fileID: 8300000, guid: 4bc6bb5c5d8f8f340b742523e4c1d7f2, type: 3}
   volume: 1
   pitch: 1
   canLoop: 1

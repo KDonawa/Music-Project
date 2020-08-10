@@ -69,13 +69,16 @@ MonoBehaviour:
   droneSounds:
   - {fileID: 11400000, guid: feb6a44de3f8eb446a49f504a27b092c, type: 2}
   harmoniumSounds:
+  - {fileID: 11400000, guid: 22f42f72a76509e4bbe32c159fd95c27, type: 2}
   - {fileID: 11400000, guid: 59c8092cb6827424e95627978ef4fdb6, type: 2}
   - {fileID: 11400000, guid: 87335af0cce907746a4dd7174c1f9ed3, type: 2}
+  - {fileID: 11400000, guid: 3f99aee42538bd5409fb439a6a3eee37, type: 2}
+  - {fileID: 11400000, guid: 711be8b894c3002439cee59888350ca8, type: 2}
+  - {fileID: 11400000, guid: d3376b0720fd5f34e8182c18382faac6, type: 2}
+  - {fileID: 11400000, guid: 8243835bbf71db24aaa016f2f4d985e4, type: 2}
   - {fileID: 11400000, guid: a0b747ffed9f63b4da7bdc26b8cafea1, type: 2}
   - {fileID: 11400000, guid: d6424c0b0ef392b4abff52628f8b177d, type: 2}
-  - {fileID: 11400000, guid: 65c4e2a7de120d1478f76fc6a2a52c1a, type: 2}
-  - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}
-  - {fileID: 11400000, guid: bb19e86521758a7479cede8e448fb570, type: 2}
-  - {fileID: 11400000, guid: 8243835bbf71db24aaa016f2f4d985e4, type: 2}
-  - {fileID: 11400000, guid: 22f42f72a76509e4bbe32c159fd95c27, type: 2}
   - {fileID: 11400000, guid: f58b033dd54739043ada612917bd31b5, type: 2}
+  - {fileID: 11400000, guid: 65c4e2a7de120d1478f76fc6a2a52c1a, type: 2}
+  - {fileID: 11400000, guid: bb19e86521758a7479cede8e448fb570, type: 2}
+  - {fileID: 11400000, guid: 2531d1e5a78d3664c9abe42156b4576b, type: 2}

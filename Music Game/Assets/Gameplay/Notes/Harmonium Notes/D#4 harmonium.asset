@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7ed6b0e5be08cf4abdba71d84f6a159, type: 3}
-  m_Name: A
+  m_Script: {fileID: 11500000, guid: 35e7a47ca3ff3f94cbcdba31ba384e32, type: 3}
+  m_Name: D#4 harmonium
   m_EditorClassIdentifier: 
-  notes:
-  - sa
-  - re
-  - ga
-  - ma
-  - pa
-  - dha
-  - ni
-  - '''sa'
+  name: D#4
+  audioClip: {fileID: 8300000, guid: ceaf2f103c7fd3841bbd9ab401d36ab0, type: 3}
+  volume: 0.6
+  pitch: 1
+  canLoop: 0

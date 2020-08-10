@@ -88,9 +88,9 @@ public class GameUI : MonoBehaviour
         while (startTime > 0)
         {
             countdownTextGUI.text = startTime.ToString();
-            AudioManager.PlaySound(AudioManager.countdown, SoundType.SFX);
-            yield return new WaitForSeconds(delay);
+            AudioManager.PlaySound(AudioManager.countdown, SoundType.SFX);            
             startTime--;
+            yield return new WaitForSeconds(delay);
         }
         HideTextGUI(countdownTextGUI);
         endOfCountdownDelegate?.Invoke();
