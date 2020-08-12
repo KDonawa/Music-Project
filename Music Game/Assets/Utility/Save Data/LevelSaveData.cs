@@ -2,30 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class LevelSaveData
+namespace KD.MusicGame.Utility.SaveSystem
 {
-    public bool[] unlockedLevels;
-    public bool[] passedLevels;
-    public int[] starsEarned;
-
-    public LevelSaveData(int stageIndex)
+    [System.Serializable]
+    public class LevelSaveData
     {
-        Level[] levels = GameManager.GetLevelsInStage(stageIndex);
-        if (levels != null)
+        public bool[] unlockedLevels;
+        public bool[] passedLevels;
+        public int[] starsEarned;
+
+        public LevelSaveData(int stageIndex)
         {
-            unlockedLevels = new bool[levels.Length];
-            starsEarned = new int[levels.Length];
-            passedLevels = new bool[levels.Length];
-            for (int i = 0; i < levels.Length; i++)
+            Gameplay.Level[] levels = GameManager.GetLevelsInStage(stageIndex);
+            if (levels != null)
             {
-                if(levels[i] != null)
+                unlockedLevels = new bool[levels.Length];
+                starsEarned = new int[levels.Length];
+                passedLevels = new bool[levels.Length];
+                for (int i = 0; i < levels.Length; i++)
                 {
-                    unlockedLevels[i] = levels[i].isUnlocked;
-                    passedLevels[i] = levels[i].isPassed;
-                    starsEarned[i] = levels[i].numStarsEarned;
-                } 
+                    if (levels[i] != null)
+                    {
+                        unlockedLevels[i] = levels[i].isUnlocked;
+                        passedLevels[i] = levels[i].isPassed;
+                        starsEarned[i] = levels[i].numStarsEarned;
+                    }
+                }
             }
         }
     }
 }
+

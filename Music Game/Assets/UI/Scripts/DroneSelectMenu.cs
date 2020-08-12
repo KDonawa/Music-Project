@@ -3,123 +3,129 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using KD.MusicGame.Utility;
 
-public class DroneSelectMenu : Menu<DroneSelectMenu>
+
+namespace KD.MusicGame.UI
 {
-    [SerializeField] GameObject noteChoiceContainer = null;
-    [SerializeField] GameObject octaveChoiceContainer = null;
-
-    [SerializeField] Button confirmButton = null;
-    [SerializeField] Button backButton = null;
-
-    [SerializeField] Color originalSelectionColor = new Color();
-
-    List<Button> noteChoices;
-    List<Button> octaveChoices;
-
-    string noteChoice;
-    bool isNoteSelected;    
-    string octaveChoice;
-    bool isOctaveSelected;
-
-    
-
-    protected override void Awake()
+    public class DroneSelectMenu : Menu<DroneSelectMenu>
     {
-        base.Awake();
+        [SerializeField] GameObject noteChoiceContainer = null;
+        [SerializeField] GameObject octaveChoiceContainer = null;
 
-        confirmButton.onClick.AddListener(CorfirmButtonPressed);
-        backButton.onClick.AddListener(BackButtonPressed);
-        InitNoteChoices();
-        InitOctaveChoices();
-    }
+        [SerializeField] Button confirmButton = null;
+        [SerializeField] Button backButton = null;
 
-    public override void Open()
-    {
-        base.Open();
-        ResetChoices();
-    }
+        [SerializeField] Color originalSelectionColor = new Color();
 
-    void ResetChoices()
-    {
-        confirmButton.gameObject.SetActive(false);
-        isNoteSelected = false;
-        isOctaveSelected = false;
-        noteChoice = string.Empty;
-        octaveChoice = string.Empty;
+        List<Button> noteChoices;
+        List<Button> octaveChoices;
 
-        foreach (var button in noteChoices)
+        string noteChoice;
+        bool isNoteSelected;
+        string octaveChoice;
+        bool isOctaveSelected;
+
+
+
+        protected override void Awake()
         {
-            UIAnimator.SetButtonTextColor(button, originalSelectionColor);
-        }
-        foreach (var button in octaveChoices)
-        {
-            UIAnimator.SetButtonTextColor(button, originalSelectionColor);
-        }
-    }    
+            base.Awake();
 
-    void InitNoteChoices()
-    {
-        noteChoices = new List<Button>();
-        foreach (var button in noteChoiceContainer.GetComponentsInChildren<Button>())
-        {
-            button.onClick.AddListener(() => NoteSelected(button));
-            noteChoices.Add(button);
+            confirmButton.onClick.AddListener(CorfirmButtonPressed);
+            backButton.onClick.AddListener(BackButtonPressed);
+            InitNoteChoices();
+            InitOctaveChoices();
         }
-    }
-    void InitOctaveChoices()
-    {
-        octaveChoices = new List<Button>();
-        foreach (var button in octaveChoiceContainer.GetComponentsInChildren<Button>())
-        {
-            button.onClick.AddListener(() => OctaveSelected(button));
-            octaveChoices.Add(button);
-        }
-    }
-    void CheckIfAllSelected()
-    {
-        if (isNoteSelected && isOctaveSelected)
-        {
-            confirmButton.gameObject.SetActive(true);
-            // Play noteChoice + octaveChoice from drone notes for 3s
-        }
-    }
-    void NoteSelected(Button b)
-    {
-        UIAnimator.ButtonPressEffect2(b, AudioManager.buttonSelect2, Color.white);
-        noteChoice = b.GetComponentInChildren<TextMeshProUGUI>().text;
-        isNoteSelected = true;
 
-        foreach (var button in noteChoices)
+        public override void Open()
         {
-            if (button != b) UIAnimator.SetButtonTextColor(button, originalSelectionColor);
+            base.Open();
+            ResetChoices();
         }
-        CheckIfAllSelected();
-    }
-    void OctaveSelected(Button b)
-    {
-        UIAnimator.ButtonPressEffect2(b, AudioManager.buttonSelect2, Color.white);
-        octaveChoice = b.GetComponentInChildren<TextMeshProUGUI>().text;
-        isOctaveSelected = true;
 
-        foreach (var button in octaveChoices)
+        void ResetChoices()
         {
-            if (button != b) UIAnimator.SetButtonTextColor(button, originalSelectionColor);
+            confirmButton.gameObject.SetActive(false);
+            isNoteSelected = false;
+            isOctaveSelected = false;
+            noteChoice = string.Empty;
+            octaveChoice = string.Empty;
+
+            foreach (var button in noteChoices)
+            {
+                UIAnimator.SetButtonTextColor(button, originalSelectionColor);
+            }
+            foreach (var button in octaveChoices)
+            {
+                UIAnimator.SetButtonTextColor(button, originalSelectionColor);
+            }
         }
-        CheckIfAllSelected();
-    }
 
-    void CorfirmButtonPressed()
-    {
-        UIAnimator.ButtonPressEffect3(confirmButton, AudioManager.buttonSelect1);
-        GameManager.DroneNote = string.Concat(noteChoice, octaveChoice);
-        SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, StageSelectMenu.Instance.Open);
-    }
+        void InitNoteChoices()
+        {
+            noteChoices = new List<Button>();
+            foreach (var button in noteChoiceContainer.GetComponentsInChildren<Button>())
+            {
+                button.onClick.AddListener(() => NoteSelected(button));
+                noteChoices.Add(button);
+            }
+        }
+        void InitOctaveChoices()
+        {
+            octaveChoices = new List<Button>();
+            foreach (var button in octaveChoiceContainer.GetComponentsInChildren<Button>())
+            {
+                button.onClick.AddListener(() => OctaveSelected(button));
+                octaveChoices.Add(button);
+            }
+        }
+        void CheckIfAllSelected()
+        {
+            if (isNoteSelected && isOctaveSelected)
+            {
+                confirmButton.gameObject.SetActive(true);
+                // Play noteChoice + octaveChoice from drone notes for 3s
+            }
+        }
+        void NoteSelected(Button b)
+        {
+            UIAnimator.ButtonPressEffect2(b, AudioManager.buttonSelect2, Color.white);
+            noteChoice = b.GetComponentInChildren<TextMeshProUGUI>().text;
+            isNoteSelected = true;
 
-    void BackButtonPressed()
-    {
-        UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
-        SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, MainMenu.Instance.Open);
+            foreach (var button in noteChoices)
+            {
+                if (button != b) UIAnimator.SetButtonTextColor(button, originalSelectionColor);
+            }
+            CheckIfAllSelected();
+        }
+        void OctaveSelected(Button b)
+        {
+            UIAnimator.ButtonPressEffect2(b, AudioManager.buttonSelect2, Color.white);
+            octaveChoice = b.GetComponentInChildren<TextMeshProUGUI>().text;
+            isOctaveSelected = true;
+
+            foreach (var button in octaveChoices)
+            {
+                if (button != b) UIAnimator.SetButtonTextColor(button, originalSelectionColor);
+            }
+            CheckIfAllSelected();
+        }
+
+        void CorfirmButtonPressed()
+        {
+            UIAnimator.ButtonPressEffect3(confirmButton, AudioManager.buttonSelect1);
+            GameManager.DroneNote = string.Concat(noteChoice, octaveChoice);
+            SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, StageSelectMenu.Instance.Open);
+        }
+
+        void BackButtonPressed()
+        {
+            UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
+            SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, MainMenu.Instance.Open);
+        }
+
     }
-    
 }
+

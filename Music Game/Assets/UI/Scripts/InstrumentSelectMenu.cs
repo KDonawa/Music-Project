@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum InstrumentType
+
+namespace KD.MusicGame.UI
 {
-    HARMONIUM,
+    public class InstrumentSelectMenu : Menu<InstrumentSelectMenu>
+    {
+
+    }
 }
-public class InstrumentSelectMenu : Menu<InstrumentSelectMenu>
-{
-    
-}
+

@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New SubLevel", menuName = "Game/SubLevel")]
-public class SubLevel : ScriptableObject
+namespace KD.MusicGame.Gameplay
 {
-    //public Sound[] notes = null;
-    public string[] notes = null;
+    [CreateAssetMenu(fileName = "New SubLevel", menuName = "Game/SubLevel")]
+    public class SubLevel : ScriptableObject
+    {
+        //public Sound[] notes = null;
+        public string[] notes = null;
 
+    }
 }
+

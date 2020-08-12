@@ -1,10 +1,13 @@
-﻿[System.Serializable]
-public class GameSaveData
+﻿namespace KD.MusicGame.Utility.SaveSystem
 {
-    public bool isNewGame = true;
-
-    public GameSaveData()
+    [System.Serializable]
+    public class GameSaveData
     {
-        isNewGame = GameManager.Instance.isNewGame;
+        public bool isNewGame = true;
+
+        public GameSaveData()
+        {
+            isNewGame = GameManager.Instance.isNewGame;
+        }
     }
 }

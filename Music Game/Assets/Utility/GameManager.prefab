@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   welcomeScreen: {fileID: 4829036730129053888, guid: 0ee8d870889984148b4a3a44c4c7994f,
     type: 3}
-  menuManager: {fileID: 3427400166071824819, guid: b952b2a40fa2c5540afef79bca64eff5,
+  menuManager: {fileID: 4666255709140049213, guid: b952b2a40fa2c5540afef79bca64eff5,
     type: 3}
   audioManager: {fileID: 8758347865857615345, guid: 87af7a9f90d0b884586124bffb3dc038,
     type: 3}
@@ -55,7 +55,6 @@ MonoBehaviour:
     type: 3}
   stages:
   - {fileID: 11400000, guid: 4c2a381b3617a0f48807db3861f8cd60, type: 2}
-  - {fileID: 11400000, guid: d9a3fd2c39dd7f34a8ad813bdf478cc1, type: 2}
   game: {fileID: 977705765011780015, guid: a2044bd05ff8c7944a5db5ed0563d25b, type: 3}
   currentStageIndex: 1
   currentLevelIndex: 1

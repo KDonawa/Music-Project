@@ -17,4 +17,4 @@ MonoBehaviour:
   numStarsEarned: 3
   numNotesToGuess: 1
   subLevels:
-  - {fileID: 11400000, guid: ef28bccfed3365d42a37074b5ef08b70, type: 2}
+  - {fileID: 11400000, guid: b7b45a469f7af2942aba38bd4e84938a, type: 2}

@@ -2,277 +2,286 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using KD.MusicGame.Gameplay;
+using KD.MusicGame.Utility.SaveSystem;
+using KD.MusicGame.UI;
 
-public enum GameState
+
+namespace KD.MusicGame.Utility
 {
-    Running,
-    Paused,
-    Loading,
-}
-public class GameManager : MonoBehaviour
-{
-    public static GameManager Instance { get; private set; }
-
-    public static event Action GamePausedEvent;
-    public static event Action GameUnPausedEvent;
-
-    #region PROPERTIES
-    public static int CurrentStageIndex 
-    { 
-        get => Instance.currentStageIndex; 
-        set => Instance.currentStageIndex = value > 0 && value <= Stages.Length ? value : 1; 
-    }
-    public static int CurrentLevelIndex 
-    { 
-        get => Instance.currentLevelIndex; 
-        set => Instance.currentLevelIndex = value > 0 && value <= CurrentLevels.Length ? value : 1; 
-    }
-    public static string DroneNote { get => Instance.droneNote; set => Instance.droneNote = value; }
-    public static InstrumentType Instrument { get => Instance.instrument; set => Instance.instrument = value; }
-    public static Stage[] Stages => Instance.stages;
-    public static int NumStages => Instance.stages.Length;
-    public static Stage CurrentStage => Instance.stages[Instance.currentStageIndex - 1];
-    public static Level CurrentLevel => CurrentLevels[Instance.currentLevelIndex - 1];
-    public static Level[] CurrentLevels => CurrentStage.Levels;
-    #endregion
-
-    [Header("Prefabs")]
-    [SerializeField] WelcomeScreen welcomeScreen = null;
-    [SerializeField] MenuManagerUpdated menuManager = null;
-    [SerializeField] AudioManager audioManager = null;
-    [SerializeField] SceneTransitions sceneTransition = null;
-    [SerializeField] UIAnimator uiAnimator = null;
-    [SerializeField] Stage[] stages = null;
-    [SerializeField] Game game = null;
-
-    [Header("Variables")]
-    [Range(1, 4)] [SerializeField] int currentStageIndex = 1;
-    [Range(1, 10)] [SerializeField] int currentLevelIndex = 1;
-    [SerializeField] string droneNote = "C4";
-    [SerializeField] InstrumentType instrument = InstrumentType.HARMONIUM;
-
-    public const string StartScene = "StartScene";
-    public const string GameScene = "GameScene";
-    public const string WelcomeScene = "WelcomeScene";
-
-    GameState currentState;
-
-    public bool isNewGame = true;
-
-
-    #region GAME STATE
-    public static void ChangeGameState(GameState gameState)
+    public enum GameState
     {
-        if (gameState == Instance.currentState) return;
+        Running,
+        Paused,
+        Loading,
+    }
 
-        switch (gameState)
+    public class GameManager : MonoBehaviour
+    {
+        public static GameManager Instance { get; private set; }
+
+        public static event Action GamePausedEvent;
+        public static event Action GameUnPausedEvent;
+
+        #region PROPERTIES
+        public static int CurrentStageIndex
         {
-            case GameState.Running:
-                Time.timeScale = 1f;
-                if (Instance.currentState == GameState.Paused) GameUnPausedEvent?.Invoke();
-                Instance.currentState = GameState.Running;
-                break;
-            case GameState.Paused:
-                Time.timeScale = 0f;
-                GamePausedEvent?.Invoke();
-                Instance.currentState = GameState.Paused;
-                break;
-
-            default:
-                break;
+            get => Instance.currentStageIndex;
+            set => Instance.currentStageIndex = value > 0 && value <= Stages.Length ? value : 1;
         }
-    }
-    #endregion
-
-    #region SETUP
-    private void Awake()
-    {
-        if (Instance != null) Destroy(gameObject);
-        else
+        public static int CurrentLevelIndex
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            GameSaveData data = BinarySaveSystem.LoadGameData();
-            if (data != null) isNewGame = data.isNewGame;
-            else isNewGame = true;
-            
-            currentState = GameState.Running;
-
-            Instantiate(menuManager);
-            Instantiate(audioManager);
-            Instantiate(sceneTransition);
-            Instantiate(uiAnimator);
-
-            if(GetCurrentSceneName() == WelcomeScene)
-            {
-                WelcomeScreen newWelcomescreen = Instantiate(welcomeScreen);
-                newWelcomescreen.gameObject.SetActive(false);
-                SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT, 
-                    () => newWelcomescreen.gameObject.SetActive(true));
-
-            }
-            if (GetCurrentSceneName() == GameScene) Instantiate(game); // for testing
-            
-        }      
-    }
-    private void Start()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        Game.LevelPassedEvent += UnlockNextStage;
-        Game.LevelPassedEvent += UnlockNextLevel;
-    }
-    private void OnDestroy()
-    {
-        if (Instance == this)
-        {
-            Instance = null;
-            //Debug.Log("test");
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            Game.LevelPassedEvent -= UnlockNextStage;
-            Game.LevelPassedEvent -= UnlockNextLevel;
+            get => Instance.currentLevelIndex;
+            set => Instance.currentLevelIndex = value > 0 && value <= CurrentLevels.Length ? value : 1;
         }
-    }
+        public static string DroneNote { get => Instance.droneNote; set => Instance.droneNote = value; }
+        public static InstrumentType Instrument { get => Instance.instrument; set => Instance.instrument = value; }
+        public static Stage[] Stages => Instance.stages;
+        public static int NumStages => Instance.stages.Length;
+        public static Stage CurrentStage => Instance.stages[Instance.currentStageIndex - 1];
+        public static Level CurrentLevel => CurrentLevels[Instance.currentLevelIndex - 1];
+        public static Level[] CurrentLevels => CurrentStage.Levels;
+        #endregion
 
-    #endregion
+        [Header("Prefabs")]
+        [SerializeField] WelcomeScreen welcomeScreen = null;
+        [SerializeField] MenuManager menuManager = null;
+        [SerializeField] AudioManager audioManager = null;
+        [SerializeField] SceneTransitions sceneTransition = null;
+        [SerializeField] UIAnimator uiAnimator = null;
+        [SerializeField] Stage[] stages = null;
+        [SerializeField] Gameplay.Game game = null;
 
-    #region SAVE DATA
-    public static void StartNewGame()
-    {
-        Instance.isNewGame = false;
-        BinarySaveSystem.SaveGameData();
-        ResetStageAndLevelData();
-    }
-    public static void ResetStageAndLevelData()
-    {
-        for (int i = 0; i < Instance.stages.Length; i++)
+        [Header("Variables")]
+        [Range(1, 4)] [SerializeField] int currentStageIndex = 1;
+        [Range(1, 10)] [SerializeField] int currentLevelIndex = 1;
+        [SerializeField] string droneNote = "C4";
+        [SerializeField] InstrumentType instrument = InstrumentType.HARMONIUM;
+
+        public const string StartScene = "StartScene";
+        public const string GameScene = "GameScene";
+        public const string WelcomeScene = "WelcomeScene";
+
+        GameState currentState;
+
+        public bool isNewGame = true;
+
+
+        #region GAME STATE
+        public static void ChangeGameState(GameState gameState)
         {
-            if (Instance.stages[i] != null)
+            if (gameState == Instance.currentState) return;
+
+            switch (gameState)
             {
-                Instance.stages[i].isUnlocked = false;
-                Instance.stages[i].numPassedLevels = 0;
-                Instance.ResetLevelData(Instance.stages[i], i + 1);
+                case GameState.Running:
+                    Time.timeScale = 1f;
+                    if (Instance.currentState == GameState.Paused) GameUnPausedEvent?.Invoke();
+                    Instance.currentState = GameState.Running;
+                    break;
+                case GameState.Paused:
+                    Time.timeScale = 0f;
+                    GamePausedEvent?.Invoke();
+                    Instance.currentState = GameState.Paused;
+                    break;
+
+                default:
+                    break;
             }
         }
-        BinarySaveSystem.SaveStageData();
-    }
-    void ResetLevelData(Stage stage, int stageIndex)
-    {
-        Level[] levels = stage.Levels;
-        foreach (var level in levels)
+        #endregion
+
+        #region SETUP
+        private void Awake()
         {
-            if (level != null)
+            if (Instance != null) Destroy(gameObject);
+            else
             {
-                level.isPassed = false;
-                level.isUnlocked = false;
-                level.numStarsEarned = 0;
-                BinarySaveSystem.SaveLevelData(stageIndex);
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+
+                GameSaveData data = BinarySaveSystem.LoadGameData();
+                if (data != null) isNewGame = data.isNewGame;
+                else isNewGame = true;
+
+                currentState = GameState.Running;
+
+                Instantiate(menuManager);
+                Instantiate(audioManager);
+                Instantiate(sceneTransition);
+                Instantiate(uiAnimator);
+
+                if (GetCurrentSceneName() == WelcomeScene)
+                {
+                    WelcomeScreen newWelcomescreen = Instantiate(welcomeScreen);
+                    newWelcomescreen.gameObject.SetActive(false);
+                    SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.FADE_OUT,
+                        () => newWelcomescreen.gameObject.SetActive(true));
+
+                }
+                if (GetCurrentSceneName() == GameScene) Instantiate(game); // for testing
+
             }
         }
-    }
-    
-
-    #endregion
-
-    #region UTILITY
-    public static void UnlockNextStage()
-    {
-        //Debug.Log("attempt unlock next stage");
-        if (!IsFinalLevel() || IsFinalStage()) return;
-
-        Stage nextStage = Stages[Instance.currentStageIndex];
-        if (nextStage != null && !nextStage.isUnlocked)
+        private void Start()
         {
-            nextStage.isUnlocked = true;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            Gameplay.Game.LevelPassedEvent += UnlockNextStage;
+            Gameplay.Game.LevelPassedEvent += UnlockNextLevel;
         }
-    }
-    public static void UnlockNextLevel()
-    {
-        //Debug.Log("attempt unlock next level");
-        if (IsFinalLevel()) return;
-        Level nextLevel = CurrentLevels[Instance.currentLevelIndex];
-        if (nextLevel != null && !nextLevel.isUnlocked)
+        private void OnDestroy()
         {
-            nextLevel.isUnlocked = true;
-        }        
-    }
-    public static Level[] GetLevelsInStage(int stageIndex)
-    {
-        return stageIndex > 0 && stageIndex <= NumStages ? Instance.stages[stageIndex - 1].Levels : null; ;
-    }
-    public static void IncrementStage()
-    {
-        if (Instance.currentStageIndex < NumStages) Instance.currentStageIndex++;
-    }
-    public static void IncrementLevel()
-    {
-        if (Instance.currentLevelIndex < CurrentLevels.Length) Instance.currentLevelIndex++;
-    }
-    public static bool IsFinalStage() => NumStages == Instance.currentStageIndex;
-    public static bool IsFinalLevel() => CurrentStage.Levels.Length == Instance.currentLevelIndex;    
+            if (Instance == this)
+            {
+                Instance = null;
+                //Debug.Log("test");
+                SceneManager.sceneLoaded -= OnSceneLoaded;
+                Gameplay.Game.LevelPassedEvent -= UnlockNextStage;
+                Gameplay.Game.LevelPassedEvent -= UnlockNextLevel;
+            }
+        }
 
-    #endregion    
+        #endregion
 
-    #region SCENE LOADING
-    void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
-    {
-        if(scene.name == GameScene) Instantiate(game);
-        //if (scene.name == StartScene) MainMenu.Instance.Open();
-        SceneTransitions.sceneLoadingComplete = true;
-    }
-    public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
-    public static int GetCurrentSceneIndex() => SceneManager.GetActiveScene().buildIndex;
-    public static void LoadGameScene() => SceneManager.LoadScene(GameScene);
-    public static void LoadStartScene(Action action = null) => LoadScene(StartScene, action);
-    public static void LoadScene(string levelName, Action action = null)
-    {
-        if (Application.CanStreamedLevelBeLoaded(levelName))
-        {          
-            SceneManager.LoadScene(levelName);
-            if (levelName == StartScene) MainMenu.Instance.Open();
-            action?.Invoke();
-        }
-        else
+        #region SAVE DATA
+        public static void StartNewGame()
         {
-            Debug.LogWarning("LevelLoader.LoadLevel(string levelName) Error: invalid scene name specified");
+            Instance.isNewGame = false;
+            BinarySaveSystem.SaveGameData();
+            ResetStageAndLevelData();
         }
-    }
-    public static void LoadScene(int sceneIndex)
-    {
-        if (sceneIndex >= 0 && sceneIndex < SceneManager.sceneCountInBuildSettings)
+        public static void ResetStageAndLevelData()
         {
-            //if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
-            MenuManagerUpdated.CloseAllMenus();
-            SceneManager.LoadScene(sceneIndex);
+            for (int i = 0; i < Instance.stages.Length; i++)
+            {
+                if (Instance.stages[i] != null)
+                {
+                    Instance.stages[i].isUnlocked = false;
+                    Instance.stages[i].numPassedLevels = 0;
+                    Instance.ResetLevelData(Instance.stages[i], i + 1);
+                }
+            }
+            BinarySaveSystem.SaveStageData();
         }
-        else
+        void ResetLevelData(Stage stage, int stageIndex)
         {
-            Debug.LogWarning("LevelLoader.LoadLevel(int buildIndex) Error: invalid build index specified");
+            Level[] levels = stage.Levels;
+            foreach (var level in levels)
+            {
+                if (level != null)
+                {
+                    level.isPassed = false;
+                    level.isUnlocked = false;
+                    level.numStarsEarned = 0;
+                    BinarySaveSystem.SaveLevelData(stageIndex);
+                }
+            }
         }
-    }
-    public static void ReloadScene() => LoadScene(SceneManager.GetActiveScene().buildIndex);
-    public static void LoadNextScene()
-    {
-        //int nextSceneIndex = (SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings;
-        //int nextSceneIndex = (SceneManager.GetActiveScene().buildIndex + 1);
-        //LoadScene(nextSceneIndex);
-    }
-    public void LoadPreviousScene()
-    {
-        //int previousSceneIndex = SceneManager.GetActiveScene().buildIndex - 1;
-        //LoadScene(previousSceneIndex);
-    }
-    #endregion
 
-    #region HELPERS
-    public static void QuitGame()
-    {
+
+        #endregion
+
+        #region UTILITY
+        public static void UnlockNextStage()
+        {
+            //Debug.Log("attempt unlock next stage");
+            if (!IsFinalLevel() || IsFinalStage()) return;
+
+            Stage nextStage = Stages[Instance.currentStageIndex];
+            if (nextStage != null && !nextStage.isUnlocked)
+            {
+                nextStage.isUnlocked = true;
+            }
+        }
+        public static void UnlockNextLevel()
+        {
+            //Debug.Log("attempt unlock next level");
+            if (IsFinalLevel()) return;
+            Level nextLevel = CurrentLevels[Instance.currentLevelIndex];
+            if (nextLevel != null && !nextLevel.isUnlocked)
+            {
+                nextLevel.isUnlocked = true;
+            }
+        }
+        public static Level[] GetLevelsInStage(int stageIndex)
+        {
+            return stageIndex > 0 && stageIndex <= NumStages ? Instance.stages[stageIndex - 1].Levels : null; ;
+        }
+        public static void IncrementStage()
+        {
+            if (Instance.currentStageIndex < NumStages) Instance.currentStageIndex++;
+        }
+        public static void IncrementLevel()
+        {
+            if (Instance.currentLevelIndex < CurrentLevels.Length) Instance.currentLevelIndex++;
+        }
+        public static bool IsFinalStage() => NumStages == Instance.currentStageIndex;
+        public static bool IsFinalLevel() => CurrentStage.Levels.Length == Instance.currentLevelIndex;
+
+        #endregion
+
+        #region SCENE LOADING
+        void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (scene.name == GameScene) Instantiate(game);
+            //if (scene.name == StartScene) MainMenu.Instance.Open();
+            SceneTransitions.sceneLoadingComplete = true;
+        }
+        public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;
+        public static int GetCurrentSceneIndex() => SceneManager.GetActiveScene().buildIndex;
+        public static void LoadGameScene() => SceneManager.LoadScene(GameScene);
+        public static void LoadStartScene(Action action = null) => LoadScene(StartScene, action);
+        public static void LoadScene(string levelName, Action action = null)
+        {
+            if (Application.CanStreamedLevelBeLoaded(levelName))
+            {
+                SceneManager.LoadScene(levelName);
+                if (levelName == StartScene) MainMenu.Instance.Open();
+                action?.Invoke();
+            }
+            else
+            {
+                Debug.LogWarning("LevelLoader.LoadLevel(string levelName) Error: invalid scene name specified");
+            }
+        }
+        public static void LoadScene(int sceneIndex)
+        {
+            if (sceneIndex >= 0 && sceneIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                //if (MenuManager.Instance != null) MenuManager.Instance.ClearMenuHistory();
+                MenuManager.CloseAllMenus();
+                SceneManager.LoadScene(sceneIndex);
+            }
+            else
+            {
+                Debug.LogWarning("LevelLoader.LoadLevel(int buildIndex) Error: invalid build index specified");
+            }
+        }
+        public static void ReloadScene() => LoadScene(SceneManager.GetActiveScene().buildIndex);
+        public static void LoadNextScene()
+        {
+            //int nextSceneIndex = (SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings;
+            //int nextSceneIndex = (SceneManager.GetActiveScene().buildIndex + 1);
+            //LoadScene(nextSceneIndex);
+        }
+        public void LoadPreviousScene()
+        {
+            //int previousSceneIndex = SceneManager.GetActiveScene().buildIndex - 1;
+            //LoadScene(previousSceneIndex);
+        }
+        #endregion
+
+        #region HELPERS
+        public static void QuitGame()
+        {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif
-    }
+        }
 
-    #endregion
+        #endregion
+    }
 }
+
