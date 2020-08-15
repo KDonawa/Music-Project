@@ -7,6 +7,7 @@ namespace KD.MusicGame.Gameplay
     {
         public bool isUnlocked;
         public bool isPassed;
+        public int hiScore;
         public int numStarsEarned;
         [Range(1, 10)] public int numNotesToGuess = 1;
         public SubLevel[] subLevels = null;

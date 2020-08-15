@@ -119,7 +119,11 @@ namespace KD.MusicGame.Utility
                         () => newWelcomescreen.gameObject.SetActive(true));
 
                 }
-                if (GetCurrentSceneName() == GameScene) Instantiate(game); // for testing
+                if (GetCurrentSceneName() == GameScene)// for testing
+                {
+                    LoadGameData();
+                    Instantiate(game); 
+                }
 
             }
         }
@@ -144,6 +148,39 @@ namespace KD.MusicGame.Utility
         #endregion
 
         #region SAVE DATA
+        public static void LoadGameData()
+        {
+            Instance.LoadStageAndLevelData();
+        }
+        void LoadStageAndLevelData()
+        {
+            StageSaveData data = BinarySaveSystem.LoadStageData();
+            if (data == null) return;
+            for (int i = 0; i < NumStages; i++)
+            {
+                if (Stages[i] != null)
+                {
+                    Stages[i].isUnlocked = data.unlockedStages[i];
+                    Stages[i].numPassedLevels = data.numPassedLevels[i];
+                    LoadLevelData(i + 1);
+                }
+            }
+        }
+        public static void LoadLevelData(int index)
+        {
+            LevelSaveData data = BinarySaveSystem.LoadLevelData(index);
+            if (data == null) return;
+
+            for (int i = 0; i < CurrentLevels.Length; i++)
+            {
+                if(CurrentLevels[i] != null)
+                {
+                    CurrentLevels[i].isUnlocked = data.unlockedLevels[i];
+                    CurrentLevels[i].numStarsEarned = data.starsEarned[i];
+                    CurrentLevels[i].hiScore = data.hiScores[i];
+                }              
+            }
+        }
         public static void StartNewGame()
         {
             Instance.isNewGame = false;
@@ -156,7 +193,8 @@ namespace KD.MusicGame.Utility
             {
                 if (Instance.stages[i] != null)
                 {
-                    Instance.stages[i].isUnlocked = false;
+                    if(i == 0) Instance.stages[i].isUnlocked = true;
+                    else Instance.stages[i].isUnlocked = false;
                     Instance.stages[i].numPassedLevels = 0;
                     Instance.ResetLevelData(Instance.stages[i], i + 1);
                 }
@@ -165,14 +203,16 @@ namespace KD.MusicGame.Utility
         }
         void ResetLevelData(Stage stage, int stageIndex)
         {
-            Level[] levels = stage.Levels;
-            foreach (var level in levels)
+            //Level[] levels = stage.Levels;
+            for (int i = 0; i < stage.Levels.Length; i++)
             {
-                if (level != null)
+                if(stage.Levels[i] != null)
                 {
-                    level.isPassed = false;
-                    level.isUnlocked = false;
-                    level.numStarsEarned = 0;
+                    if (i == 0) stage.Levels[i].isUnlocked = true;
+                    else stage.Levels[i].isUnlocked = false;
+                    stage.Levels[i].isPassed = false;
+                    stage.Levels[i].numStarsEarned = 0;
+                    stage.Levels[i].hiScore = 0;
                     BinarySaveSystem.SaveLevelData(stageIndex);
                 }
             }

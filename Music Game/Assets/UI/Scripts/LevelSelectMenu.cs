@@ -13,7 +13,9 @@ namespace KD.MusicGame.UI
         [SerializeField] TextMeshProUGUI headerText = null;
         [SerializeField] Button mainMenuButton = null;
         [SerializeField] Button backButton = null;
+        [SerializeField] Button hiScoresButton = null;
         [SerializeField] GameObject buttonsContainer = null;
+        [SerializeField] HiScorePanel hiScorePanel = null;
 
         [Header("Prefabs")]
         [SerializeField] Button unlockedButtonPrefab = null;
@@ -32,6 +34,7 @@ namespace KD.MusicGame.UI
 
             if (backButton == null) Debug.LogError("No reference to back button");
             else backButton.onClick.AddListener(BackPressed);
+            if (hiScoresButton != null) hiScoresButton.onClick.AddListener(OnHiScoresButtonPressed);
 
         }
         protected override void OnDestroy()
@@ -39,53 +42,43 @@ namespace KD.MusicGame.UI
             base.OnDestroy();
             if (mainMenuButton != null) mainMenuButton.onClick.RemoveListener(MainMenuPressed);
             if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
+            if (hiScoresButton != null) hiScoresButton.onClick.RemoveListener(OnHiScoresButtonPressed);
         }
         public override void Open()
         {
             InitializeMenu();
             base.Open();
         }
-        void LoadData()
-        {
-            LevelSaveData data = BinarySaveSystem.LoadLevelData(GameManager.CurrentStageIndex);
-            Gameplay.Level[] levels = GameManager.CurrentLevels;
-            if (levels != null && data != null)
-            {
-                for (int i = 0; i < levels.Length && i < data.unlockedLevels.Length; i++)
-                {
-                    levels[i].isUnlocked = data.unlockedLevels[i];
-                    levels[i].numStarsEarned = data.starsEarned[i];
-                }
-            }
-        }
-
+        
         void InitializeMenu()
         {
-            LoadData();
-
+            buttonsContainer.GetComponent<GridLayoutGroup>().enabled = true;
+            if (hiScorePanel != null) hiScorePanel.gameObject.SetActive(false);
             headerText.text = GameManager.CurrentStage.name;
 
             foreach (var b in levelOptions) Destroy(b.gameObject);
             levelOptions.Clear();
 
             Gameplay.Level[] levels = GameManager.CurrentLevels;
-            if (levels == null) return;
-
-            for (int i = 1; i <= GameManager.CurrentLevels.Length; i++)
+            for (int i = 0; i < levels.Length; i++)
             {
-                Button b;
-
-                if (i == 1) levels[i - 1].isUnlocked = true;
-                if (levels[i - 1].isUnlocked) b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
-                else b = Instantiate(lockedButtonPrefab, buttonsContainer.transform);
-                b.interactable = levels[i - 1].isUnlocked;
-                levelOptions.Add(b);
-
-                LevelSelectButton lsb = b.GetComponent<LevelSelectButton>();
-                lsb.InitializeButton(i, levels[i - 1].numStarsEarned);
-                b.onClick.AddListener(() => lsb.ButtonPressed(ButtonPressedEffect));
+                if(levels[i] != null)
+                {
+                    Button b;
+                    if (!levels[i].isUnlocked) b = Instantiate(lockedButtonPrefab, buttonsContainer.transform);
+                    else
+                    {
+                        b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
+                        LevelSelectButton lsb = b.GetComponent<LevelSelectButton>();
+                        lsb.InitializeButton(i + 1, levels[i].numStarsEarned);
+                        b.onClick.AddListener(() => lsb.ButtonPressed(ButtonPressedEffect));
+                    }
+                    levelOptions.Add(b);
+                }
             }
         }
+
+        #region BUTTON EVENTS
         void ButtonPressedEffect(Button button)
         {
             buttonsContainer.GetComponent<GridLayoutGroup>().enabled = false;
@@ -94,14 +87,9 @@ namespace KD.MusicGame.UI
                 if (b != button)
                 {
                     RectTransform rect = b.GetComponent<RectTransform>();
-                    UIAnimator.ShrinkToNothing(rect, 0.5f, 2f, () => ButtonPressEffectCompleted(rect));
+                    UIAnimator.ShrinkToNothing(rect, 0.5f, 2f);
                 }
             }
-        }
-        void ButtonPressEffectCompleted(RectTransform rect)
-        {
-            buttonsContainer.GetComponent<GridLayoutGroup>().enabled = true;
-            rect.gameObject.SetActive(true);
         }
         void MainMenuPressed()
         {
@@ -113,7 +101,12 @@ namespace KD.MusicGame.UI
             UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
             SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, StageSelectMenu.Instance.Open);
         }
-
+        void OnHiScoresButtonPressed()
+        {
+            UIAnimator.ButtonPressEffect3(hiScoresButton, AudioManager.buttonSelect2);
+            if (hiScorePanel != null) hiScorePanel.Open();
+        }
+        #endregion
     }
 }
 

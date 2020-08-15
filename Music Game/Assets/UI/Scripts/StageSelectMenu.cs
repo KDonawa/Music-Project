@@ -46,46 +46,34 @@ namespace KD.MusicGame.UI
             InitializeMenu();
             base.Open();
         }
-        void LoadData()
-        {
-            StageSaveData data = BinarySaveSystem.LoadStageData();
-            Gameplay.Stage[] stages = GameManager.Stages;
-            if (stages != null && data != null)
-            {
-                for (int i = 0; i < GameManager.NumStages && i < data.unlockedStages.Length; i++)
-                {
-                    if (data != null && stages[i] != null)
-                    {
-                        stages[i].isUnlocked = data.unlockedStages[i];
-                        stages[i].numPassedLevels = data.numPassedLevels[i];
-                    }
-                }
-            }
-        }
+
         void InitializeMenu()
         {
-            LoadData();
+            buttonsContainer.GetComponent<GridLayoutGroup>().enabled = true;            
 
             foreach (var b in stageOptions) Destroy(b.gameObject);
             stageOptions.Clear();
 
             Gameplay.Stage[] stages = GameManager.Stages;
-            for (int i = 1; i <= GameManager.NumStages; i++)
+            for (int i = 0; i < stages.Length; i++)
             {
-                Button b;
-
-                if (i == 1) stages[i - 1].isUnlocked = true;
-                if (stages[i - 1].isUnlocked) b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
-                else b = Instantiate(lockedButtonPrefab, buttonsContainer.transform);
-                stageOptions.Add(b);
-                b.interactable = stages[i - 1].isUnlocked;
-                //b.GetComponentInChildren<TextMeshProUGUI>().text = i + ". " + stages[i-1].name;
-                StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-                ssb.Init(i, stages[i - 1].name, stages[i - 1].numPassedLevels);
-                b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
+                if(stages[i] != null)
+                {
+                    Button b;
+                    if (!stages[i].isUnlocked) b = Instantiate(lockedButtonPrefab, buttonsContainer.transform);
+                    else
+                    {
+                        b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
+                        StageSelectButton ssb = b.GetComponent<StageSelectButton>();
+                        ssb.Init(i + 1, stages[i].name, stages[i].numPassedLevels);
+                        b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
+                    }
+                    stageOptions.Add(b);
+                }                
             }
         }
 
+        #region BUTTON EVENTS
         void ButtonPressedEffect(Button button)
         {
             buttonsContainer.GetComponent<GridLayoutGroup>().enabled = false;
@@ -94,14 +82,9 @@ namespace KD.MusicGame.UI
                 if (b != button)
                 {
                     RectTransform rect = b.GetComponent<RectTransform>();
-                    UIAnimator.ShrinkToNothing(rect, 0.5f, 2f, () => ButtonPressEffectCompleted(rect));
+                    UIAnimator.ShrinkToNothing(rect, 0.5f, 2f);
                 }
             }
-        }
-        void ButtonPressEffectCompleted(RectTransform rect)
-        {
-            buttonsContainer.GetComponent<GridLayoutGroup>().enabled = true;
-            rect.gameObject.SetActive(true);
         }
 
         void BackPressed()
@@ -114,6 +97,8 @@ namespace KD.MusicGame.UI
             UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
             SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, MainMenu.Instance.Open);
         }
+
+        #endregion
     }
 }
 

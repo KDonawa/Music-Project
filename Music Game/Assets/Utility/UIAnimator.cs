@@ -53,7 +53,7 @@ namespace KD.MusicGame.Utility
             SetButtonTextColor(b, effectColor);
             AudioManager.PlaySound(soundEffect, SoundType.SFX);
         }
-        /// impact effect. Flash button color white
+        /** impact effect. Flash button color white*/
         public static void ButtonPressEffect3(Button b, string soundEffect)
         {
             ButtonPressEffect4(b, soundEffect, Color.white);
@@ -167,11 +167,11 @@ namespace KD.MusicGame.Utility
                 //textGUI.fontSize = minValue;
             }
         }
-        public static void ShrinkToNothing(RectTransform rect, float duration, float postEffectDelay, Action onCompletedAction)
+        public static void ShrinkToNothing(RectTransform rect, float duration, float postEffectDelay)
         {
-            _instance.StartCoroutine(ShrinkToNothingRoutine(rect, duration, postEffectDelay, onCompletedAction));
+            _instance.StartCoroutine(ShrinkToNothingRoutine(rect, duration, postEffectDelay));
         }
-        public static IEnumerator ShrinkToNothingRoutine(RectTransform rect, float duration, float postEffectDelay, Action EffectCompleted)
+        public static IEnumerator ShrinkToNothingRoutine(RectTransform rect, float duration, float postEffectDelay)
         {
             yield return _instance.StartCoroutine(ShrinkToNothingRoutine(rect, duration));
 
@@ -181,7 +181,7 @@ namespace KD.MusicGame.Utility
                 remainingTime -= Time.deltaTime;
                 yield return null;
             }
-            EffectCompleted?.Invoke();
+            //EffectCompleted?.Invoke();
         }
         public static void ShrinkToNothing(RectTransform rect, float duration)
         {

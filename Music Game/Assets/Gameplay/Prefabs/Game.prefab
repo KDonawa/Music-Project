@@ -48,7 +48,7 @@ MonoBehaviour:
   countdownTime: 0
   timeToGuessPerNote: 5
   levelPassPercentage: 50
-  playIntro: 1
+  numRoundsPerSublevel: 1
   timerPrefab: {fileID: 2331815702461281659, guid: a4a86d2180d2fca4fa55e38695b42502,
     type: 3}
   scoreSystemPrefab: {fileID: 1579604373362280786, guid: 414a510741bbd0340b8438692de9c11f,

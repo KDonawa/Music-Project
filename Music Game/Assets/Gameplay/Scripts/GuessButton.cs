@@ -10,7 +10,6 @@ namespace KD.MusicGame.Gameplay
     public class GuessButton : MonoBehaviour
     {
         string _name;
-        Image _image;
         Button _button;
         Color _originalTextColor;
 
@@ -23,7 +22,6 @@ namespace KD.MusicGame.Gameplay
 
         private void Awake()
         {
-            _image = GetComponent<Image>();
             _button = GetComponent<Button>();
             _originalTextColor = _button.GetComponentInChildren<TextMeshProUGUI>().color;
         }
@@ -35,12 +33,17 @@ namespace KD.MusicGame.Gameplay
         public void ButtonPressed()
         {
             ButtonPressedEvent?.Invoke(this);
-            CheckGuess();
-        }
-
-        public void CheckGuess()
-        {
             StartCoroutine(ProcessGuessRoutine(_name == correctGuess));
+        }
+        public void ShowCorrectGuess() => StartCoroutine(ShowCorrectGuessRoutine());
+        IEnumerator ShowCorrectGuessRoutine()
+        {
+            if (_name == correctGuess)
+            {
+                UIAnimator.SetButtonTextColor(_button, Color.green);
+                yield return new WaitForSeconds(0.75f);
+                UIAnimator.SetButtonTextColor(_button, _originalTextColor);
+            }
         }
 
         IEnumerator ProcessGuessRoutine(bool isGuessCorrect)
@@ -56,7 +59,7 @@ namespace KD.MusicGame.Gameplay
                 UIAnimator.ButtonPressEffect2(_button, AudioManager.wrongGuess, Color.red);
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.75f);
             UIAnimator.SetButtonTextColor(_button, _originalTextColor);
 
             GuessCheckedEvent?.Invoke();

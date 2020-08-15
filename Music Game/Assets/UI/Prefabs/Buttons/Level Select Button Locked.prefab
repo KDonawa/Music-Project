@@ -85,7 +85,6 @@ GameObject:
   - component: {fileID: 4034562816295023373}
   - component: {fileID: 5211540348633136556}
   - component: {fileID: 1267389456419548250}
-  - component: {fileID: 4828190600079966698}
   m_Layer: 5
   m_Name: Level Select Button Locked
   m_TagString: Untagged
@@ -188,25 +187,11 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 5211540348633136556}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4828190600079966698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2816560086517902033}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a4aa1be4acaaa94789146a787a2d331, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelText: {fileID: 3911166334122252967}
-  starsContainer: {fileID: 0}
 --- !u!1 &3468853451370981144
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,7 +431,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6496913498160221388
 RectTransform:
   m_ObjectHideFlags: 0

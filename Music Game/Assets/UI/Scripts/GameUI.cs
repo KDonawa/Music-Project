@@ -9,8 +9,13 @@ namespace KD.MusicGame.UI
 {
     public class GameUI : MonoBehaviour
     {
+        public static event System.Action HintEvent;
+        public static event System.Action ReplayEvent;
+
         [Header("Buttons")]
         [SerializeField] Button pauseButton = null;
+        [SerializeField] Button hintButton = null;
+        [SerializeField] Button replayButton = null;
 
         [Header("UI")]
         [SerializeField] TextMeshProUGUI countdownTextGUI = null;
@@ -37,12 +42,15 @@ namespace KD.MusicGame.UI
         }
         private void Start()
         {
-            if (pauseButton == null) Debug.LogError("No reference to Pause button");
-            else pauseButton.onClick.AddListener(OnPausePressed);
+            pauseButton.onClick.AddListener(OnPausePressed);
+            hintButton.onClick.AddListener(OnHintButtonPressed);
+            replayButton.onClick.AddListener(OnReplayButtonPressed);
         }
         private void OnDestroy()
         {
             if (pauseButton != null) pauseButton.onClick.RemoveListener(OnPausePressed);
+            hintButton.onClick.RemoveListener(OnHintButtonPressed);
+            replayButton.onClick.RemoveListener(OnReplayButtonPressed);
         }
 
         public void Inititialize()
@@ -50,20 +58,15 @@ namespace KD.MusicGame.UI
             //StopAllCoroutines();
             originalDroneTextSize = droneText.fontSize;
             ShowPauseButton();
+            HideHintButton();
+            HideReplayButton();
             HideTextGUI(levelText);
             HideTextGUI(countdownTextGUI);
             HideDroneText();
             HideGameText();
             HideDebugText();
         }
-        public void HidePauseButton()
-        {
-            pauseButton.gameObject.SetActive(false);
-        }
-        public void ShowPauseButton()
-        {
-            pauseButton.gameObject.SetActive(true);
-        }
+        
         public Button InitGuessButton(string name, string textToDisplay)
         {
             if (guessButtonsContainer != null && guessButton != null)
@@ -118,7 +121,7 @@ namespace KD.MusicGame.UI
             levelText.text = string.Concat("Level ", GameManager.CurrentLevelIndex.ToString());
             ShowTextGUI(levelText);
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
 
             AudioManager.PlaySound(AudioManager.swoosh1, SoundType.SFX);
             UIAnimator.ShrinkToNothing(levelText.rectTransform, 0.5f);
@@ -126,7 +129,13 @@ namespace KD.MusicGame.UI
         }
         #endregion
 
-        #region TEXT DISPLAY
+        #region DISPLAY
+        public void HideReplayButton() => replayButton.gameObject.SetActive(false);
+        public void ShowReplayButton() => replayButton.gameObject.SetActive(true);
+        public void HideHintButton() => hintButton.gameObject.SetActive(false);
+        public void ShowHintButton() => hintButton.gameObject.SetActive(true);
+        public void HidePauseButton() => pauseButton.gameObject.SetActive(false);
+        public void ShowPauseButton() => pauseButton.gameObject.SetActive(true);
         public void DisplayGameText(string textToDisplay)
         {
             gameText.text = textToDisplay;
@@ -160,9 +169,18 @@ namespace KD.MusicGame.UI
         void OnPausePressed()
         {
             AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.SFX);
-            //Time.timeScale = 0f;
             GameManager.ChangeGameState(GameState.Paused);
-            //Game.PauseGame();
+        }
+        void OnHintButtonPressed()
+        {
+            UIAnimator.ButtonPressEffect3(hintButton, AudioManager.buttonSelect2);
+            HintEvent?.Invoke();
+
+        }
+        void OnReplayButtonPressed()
+        {
+            UIAnimator.ButtonPressEffect3(replayButton, AudioManager.buttonSelect2);
+            ReplayEvent?.Invoke();
         }
     }
 }

@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 535}
+  m_AnchoredPosition: {x: 0, y: 606.27}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4259668916779761187
@@ -369,10 +369,25 @@ MonoBehaviour:
   - Good Job!
   - Nice!
   - Not Bad!
+  - Correct!
+  - That's Correct!
+  - Well Done!
+  - Bravo!
+  - Cheers!
+  - Great!
+  - Nice One!
+  - Keep It Up!
+  - There You Go!
+  - Encore!
   wrongGuessMessages:
   - Too Bad
   - Sorry
   - Not Quite
+  - Wrong
+  - That's Wrong
+  - Incorrect
+  - No
+  - Nope
 --- !u!1 &9085902722915231474
 GameObject:
   m_ObjectHideFlags: 0

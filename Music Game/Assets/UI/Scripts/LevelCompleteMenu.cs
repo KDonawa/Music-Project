@@ -19,6 +19,7 @@ namespace KD.MusicGame.UI
         [SerializeField] TextMeshProUGUI loseText = null;
         [SerializeField] TextMeshProUGUI scoreHeaderText = null;
         [SerializeField] TextMeshProUGUI scoreText = null;
+        [SerializeField] TextMeshProUGUI hiScoreText = null;
         [SerializeField] GameObject starsContainer = null;
         [SerializeField] Image badgeIcon = null;
 
@@ -57,13 +58,14 @@ namespace KD.MusicGame.UI
 
         #endregion
 
-        public static void DisplayMenu(int finalScore, bool isLevelPassed, int numStars)
+        public static void DisplayMenu(int finalScore, bool isLevelPassed, int hiScore, int numStars)
         {
             // hide text
             Instance.winText.gameObject.SetActive(false);
             Instance.loseText.gameObject.SetActive(false);
             Instance.scoreHeaderText.gameObject.SetActive(false);
-            Instance.scoreText.gameObject.SetActive(false);
+            //Instance.scoreText.gameObject.SetActive(false);
+            Instance.hiScoreText.gameObject.SetActive(false);
 
             // deactivate stars
             for (int i = 0; i < Instance.stars.Length; i++)
@@ -79,10 +81,10 @@ namespace KD.MusicGame.UI
 
             Instance.Open();
 
-            Instance.StartCoroutine(Instance.DisplayMenuRoutine(finalScore, isLevelPassed, numStars));
+            Instance.StartCoroutine(Instance.DisplayMenuRoutine(finalScore, isLevelPassed, hiScore, numStars));
         }
 
-        public IEnumerator DisplayMenuRoutine(int finalScore, bool isLevelPassed, int numStars)
+        public IEnumerator DisplayMenuRoutine(int finalScore, bool isLevelPassed, int hiScore, int numStars)
         {
             //yield return new WaitForSeconds(1f);
 
@@ -92,11 +94,12 @@ namespace KD.MusicGame.UI
             if (isLevelPassed) AudioManager.PlaySound(AudioManager.success, SoundType.SFX);
             yield return new WaitForSeconds(1f);
 
-            // set final score text routine     
+            // set final score text routine   
+            hiScoreText.text = "HiScore: " + hiScore + "%";
+            hiScoreText.gameObject.SetActive(true);
+            yield return new WaitForSeconds(1f);
             scoreText.text = "0%";
-            scoreHeaderText.gameObject.SetActive(true);
-            scoreText.gameObject.SetActive(true);
-            yield return new WaitForSeconds(0.5f);
+            scoreHeaderText.gameObject.SetActive(true);            
 
             int increaingScore = 0;
             int counter = 0;
@@ -114,8 +117,7 @@ namespace KD.MusicGame.UI
             }
             AudioManager.StopSound(AudioManager.finalScoreUpdate, SoundType.SFX);
             yield return new WaitForSeconds(0.5f);
-
-
+            
 
             // display stars
             numStars = Mathf.Clamp(numStars, 0, stars.Length);
@@ -125,12 +127,12 @@ namespace KD.MusicGame.UI
                 AudioManager.PlaySound(AudioManager.starDisplay, SoundType.SFX);
                 yield return new WaitForSeconds(0.5f);
             }
-            if (numStars == 3)
-            {
-                badgeIcon.gameObject.SetActive(true);
-                AudioManager.PlaySound(AudioManager.badgeDisplay, SoundType.SFX);
-            }
-            yield return new WaitForSeconds(1f);
+            //if (numStars == 3)
+            //{
+            //    badgeIcon.gameObject.SetActive(true);
+            //    AudioManager.PlaySound(AudioManager.badgeDisplay, SoundType.SFX);
+            //}
+            //yield return new WaitForSeconds(1f);
 
             // open stage complete menu
             if (isLevelPassed && GameManager.IsFinalLevel())

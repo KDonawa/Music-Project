@@ -11,6 +11,8 @@ namespace KD.MusicGame.Gameplay
         [SerializeField] string[] corerctGuessMessages = null;
         [SerializeField] string[] wrongGuessMessages = null;
 
+        Coroutine _feedbackRoutine;
+
         #region SETUP
         private void Awake()
         {
@@ -32,8 +34,16 @@ namespace KD.MusicGame.Gameplay
         #endregion
 
         #region UTILITY
-        void DisplayCorrectGuessFeedback() => StartCoroutine(DisplayGuessFeedbackRoutine(true));
-        void DisplayIncorrectGuessFeedback() => StartCoroutine(DisplayGuessFeedbackRoutine(false));
+        void DisplayCorrectGuessFeedback()
+        {
+            if (_feedbackRoutine != null) StopCoroutine(_feedbackRoutine);
+            _feedbackRoutine = StartCoroutine(DisplayGuessFeedbackRoutine(true));
+        }
+        void DisplayIncorrectGuessFeedback()
+        {
+            if (_feedbackRoutine != null) StopCoroutine(_feedbackRoutine);
+            _feedbackRoutine = StartCoroutine(DisplayGuessFeedbackRoutine(false));
+        }
         #endregion
 
         #region HELPER METHODS
@@ -61,12 +71,12 @@ namespace KD.MusicGame.Gameplay
                     display = wrongGuessMessages[randInt];
                 }
             }
-            if (textGUI.gameObject.activeSelf) textGUI.text += string.Concat("\n", display);
-            else textGUI.text = display;
+            //if (textGUI.gameObject.activeSelf) textGUI.text += string.Concat("\n", display);
+            textGUI.text = display;
 
             //yield return new WaitForSeconds(0.5f);
             ShowTextGUI(textGUI);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             ShowTextGUI(textGUI, false);
             textGUI.text = string.Empty;
         }

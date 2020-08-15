@@ -11,6 +11,8 @@ namespace KD.MusicGame.UI
     {
         [SerializeField] TextMeshProUGUI levelText = null;
         [SerializeField] GameObject starsContainer = null;
+        [SerializeField] Color earnedStarColor = new Color();
+        [SerializeField] Color unearnedStarColor = new Color();
 
         int levelIndex = 1;
         public void InitializeButton(int index, int numStars)
@@ -20,9 +22,11 @@ namespace KD.MusicGame.UI
 
             if (starsContainer == null) return;
 
+            numStars = Mathf.Clamp(numStars, 0, 3);
             Image[] stars = starsContainer.GetComponentsInChildren<Image>();
-            foreach (var star in stars) star.gameObject.SetActive(false);
-            for (int i = 0; i < stars.Length && i < numStars; i++) stars[i].gameObject.SetActive(true);
+            int i = 0;
+            for (; i < stars.Length && i < numStars; i++) stars[i].color = earnedStarColor;
+            for (; i < stars.Length; i++) stars[i].color = unearnedStarColor;
         }
 
         public void ButtonPressed(System.Action<Button> buttonPressedAction)

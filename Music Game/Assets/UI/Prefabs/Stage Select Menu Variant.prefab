@@ -1,24 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &5381848760713535571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2137641968732730033}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ec841c78bbe3874a94f360bdce564b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonsContainer: {fileID: 6681820022561557267}
-  backButton: {fileID: 7151872158300518646}
-  mainMenuButton: {fileID: 6886021596355729443}
-  unlockedButtonPrefab: {fileID: 4742920734226057809, guid: 76615680f9e741249b19b059edd90cd4,
-    type: 3}
-  lockedButtonPrefab: {fileID: 362170426429413149, guid: 48b13361e529f3c47bdb82d89e481781,
-    type: 3}
 --- !u!1 &5368853542257305750
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,6 +155,25 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5381848760713535571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2137641968732730033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ec841c78bbe3874a94f360bdce564b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonsContainer: {fileID: 6681820022561557267}
+  backButton: {fileID: 7151872158300518646}
+  mainMenuButton: {fileID: 6886021596355729443}
+  unlockedButtonPrefab: {fileID: 4742920734226057809, guid: 76615680f9e741249b19b059edd90cd4,
+    type: 3}
+  lockedButtonPrefab: {fileID: 362170426429413149, guid: 48b13361e529f3c47bdb82d89e481781,
+    type: 3}
 --- !u!1 &6310505738482406880
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,8 +208,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 51.69998}
-  m_SizeDelta: {x: 0, y: -580}
+  m_AnchoredPosition: {x: 0, y: 0.5}
+  m_SizeDelta: {x: 0, y: -477.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6681820022561557267
 GameObject:
@@ -244,8 +244,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -174.5}
-  m_SizeDelta: {x: 0, y: -348.9}
+  m_AnchoredPosition: {x: 0, y: -155.9}
+  m_SizeDelta: {x: 0, y: -311.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8146744461440267747
 MonoBehaviour:
@@ -269,7 +269,7 @@ MonoBehaviour:
   m_StartAxis: 0
   m_CellSize: {x: 280, y: 280}
   m_Spacing: {x: 169.6, y: 237.25}
-  m_Constraint: 0
+  m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!1 &7971806883736836003
 GameObject:
