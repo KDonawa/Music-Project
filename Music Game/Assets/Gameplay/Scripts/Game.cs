@@ -7,6 +7,8 @@ using KD.MusicGame.Utility.SaveSystem;
 using KD.MusicGame.UI;
 /*
 TODO:     
+-hints reduce score by 10% each time one is used
+-add tips: this will explain the indian notations, what each stage will teach, what each level plays like, what the drone is, and how to turn off
 -object pool sounds
 -custom levels
 -button loads expand in
@@ -29,7 +31,6 @@ namespace KD.MusicGame.Gameplay
         [Range(0, 10f)] [SerializeField] float timeToGuessPerNote = 5f;
         [Range(0, 100)] [SerializeField] int levelPassPercentage = 50;
         [Range(1, 10)] [SerializeField] int numRoundsPerSublevel = 5;
-        //[SerializeField] bool playIntro = true;
         //[SerializeField] bool useTimer = false;
 
         [Header("Systems")]
@@ -194,7 +195,8 @@ namespace KD.MusicGame.Gameplay
                 PlayInstrumentNote(_utility.GetWesternNotation(answers[i], droneNote));
                 //_gameUI.DisplayDebugText(_utility.GetNoteFormatted(note)); // testing
 
-                yield return new WaitForSeconds(1.8f);
+                //yield return new WaitForSeconds(1.8f);
+                yield return new WaitForSeconds(SettingsMenu.NoteSpeedSlider.value);
                 StopInstrumentNote(_utility.GetWesternNotation(answers[i], droneNote));
             }
 
@@ -206,13 +208,15 @@ namespace KD.MusicGame.Gameplay
             _gameUI.HideDroneText();
             _utility.EnableButtons(guessButtons);
         }
-        void ContinueGameLoop()
+        IEnumerator ContinueGameLoop()
         {
             _utility.HideButtons(guessButtons);
             _gameUI.HideDebugText();
             _gameUI.HideGameText();
             //_timer.StopGuessTimer();
             currentSubLevelIndex++;
+
+            yield return new WaitForSeconds(1.5f);
 
             if (HasLevelEnded()) StartCoroutine(LevelEndedRoutine());
             else PlayGameLoop();
@@ -288,7 +292,7 @@ namespace KD.MusicGame.Gameplay
             yield return new WaitForSeconds(1f);
             _utility.HideButtons(guessButtons);
             yield return new WaitForSeconds(1f);
-            ContinueGameLoop();
+            StartCoroutine(ContinueGameLoop());
         }
         void ShowCorrectGuessOnWrongGuess()
         {
@@ -308,9 +312,8 @@ namespace KD.MusicGame.Gameplay
             if (guessCount == numGuessesPerRound)
             {
                 currentRound++;
-                if (currentRound > numRoundsPerSublevel) ContinueGameLoop();
+                if (currentRound > numRoundsPerSublevel) StartCoroutine(ContinueGameLoop());
                 else PlayRound();
-
             }
             else
             {
@@ -343,6 +346,7 @@ namespace KD.MusicGame.Gameplay
         void StopInstrumentNote(string note)
         {
             activeNoteSounds.Remove(note);
+            AudioManager.StopSound(note, SoundType.INSTRUMENT);
         }
         void PlayDroneNoteEffect() => StartCoroutine(DroneNoteEffectRoutine());
         IEnumerator DroneNoteEffectRoutine()

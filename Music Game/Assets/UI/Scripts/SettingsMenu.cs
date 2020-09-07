@@ -12,6 +12,7 @@ namespace KD.MusicGame.UI
         [SerializeField] Slider slider2 = null;
         [SerializeField] Slider slider3 = null;
         [SerializeField] Slider slider4 = null;
+        [SerializeField] Slider slider5 = null;
 
         [Header("Buttons")]
         [SerializeField] Button backButton = null;
@@ -21,6 +22,7 @@ namespace KD.MusicGame.UI
         public static Slider Slider2 => Instance.slider2;
         public static Slider Slider3 => Instance.slider3;
         public static Slider Slider4 => Instance.slider4;
+        public static Slider NoteSpeedSlider => Instance.slider5;
 
         protected override void Awake()
         {
@@ -41,15 +43,16 @@ namespace KD.MusicGame.UI
             LoadData();
             base.Open();
         }
-        public static void ResetSettingsData()
-        {
-            Instance.slider1.value = 1f;
-            Instance.slider2.value = 1f;
-            Instance.slider3.value = 1f;
-            Instance.slider4.value = 1f;
+        //public static void ResetSettingsData()
+        //{
+        //    Instance.slider1.value = 1f;
+        //    Instance.slider2.value = 1f;
+        //    Instance.slider3.value = 1f;
+        //    Instance.slider4.value = 1f;
+        //    Instance.slider5.value = 3f;
 
-            BinarySaveSystem.SaveSettings();
-        }
+        //    BinarySaveSystem.SaveSettings();
+        //}
 
         protected override void OnDestroy()
         {
@@ -86,8 +89,8 @@ namespace KD.MusicGame.UI
                 Instance.slider2.value = data.value2;
                 Instance.slider3.value = data.value3;
                 Instance.slider4.value = data.value4;
+                Instance.slider5.value = data.noteSpeed;
             }
-            //SetVolume();
         }
     }
 }

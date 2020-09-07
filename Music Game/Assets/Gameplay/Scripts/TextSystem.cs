@@ -10,6 +10,8 @@ namespace KD.MusicGame.Gameplay
         [SerializeField] TextMeshProUGUI textGUI = null;
         [SerializeField] string[] corerctGuessMessages = null;
         [SerializeField] string[] wrongGuessMessages = null;
+        [SerializeField] Color correctGuessColor = new Color();
+        [SerializeField] Color wrongGuessColor = new Color();
 
         Coroutine _feedbackRoutine;
 
@@ -61,6 +63,7 @@ namespace KD.MusicGame.Gameplay
                 {
                     int randInt = UnityEngine.Random.Range(0, corerctGuessMessages.Length);
                     display = corerctGuessMessages[randInt];
+                    textGUI.color = correctGuessColor;
                 }
             }
             else
@@ -69,6 +72,7 @@ namespace KD.MusicGame.Gameplay
                 {
                     int randInt = UnityEngine.Random.Range(0, wrongGuessMessages.Length);
                     display = wrongGuessMessages[randInt];
+                    textGUI.color = wrongGuessColor;
                 }
             }
             //if (textGUI.gameObject.activeSelf) textGUI.text += string.Concat("\n", display);

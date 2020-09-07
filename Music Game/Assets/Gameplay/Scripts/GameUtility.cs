@@ -11,7 +11,6 @@ namespace KD.MusicGame.Gameplay
     {
         // lower octaves: .sa .re .ga (must be bold and italicized)
         // higher octaves: 'sa 're 'ga (end in apostrophe and Capitalized)
-        // drone: d:C3 -> 3 will tell us the octave
         readonly string[] indianNotes = { "sa", "_re", "re", "_ga", "ga", "ma", "Ma", "pa", "_dha", "dha", "_ni", "ni" };
         readonly string[] westernNotes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
         //readonly string[] droneNotes = { "d:C", "d:C#", "d:D", "d:D#", "d:E", "d:F", "d:F#", "d:G", "d:G#", "d:A", "d:A#", "d:B", };
