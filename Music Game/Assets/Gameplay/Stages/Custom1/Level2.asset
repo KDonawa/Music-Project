@@ -17,4 +17,10 @@ MonoBehaviour:
   hiScore: 0
   numStarsEarned: 0
   numNotesToGuess: 1
-  subLevels: []
+  subLevels:
+  - {fileID: 11400000, guid: c1c70abfed7dd5b4a9a0d007de5ab91e, type: 2}
+  - {fileID: 11400000, guid: 20d5d8ab151b70d4587887988765e40c, type: 2}
+  - {fileID: 11400000, guid: f5f97a3ee8b8fba478c6680704555c7b, type: 2}
+  - {fileID: 11400000, guid: b418e547cb3c868458759f0e0f31e899, type: 2}
+  - {fileID: 11400000, guid: c1950e26d9cbda743b8b2117f3d92701, type: 2}
+  - {fileID: 11400000, guid: f84bf96f3cf87544c95da6bbc97142c5, type: 2}

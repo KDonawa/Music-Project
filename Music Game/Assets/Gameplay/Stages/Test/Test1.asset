@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7ed6b0e5be08cf4abdba71d84f6a159, type: 3}
-  m_Name: A
-  m_EditorClassIdentifier: 
-  notes:
-  - sa
-  - re
-  - ga
+  m_Script: {fileID: 0}
+  m_Name: Test1
+  m_EditorClassIdentifier: Assembly-CSharp:KD.MusicGame.Gameplay:Stage
+  name: Test 1
+  isUnlocked: 1
+  numPassedLevels: 0
+  levels:
+  - {fileID: 11400000, guid: 0c0680697f16957439a54f51d3ec069b, type: 2}

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   isUnlocked: 1
-  isPassed: 1
-  numStarsEarned: 3
+  isPassed: 0
+  hiScore: 0
+  numStarsEarned: 0
   numNotesToGuess: 1
   subLevels:
   - {fileID: 11400000, guid: ef28bccfed3365d42a37074b5ef08b70, type: 2}
