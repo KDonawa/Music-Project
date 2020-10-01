@@ -13,14 +13,18 @@ namespace KD.MusicGame.UI
         [Header("UI")]
         [SerializeField] TextMeshProUGUI headerText = null;
         [SerializeField] Button mainMenuButton = null;
-        [SerializeField] Button backButton = null;
-        [SerializeField] Button hiScoresButton = null;
+        [SerializeField] Button backButton = null;        
         [SerializeField] GameObject buttonsContainer = null;
-        [SerializeField] HiScorePanel hiScorePanel = null;
-
-        [Header("Prefabs")]
         [SerializeField] Button unlockedButtonPrefab = null;
         [SerializeField] Button lockedButtonPrefab = null;
+
+        [Header("HiScore Panel")]
+        [SerializeField] Button hiScoresButton = null;
+        [SerializeField] GameObject hiScorePanel = null;
+        [SerializeField] GameObject hiScoreSlotsContainer = null;
+        [SerializeField] HiScoreSlot hiScoreSlotPrefab = null;
+        [SerializeField] Button closeButton = null;
+        List<HiScoreSlot> _hiScoreSlots = new List<HiScoreSlot>();
 
         List<Button> levelOptions;
 
@@ -30,20 +34,27 @@ namespace KD.MusicGame.UI
 
             levelOptions = new List<Button>();
 
-            if (mainMenuButton == null) Debug.LogError("No reference to Main Menu button");
-            else mainMenuButton.onClick.AddListener(MainMenuPressed);
+            if (mainMenuButton != null) mainMenuButton.onClick.AddListener(() =>
+            {
+                UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
+                SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, MainMenu.Instance.Open);
+            });
+            if (backButton != null) backButton.onClick.AddListener(() =>
+            {
+                UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
+                SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, StageSelectMenu.Instance.Open);
+            });
+            if (hiScoresButton != null) hiScoresButton.onClick.AddListener(() =>
+            {
+                UIAnimator.ButtonPressEffect3(hiScoresButton, AudioManager.buttonSelect2);
+                OpenHiScorePanel();
+            });
+            closeButton.onClick.AddListener(() =>
+            {
+                UIAnimator.ButtonPressEffect3(closeButton, AudioManager.buttonSelect2);
+                hiScorePanel.SetActive(false);
+            });
 
-            if (backButton == null) Debug.LogError("No reference to back button");
-            else backButton.onClick.AddListener(BackPressed);
-            if (hiScoresButton != null) hiScoresButton.onClick.AddListener(OnHiScoresButtonPressed);
-
-        }
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            if (mainMenuButton != null) mainMenuButton.onClick.RemoveListener(MainMenuPressed);
-            if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
-            if (hiScoresButton != null) hiScoresButton.onClick.RemoveListener(OnHiScoresButtonPressed);
         }
         public override void Open()
         {
@@ -78,6 +89,34 @@ namespace KD.MusicGame.UI
                 }
             }
         }
+        void OpenHiScorePanel()
+        {
+            if (hiScorePanel == null) return;
+
+            LevelData[] levels = GameManager.GetCurrentStage().levels;
+            int i = 0;
+            for (; i < levels.Length && i < _hiScoreSlots.Count; i++)
+            {
+                if (levels[i] != null)
+                {
+                    _hiScoreSlots[i].SetLevelNumberText(i + 1);
+                    _hiScoreSlots[i].SetHiScoreText(levels[i].hiScore);
+                    _hiScoreSlots[i].gameObject.SetActive(true);
+                }
+            }
+            for (; i < levels.Length; i++)
+            {
+                if (levels[i] != null)
+                {
+                    _hiScoreSlots.Add(Instantiate(hiScoreSlotPrefab, hiScoreSlotsContainer.transform));
+                    _hiScoreSlots[i].SetLevelNumberText(i + 1);
+                    _hiScoreSlots[i].SetHiScoreText(levels[i].hiScore);
+                }
+            }
+            for (; i < _hiScoreSlots.Count; i++) _hiScoreSlots[i].gameObject.SetActive(false);
+
+            hiScorePanel.SetActive(true);
+        }
 
         #region BUTTON EVENTS
         void ButtonPressedEffect(Button button)
@@ -92,21 +131,7 @@ namespace KD.MusicGame.UI
                 }
             }
         }
-        void MainMenuPressed()
-        {
-            UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
-            SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, MainMenu.Instance.Open);
-        }
-        void BackPressed()
-        {
-            UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
-            SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, StageSelectMenu.Instance.Open);
-        }
-        void OnHiScoresButtonPressed()
-        {
-            UIAnimator.ButtonPressEffect3(hiScoresButton, AudioManager.buttonSelect2);
-            if (hiScorePanel != null) hiScorePanel.Open();
-        }
+
         #endregion
     }
 }

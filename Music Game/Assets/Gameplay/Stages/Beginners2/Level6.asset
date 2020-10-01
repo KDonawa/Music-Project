@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74509fb684e6d764ca930a52f9f2840e, type: 3}
   m_Name: Level6
   m_EditorClassIdentifier: 
-  droneNote: {fileID: 11400000, guid: feb6a44de3f8eb446a49f504a27b092c, type: 2}
+  isUnlocked: 1
+  isPassed: 0
+  hiScore: 0
+  numStarsEarned: 0
+  numNotesToGuess: 6
   subLevels:
   - {fileID: 11400000, guid: 57a17f7dcfe3ba14ca5ab4edb29f0dc4, type: 2}
   - {fileID: 11400000, guid: e0b04ee50ea280c4cba8e377d9e9551f, type: 2}
   - {fileID: 11400000, guid: 95856495783a4e64c9afa3565b2c5c1f, type: 2}
-  numNotesToGuess: 6
