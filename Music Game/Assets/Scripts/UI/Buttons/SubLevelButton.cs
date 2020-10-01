@@ -10,8 +10,8 @@ namespace KD.MusicGame.UI
     {
         public Button Button { get; private set; }
 
-        public bool[] selectedNotes;
-        int maxNumNotes = 1;
+        [HideInInspector] public bool[] selectedNotes;
+        int maxNumNotes;
 
         StageCreationScreen stageCreation;
 
@@ -24,11 +24,12 @@ namespace KD.MusicGame.UI
         {
             Button.onClick.RemoveListener(OnButtonPressed);
         }
-        public void Init(StageCreationScreen stageCreationScreen, int maxNum)
+        public void Init(StageCreationScreen stageCreationScreen, string textToDisplay, int maxNumNotes)
         {
             stageCreation = stageCreationScreen;
-            maxNumNotes = maxNum;
+            this.maxNumNotes = maxNumNotes;
             selectedNotes = new bool[maxNumNotes];
+            GetComponentInChildren<TextMeshProUGUI>().text = textToDisplay;
         }
         public void UpdateSelectedNotes(int index, bool newValue)
         {

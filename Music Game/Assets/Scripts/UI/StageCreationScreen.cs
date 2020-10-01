@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using TMPro;
 using KD.MusicGame.Utility;
@@ -11,6 +10,15 @@ namespace KD.MusicGame.UI
 {
     public class StageCreationScreen : MonoBehaviour
     {
+        readonly string[] notes = { ".pa", "._dha", ".dha", "._ni", ".ni", "sa", "_re", "re", "_ga", "ga", "ma", "Ma", "pa", "_dha",
+            "dha","_ni","ni","'sa","'_re","'re","'_ga","'ga","'ma","'Ma","'pa"};
+        [SerializeField] string[] subLevels = { "A", "B", "C", "D", "E", "F" };        
+        [Range(0,10)][SerializeField] int maxNumLevels = 10;
+        [SerializeField] GameObject tooltip = null;
+
+        public Color unselectedColor = new Color();
+        public Color selectedColor = new Color();
+
         [Header("Stage Options")]
         [SerializeField] GameObject stageOptions = null;
         [SerializeField] Slider numLevelsSlider = null;
@@ -20,15 +28,14 @@ namespace KD.MusicGame.UI
         [SerializeField] Button nextButton1 = null;
         [SerializeField] Button cancelButton = null;
 
-
         [Header("Sub-Level Options")]
         [SerializeField] GameObject subLevelOptions = null;
         [SerializeField] GameObject subLevelButtonsContainer = null;
+        [SerializeField] SubLevelButton subLevelButtonPrefab = null;
         [SerializeField] GameObject noteButtonsContainer = null;
+        [SerializeField] NoteButton noteButtonPrefab = null;
         [SerializeField] Button nextButton2 = null;
-        [SerializeField] Button previousButton1 = null;
-        public Color unselectedColor = new Color();
-        public Color selectedColor = new Color();
+        [SerializeField] Button previousButton1 = null;        
         public SubLevelButton[] SubLevelButtons { get; private set; }
         public NoteButton[] NoteButtons { get; private set; }
         public SubLevelButton ActiveSubLevelButton { get; set; }
@@ -37,9 +44,11 @@ namespace KD.MusicGame.UI
         [Header("Level Options")]
         [SerializeField] GameObject levelOptions = null;
         [SerializeField] GameObject levelButtonsContainer = null;
+        [SerializeField] LevelButton levelButtonPrefab = null;
         [SerializeField] Slider numNotesPlayedSlider = null;
         [SerializeField] TextMeshProUGUI numNotesTextGUI = null;
         [SerializeField] GameObject subLevelButtonsContainer2 = null;
+        [SerializeField] SubLevelButton2 subLevelButton2Prefab = null;
         [SerializeField] Button confirmButton = null;
         [SerializeField] Button previousButton2 = null;
         public LevelButton[] LevelButtons { get; private set; }
@@ -78,23 +87,38 @@ namespace KD.MusicGame.UI
 
 
             // init buttons
-            SubLevelButtons = subLevelButtonsContainer.GetComponentsInChildren<SubLevelButton>();
-            int numSubLevelButtons = SubLevelButtons.Length;
-            for (int i = 0; i < numSubLevelButtons; i++) SubLevelButtons[i].Init(this, numSubLevelButtons);
+            SubLevelButtons = new SubLevelButton[subLevels.Length];
+            for (int i = 0; i < SubLevelButtons.Length; i++)
+            {
+                SubLevelButtons[i] = Instantiate(subLevelButtonPrefab, subLevelButtonsContainer.transform);
+                SubLevelButtons[i].Init(this, subLevels[i], notes.Length);
+            }
 
-            NoteButtons = noteButtonsContainer.GetComponentsInChildren<NoteButton>();
-            for (int i = 0; i < NoteButtons.Length; i++) NoteButtons[i].Init(i, this);
+            NoteButtons = new NoteButton[notes.Length];
+            for (int i = 0; i < NoteButtons.Length; i++)
+            {
+                NoteButtons[i] = Instantiate(noteButtonPrefab, noteButtonsContainer.transform);
+                NoteButtons[i].Init(i, notes[i], this);
+            }
 
-            LevelButtons = levelButtonsContainer.GetComponentsInChildren<LevelButton>();
-            int numLevelButtons = LevelButtons.Length;
-            for (int i = 0; i < numLevelButtons; i++) LevelButtons[i].Init(this, numLevelButtons);
+            LevelButtons = new LevelButton[maxNumLevels];
+            for (int i = 0; i < LevelButtons.Length; i++)
+            {
+                LevelButtons[i] = Instantiate(levelButtonPrefab, levelButtonsContainer.transform);
+                LevelButtons[i].Init(this, i + 1, subLevels.Length);
+            }
 
-            SubLevelButtons2 = subLevelButtonsContainer2.GetComponentsInChildren<SubLevelButton2>();
-            for (int i = 0; i < SubLevelButtons2.Length; i++) SubLevelButtons2[i].Init(i, this);
+            SubLevelButtons2 = new SubLevelButton2[subLevels.Length];
+            for (int i = 0; i < SubLevelButtons2.Length; i++)
+            {
+                SubLevelButtons2[i] = Instantiate(subLevelButton2Prefab, subLevelButtonsContainer2.transform);
+                SubLevelButtons2[i].Init(this, i, subLevels[i]);
+            }
         }
 
         private void OnEnable()
         {
+            if (tooltip != null) tooltip.SetActive(false);
             for (int i = 0; i < SubLevelButtons.Length; i++) SubLevelButtons[i].ResetButton(); // Init SubLevel Options
             for (int i = 0; i < LevelButtons.Length; i++) LevelButtons[i].ResetButton(); // Init Level Options
             OpenStageOptionsScreen();            
@@ -175,7 +199,11 @@ namespace KD.MusicGame.UI
             {
                 if (!SubLevelButtons[i].HasActiveNote())
                 {
-                    // error msg popup: "Must have at least one note selected per Sub-Level!"
+                    if (tooltip != null)
+                    {
+                        tooltip.GetComponentInChildren<TextMeshProUGUI>().text = "Must select at least 1 note in each Sublevel to continue";
+                        tooltip.gameObject.SetActive(true);
+                    }
                     return;
                 }
             }
@@ -196,7 +224,11 @@ namespace KD.MusicGame.UI
             {
                 if (!LevelButtons[i].HasActiveNote())
                 {
-                    // error msg popup: "Must have at least one Sub-Level selected per Level!"
+                    if (tooltip != null)
+                    {
+                        tooltip.GetComponentInChildren<TextMeshProUGUI>().text = "Must select at least 1 Sublevel in each Level to continue";
+                        tooltip.gameObject.SetActive(true);
+                    }
                     return;
                 }
             }

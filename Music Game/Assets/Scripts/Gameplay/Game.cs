@@ -12,7 +12,6 @@ IDEAS:
 */
 namespace KD.MusicGame.Gameplay
 {
-    [RequireComponent(typeof(GameUtility))]
     public class Game : MonoBehaviour
     {
         static Game _instance;
@@ -24,21 +23,15 @@ namespace KD.MusicGame.Gameplay
         [SerializeField] GameUI gameUI = null;
 
         [Header("Variables")]
-        [Range(0, 5)] [SerializeField] int countdownTime = 0;
-        [Range(0, 10f)] [SerializeField] float timeToGuessPerNote = 5f;
         [Range(0, 100)] [SerializeField] int levelPassPercentage = 50;
         [Range(1, 10)] [SerializeField] int numRoundsPerSublevel = 5;
-        //[SerializeField] bool useTimer = false;
 
         [Header("Systems")]
-        [SerializeField] Timer timerPrefab = null;
         [SerializeField] ScoreSystem scoreSystemPrefab = null;
         [SerializeField] TextSystem textSystemPrefab = null;
 
         // refs
         GameUI _gameUI;
-        GameUtility _utility;
-        Timer _timer;
         ScoreSystem _scoreSystem;
         TextSystem _textSystem;
 
@@ -60,10 +53,7 @@ namespace KD.MusicGame.Gameplay
             if (_instance == null) _instance = this;
             else Destroy(gameObject);
 
-            _utility = GetComponent<GameUtility>();
-
             _gameUI = Instantiate(gameUI);
-            _timer = Instantiate(timerPrefab);
             _scoreSystem = Instantiate(scoreSystemPrefab);
             _textSystem = Instantiate(textSystemPrefab);
 
@@ -77,11 +67,13 @@ namespace KD.MusicGame.Gameplay
         {
             GuessButton.ButtonPressedEvent += OnGuessButtonPressed;
             GuessButton.GuessCheckedEvent += OnGuessButtonChecked;
-            Timer.TimerExpiredEvent += OnTimerExpired;
+
             GameManager.GamePausedEvent += OnGamePaused;
             GameManager.GameUnPausedEvent += OnGameResumed;
+
             GameUI.HintEvent += ShowHint;
             GameUI.ReplayEvent += PlayNotes;
+
             GuessButton.GuessIncorrectEvent += ShowCorrectGuessOnWrongGuess;
 
             Play();
@@ -93,11 +85,13 @@ namespace KD.MusicGame.Gameplay
 
             GameManager.GamePausedEvent -= OnGamePaused;
             GameManager.GameUnPausedEvent -= OnGameResumed;
+
             GuessButton.ButtonPressedEvent -= OnGuessButtonPressed;
             GuessButton.GuessCheckedEvent -= OnGuessButtonChecked;
-            Timer.TimerExpiredEvent -= OnTimerExpired;
+
             GameUI.HintEvent -= ShowHint;
             GameUI.ReplayEvent -= PlayNotes;
+
             GuessButton.GuessIncorrectEvent -= ShowCorrectGuessOnWrongGuess;
         }
 
@@ -105,15 +99,13 @@ namespace KD.MusicGame.Gameplay
         {
             MenuManager.CloseAllMenus();
             AudioManager.StopAllNoteSounds();
-            _utility.HideButtons(guessButtons);
+            _gameUI.HideButtons(guessButtons);
 
             currentLevel = GameManager.GetCurrentLevelData();
-
             currentSubLevelIndex = 0;
             numGuessesPerRound = currentLevel.numNotesToGuess;
 
             _gameUI.Inititialize();
-            _timer.Initialize(timeToGuessPerNote * numGuessesPerRound);
             _scoreSystem.Initialize(numGuessesPerRound * numRoundsPerSublevel * currentLevel.subLevels.Length);
             _textSystem.Initialize();
         }
@@ -127,7 +119,7 @@ namespace KD.MusicGame.Gameplay
         {
             foreach (var b in guessButtons) Destroy(b.gameObject);
             guessButtons.Clear();
-            foreach (var note in currentNotes) guessButtons.Add(_gameUI.InitGuessButton(note, _utility.GetNoteFormatted(note)));
+            foreach (var note in currentNotes) guessButtons.Add(_gameUI.InitGuessButton(note));
         }
         #endregion
 
@@ -143,14 +135,12 @@ namespace KD.MusicGame.Gameplay
             while (!SceneTransitions.sceneLoadingComplete) yield return null; //wait until scene is loaded
 
             yield return StartCoroutine(_gameUI.DisplayCurrentLevelRoutine());
-            yield return new WaitForSeconds(0.5f);
-            _gameUI.StartCountdown(countdownTime, 0.75f, PlayGameLoop);
+            PlayGameLoop();
         }
         void PlayGameLoop()
         {
             InitializeNotes();
             InitializeGuessButtons();
-            //_timer.ResetGuessTimer();
             currentRound = 1;
             PlayRound();
         }
@@ -160,7 +150,7 @@ namespace KD.MusicGame.Gameplay
             answers.Clear();
             activeNoteSounds.Clear();
 
-            StartCoroutine(_utility.LoadButtonsRoutine(guessButtons, 0.2f, false));
+            StartCoroutine(_gameUI.LoadButtonsRoutine(guessButtons, 0.2f, false));
 
             string numNotesText = numGuessesPerRound > 1 ? " Notes" : " Note";
             _gameUI.DisplayGameText("Guess " + numGuessesPerRound + numNotesText);
@@ -176,7 +166,7 @@ namespace KD.MusicGame.Gameplay
         {
             _gameUI.HideHintButton();
             _gameUI.HideReplayButton();
-            _utility.DisableButtons(guessButtons);
+            _gameUI.DisableButtons(guessButtons);
 
             yield return new WaitForSeconds(1.5f);
             PlayDroneNoteEffect();
@@ -185,12 +175,12 @@ namespace KD.MusicGame.Gameplay
             // play each note consecutively
             for (int i = 0; i < numGuessesPerRound; i++)
             {               
-                PlayInstrumentNote(_utility.GetWesternNotation(answers[i], droneNote));
+                PlayInstrumentNote(GameManager.GetWesternNotation(answers[i], droneNote));
                 //_gameUI.DisplayDebugText(_utility.GetNoteFormatted(note)); // testing
 
                 //yield return new WaitForSeconds(1.8f);
                 yield return new WaitForSeconds(4f - SettingsMenu.NoteSpeedSlider.value);
-                StopInstrumentNote(_utility.GetWesternNotation(answers[i], droneNote));
+                StopInstrumentNote(GameManager.GetWesternNotation(answers[i], droneNote));
             }
 
             yield return new WaitForSeconds(0.2f);
@@ -199,16 +189,15 @@ namespace KD.MusicGame.Gameplay
             _gameUI.ShowHintButton();
             _gameUI.ShowReplayButton();
             _gameUI.HideDroneText();
-            _utility.EnableButtons(guessButtons);
+            _gameUI.EnableButtons(guessButtons);
         }
         IEnumerator ContinueGameLoop()
         {
             currentSubLevelIndex++;
             _gameUI.HideHintButton();
-            _gameUI.HideReplayButton();
-            //_timer.StopGuessTimer();            
+            _gameUI.HideReplayButton();          
             yield return new WaitForSeconds(1f);
-            _utility.HideButtons(guessButtons);
+            _gameUI.HideButtons(guessButtons);
             _gameUI.HideGameText();
             _gameUI.HideDebugText();
             yield return new WaitForSeconds(1f);
@@ -216,7 +205,6 @@ namespace KD.MusicGame.Gameplay
             if (HasLevelEnded())
             {
                 _gameUI.HidePauseButton();
-                //_timer.HideTimer();
 
                 if (IsLevelPassed())
                 {
@@ -258,33 +246,33 @@ namespace KD.MusicGame.Gameplay
         {
             _gameUI.HideHintButton();
             _gameUI.HideReplayButton();
-            _utility.DisableButtons(guessButtons);
+            _gameUI.DisableButtons(guessButtons);
             for (int i = 0; i < currentNotes.Count; i++)
             {
                 Button b = guessButtons[i];
-                _utility.LoadButton(b, false, false);
-                PlayInstrumentNote(_utility.GetWesternNotation(currentNotes[i], droneNote));
+                _gameUI.LoadButton(b, false, false);
+                PlayInstrumentNote(GameManager.GetWesternNotation(currentNotes[i], droneNote));
                 yield return new WaitForSeconds(0.3f);
                 UIAnimator.FlashButtonColor(b, Color.green, 2f);
 
                 yield return new WaitForSeconds(1.5f);
-                StopInstrumentNote(_utility.GetWesternNotation(currentNotes[i], droneNote));
+                StopInstrumentNote(GameManager.GetWesternNotation(currentNotes[i], droneNote));
             }
 
             yield return new WaitForSeconds(0.2f);
-            _utility.EnableButtons(guessButtons);
+            _gameUI.EnableButtons(guessButtons);
             _gameUI.ShowHintButton();
             _gameUI.ShowReplayButton();
         }
         void OnTimerExpired() => StartCoroutine(TimerExpiredRoutine());
         IEnumerator TimerExpiredRoutine()
         {
-            _utility.DisableButtons(guessButtons);
+            _gameUI.DisableButtons(guessButtons);
 
             AudioManager.PlaySound(AudioManager.timerExpired, SoundType.SFX);
 
             yield return new WaitForSeconds(1f);
-            _utility.HideButtons(guessButtons);
+            _gameUI.HideButtons(guessButtons);
             yield return new WaitForSeconds(1f);
             StartCoroutine(ContinueGameLoop());
         }
@@ -297,8 +285,7 @@ namespace KD.MusicGame.Gameplay
         }
         void OnGuessButtonPressed(GuessButton guessButton)
         {
-            //_timer.StopGuessTimer();
-            _utility.DisableButtons(guessButtons);            
+            _gameUI.DisableButtons(guessButtons);            
             GuessButton.correctGuess = answers[guessCount++];
         }
         void OnGuessButtonChecked()
@@ -311,8 +298,7 @@ namespace KD.MusicGame.Gameplay
             }
             else
             {
-                _utility.EnableButtons(guessButtons);
-                //_timer.StartGuessTimer();
+                _gameUI.EnableButtons(guessButtons);
             }
         }
         void OnGamePaused()
@@ -365,7 +351,6 @@ namespace KD.MusicGame.Gameplay
             AudioManager.StopAllNoteSounds();
             _instance.StopAllCoroutines();
             _instance._gameUI.StopAllCoroutines();
-            _instance._utility.StopAllCoroutines();
             //_instance._timer.StopAllCoroutines();
             _instance._scoreSystem.StopAllCoroutines();
             _instance._textSystem.StopAllCoroutines();
@@ -375,7 +360,6 @@ namespace KD.MusicGame.Gameplay
             GameManager.IncrementLevel();
             Play();
         }
-
 
         #endregion
     }

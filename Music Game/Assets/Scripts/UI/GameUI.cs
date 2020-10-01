@@ -55,7 +55,6 @@ namespace KD.MusicGame.UI
 
         public void Inititialize()
         {
-            //StopAllCoroutines();
             originalDroneTextSize = droneText.fontSize;
             ShowPauseButton();
             HideHintButton();
@@ -67,14 +66,14 @@ namespace KD.MusicGame.UI
             HideDebugText();
         }
         
-        public Button InitGuessButton(string name, string textToDisplay)
+        public Button InitGuessButton(string noteName)
         {
             if (guessButtonsContainer != null && guessButton != null)
             {
                 Button b = Instantiate(guessButton, guessButtonsContainer.transform);
                 b.gameObject.SetActive(false);
-                b.GetComponent<GuessButton>().Initialize(name);
-                b.GetComponentInChildren<TextMeshProUGUI>().text = textToDisplay;
+                b.GetComponent<GuessButton>().Initialize(noteName);
+                b.GetComponentInChildren<TextMeshProUGUI>().text = GameManager.GetNoteFormatted(noteName);
                 b.onClick.AddListener(b.GetComponent<GuessButton>().ButtonPressed);
                 return b;
             }
@@ -104,7 +103,6 @@ namespace KD.MusicGame.UI
 
         #endregion
 
-
         #region EFFECTS
         public void PulseDroneText()
         {
@@ -125,7 +123,7 @@ namespace KD.MusicGame.UI
 
             AudioManager.PlaySound(AudioManager.swoosh1, SoundType.SFX);
             UIAnimator.ShrinkToNothing(levelText.rectTransform, 0.5f);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1f);
         }
         #endregion
 
@@ -164,8 +162,46 @@ namespace KD.MusicGame.UI
 
         #endregion
 
-        void ShowTextGUI(TextMeshProUGUI textGUI, bool canShow = true) => textGUI.gameObject.SetActive(canShow);
-        void HideTextGUI(TextMeshProUGUI textGUI) => ShowTextGUI(textGUI, false);
+        #region BUTTON UTILITY
+        public void LoadButtons(List<Button> buttonsList, float timeBetweenButtons = 0f, bool canEnable = true)
+        {
+            StartCoroutine(LoadButtonsRoutine(buttonsList, timeBetweenButtons, canEnable));
+        }
+        public IEnumerator LoadButtonsRoutine(List<Button> buttonsList, float timeBetweenButtons, bool canEnable = true)
+        {
+            for (int i = 0; i < buttonsList.Count; i++)
+            {
+                LoadButton(buttonsList[i], canEnable, false);
+                yield return new WaitForSeconds(timeBetweenButtons);
+            }
+        }
+        public void LoadButton(Button b, bool canEnable = true, bool playSound = true)
+        {
+            DisplayButton(b, canEnable);
+            if (playSound) Utility.AudioManager.PlaySound(Utility.AudioManager.buttonLoad1, Utility.SoundType.SFX);
+        }
+        public void HideButtons(List<Button> buttonsList)
+        {
+            foreach (var b in buttonsList)
+            {
+                HideButton(b);
+            }
+        }
+        public void EnableButtons(List<Button> buttonsList, bool canEnable = true)
+        {
+            foreach (var b in buttonsList)
+            {
+                EnableButton(b, canEnable);
+            }
+        }
+        public void DisableButtons(List<Button> buttonsList)
+        {
+            EnableButtons(buttonsList, false);
+        }
+
+        #endregion
+
+        #region BUTTON EVENTS
         void OnPausePressed()
         {
             AudioManager.PlaySound(AudioManager.buttonSelect2, SoundType.SFX);
@@ -182,6 +218,31 @@ namespace KD.MusicGame.UI
             UIAnimator.ButtonPressEffect3(replayButton, AudioManager.buttonSelect2);
             ReplayEvent?.Invoke();
         }
+        #endregion
+
+        #region HELPER METHODS
+        void ShowTextGUI(TextMeshProUGUI textGUI, bool canShow = true) => textGUI.gameObject.SetActive(canShow);
+        void HideTextGUI(TextMeshProUGUI textGUI) => ShowTextGUI(textGUI, false);
+        void EnableButton(Button b, bool isInteractable = true)
+        {
+            if (b) b.interactable = isInteractable;
+        }
+        void DisplayButton(Button b, bool canEnable = true)
+        {
+            if (b)
+            {
+                EnableButton(b, canEnable);
+                b.gameObject.SetActive(true);
+            }
+        }
+        void HideButton(Button b)
+        {
+            if (b) b.gameObject.SetActive(false);
+        }
+
+        #endregion
+        
+        
     }
 }
 

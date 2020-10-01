@@ -7,7 +7,6 @@ namespace KD.MusicGame.Gameplay
 {
     public class Timer : MonoBehaviour
     {
-        //[SerializeField] TextMeshProUGUI countdownTextGUI = null;
         [SerializeField] TextMeshProUGUI timerTextGUI = null;
 
         public float RemainingTime { get; private set; }

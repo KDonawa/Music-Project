@@ -23,9 +23,10 @@ namespace KD.MusicGame.UI
         {
             Button.onClick.RemoveListener(OnButtonSelected);
         }
-        public void Init(int index, StageCreationScreen stageCreationScreen)
+        public void Init(StageCreationScreen stageCreationScreen, int index, string textToDisplay)
         {
             this.index = index;
+            GetComponentInChildren<TextMeshProUGUI>().text = textToDisplay;
             stageCreation = stageCreationScreen;
         }
 

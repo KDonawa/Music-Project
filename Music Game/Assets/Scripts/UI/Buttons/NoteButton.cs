@@ -8,9 +8,9 @@ namespace KD.MusicGame.UI
 {
     public class NoteButton : MonoBehaviour
     {
-        public string note;
-        public int index = 0;
-        public bool isSelected = false;
+        [HideInInspector] public string note;
+        [HideInInspector] public int index = 0;
+        [HideInInspector] public bool isSelected = false;
         public Button Button { get; private set; }
         StageCreationScreen stageCreation;
 
@@ -23,10 +23,12 @@ namespace KD.MusicGame.UI
         {
             Button.onClick.RemoveListener(OnButtonSelected);
         }
-        public void Init(int index, StageCreationScreen stageCreationScreen)
+        public void Init(int index, string note, StageCreationScreen stageCreationScreen)
         {
             this.index = index;
-            stageCreation = stageCreationScreen;            
+            this.note = note;
+            stageCreation = stageCreationScreen;
+            GetComponentInChildren<TextMeshProUGUI>().text = GameManager.GetNoteFormatted(note);
         }
 
         void OnButtonSelected()

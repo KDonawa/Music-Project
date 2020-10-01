@@ -10,10 +10,11 @@ namespace KD.MusicGame.UI
     {
         public Button Button { get; private set; }
 
-        public bool[] selectedSubLevels;
-        public int numNotesPlayedPerRound = 1;
+        [HideInInspector] public bool[] selectedSubLevels;
+        [HideInInspector] public int numNotesPlayedPerRound = 1;
+
         StageCreationScreen stageCreation;
-        int maxNumSubLevels = 1;
+        int maxNumSubLevels;
 
         private void Awake()
         {
@@ -24,10 +25,11 @@ namespace KD.MusicGame.UI
         {
             Button.onClick.RemoveListener(OnButtonPressed);
         }
-        public void Init(StageCreationScreen stageCreationScreen, int maxNum)
+        public void Init(StageCreationScreen stageCreationScreen, int levelNumber, int maxNumSubLevels)
         {
             stageCreation = stageCreationScreen;
-            maxNumSubLevels = maxNum;
+            GetComponentInChildren<TextMeshProUGUI>().text = levelNumber.ToString();
+            this.maxNumSubLevels = maxNumSubLevels;
             selectedSubLevels = new bool[maxNumSubLevels];
         }
         public void UpdateSelectedSubLevels(int index, bool newValue)

@@ -6,14 +6,17 @@ using KD.MusicGame.Gameplay;
 
 namespace KD.MusicGame.UI
 {
-    public class StageSelectButton : MonoBehaviour
+    public class CustomStageSelectButton : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI stageName = null;
         [SerializeField] TextMeshProUGUI levelsPassed = null;
-        int stageIndex = 0;
+
+        [HideInInspector] public StageData stage;
+        int stageIndex = 0;        
 
         public void Init(int position, StageData stage)
         {
+            this.stage = stage;
             stageIndex = position;
             stageName.text = $"{position + 1}. {stage.name}";
             if (levelsPassed == null) return;
@@ -22,11 +25,8 @@ namespace KD.MusicGame.UI
 
         public void ButtonPressed()
         {
-            UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonSelect1);
+            UIAnimator.ButtonPressEffect1(GetComponent<Button>(), AudioManager.buttonSelect2);
             GameManager.Instance.currentStageIndex = stageIndex;
-            SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_VERTICAL, LevelSelectMenu.Instance.Open);
         }
     }
 }
-
-

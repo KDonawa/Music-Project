@@ -5,6 +5,7 @@ using System;
 using KD.MusicGame.Gameplay;
 using KD.MusicGame.Utility.SaveSystem;
 using KD.MusicGame.UI;
+using System.Text;
 
 namespace KD.MusicGame.Utility
 {
@@ -20,6 +21,8 @@ namespace KD.MusicGame.Utility
         public static event Action GamePausedEvent;
         public static event Action GameUnPausedEvent;
         public static GameManager Instance { get; private set; }
+        static readonly string[] indianNotes = { "sa", "_re", "re", "_ga", "ga", "ma", "Ma", "pa", "_dha", "dha", "_ni", "ni" };
+        static readonly string[] westernNotes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
         #region SETUP
         [Header("Prefabs")]
@@ -227,6 +230,65 @@ namespace KD.MusicGame.Utility
         #endregion
 
         #region UTILITY
+        
+        public static string GetWesternNotation(string indianNotation, string droneNote)
+        {
+            int octave = droneNote[droneNote.Length - 1] - '0';
+            droneNote = droneNote.Substring(0, droneNote.Length - 1);
+            if (indianNotation[0] == '.')
+            {
+                octave--;
+                indianNotation = indianNotation.Substring(1);
+            }
+            else if (indianNotation[0] == '\'')
+            {
+                octave++;
+                indianNotation = indianNotation.Substring(1);
+            }
+
+            int indexDrone = Array.FindIndex(westernNotes, x => x == droneNote); // find the index of the drone note
+            int indexIN = Array.FindIndex(indianNotes, x => x == indianNotation);
+            int indexWN = (indexIN - indexDrone + westernNotes.Length) % westernNotes.Length;
+
+            return westernNotes[indexWN] + octave;
+        }
+        public static string GetNoteFormatted(string indianNotation)
+        {
+            StringBuilder sb = new StringBuilder(30);
+
+            bool isBoldAndItalicized = false;
+            bool isUnderlined = false;
+            bool isCapitalized = false;
+
+            if (indianNotation[0] == '.')
+            {
+                indianNotation = indianNotation.Substring(1);
+                isBoldAndItalicized = true;
+            }
+            else if (indianNotation[0] == '\'')
+            {
+                isCapitalized = true;
+                indianNotation = indianNotation.Substring(1) + '\'';
+            }
+            if (indianNotation[0] == '_')
+            {
+                isUnderlined = true;
+                indianNotation = indianNotation.Substring(1);
+            }
+            if (isCapitalized)
+            {
+                indianNotation = char.ToUpper(indianNotation[0]) + indianNotation.Substring(1);
+            }
+
+            //sb.Clear();
+            if (isBoldAndItalicized) sb.Append("<i><b>");
+            if (isUnderlined) sb.Append("<u>");
+            sb.Append(indianNotation);
+            if (isUnderlined) sb.Append("</u>");
+            if (isBoldAndItalicized) sb.Append("</b></i>");
+
+            return sb.ToString();
+        }
         public static StageData GetCurrentStage()
         {
             // return dummy stage date in case of invalid stages or stage index
