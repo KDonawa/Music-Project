@@ -183,7 +183,7 @@ namespace KD.MusicGame.Utility
         }
         private Sound FindInstrumentSound(string name)
         {
-            switch (GameManager.Instrument)
+            switch (GameManager.Instance.instrument)
             {
                 case InstrumentType.HARMONIUM: return Array.Find(harmoniumSounds, s => s.name == name);
                 default: return null;

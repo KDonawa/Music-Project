@@ -14,11 +14,11 @@ namespace KD.MusicGame.UI
         [SerializeField] Color earnedStarColor = new Color();
         [SerializeField] Color unearnedStarColor = new Color();
 
-        int levelIndex = 1;
+        int levelIndex = 0;
         public void InitializeButton(int index, int numStars)
         {
             levelIndex = index;
-            levelText.text = index.ToString();
+            levelText.text = $"{index + 1}";
 
             if (starsContainer == null) return;
 
@@ -33,7 +33,7 @@ namespace KD.MusicGame.UI
         {
             buttonPressedAction?.Invoke(GetComponent<Button>());
             UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonSelect1);
-            GameManager.CurrentLevelIndex = levelIndex;
+            GameManager.Instance.currentLevelIndex = levelIndex;
             SceneTransitions.PlayTransition(InTransition.CLOSE_VERTICAL, OutTransition.FADE_OUT, GameManager.LoadGameScene);
         }
     }

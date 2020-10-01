@@ -79,13 +79,15 @@ namespace KD.MusicGame.UI
 
             // init buttons
             SubLevelButtons = subLevelButtonsContainer.GetComponentsInChildren<SubLevelButton>();
-            foreach (var button in SubLevelButtons) button.Init(this);
+            int numSubLevelButtons = SubLevelButtons.Length;
+            for (int i = 0; i < numSubLevelButtons; i++) SubLevelButtons[i].Init(this, numSubLevelButtons);
 
             NoteButtons = noteButtonsContainer.GetComponentsInChildren<NoteButton>();
             for (int i = 0; i < NoteButtons.Length; i++) NoteButtons[i].Init(i, this);
 
             LevelButtons = levelButtonsContainer.GetComponentsInChildren<LevelButton>();
-            for (int i = 0; i < LevelButtons.Length; i++) LevelButtons[i].Init(this);
+            int numLevelButtons = LevelButtons.Length;
+            for (int i = 0; i < numLevelButtons; i++) LevelButtons[i].Init(this, numLevelButtons);
 
             SubLevelButtons2 = subLevelButtonsContainer2.GetComponentsInChildren<SubLevelButton2>();
             for (int i = 0; i < SubLevelButtons2.Length; i++) SubLevelButtons2[i].Init(i, this);
@@ -96,23 +98,6 @@ namespace KD.MusicGame.UI
             for (int i = 0; i < SubLevelButtons.Length; i++) SubLevelButtons[i].ResetButton(); // Init SubLevel Options
             for (int i = 0; i < LevelButtons.Length; i++) LevelButtons[i].ResetButton(); // Init Level Options
             OpenStageOptionsScreen();            
-        }
-        private void OnDestroy()
-        {
-            //numLevelsSlider.onValueChanged.RemoveListener((value) => numLevelsTextGUI.text = value.ToString());
-            //numSubLevelsSlider.onValueChanged.RemoveListener((value) => numSubLevelsTextGUI.text = value.ToString());
-            //numNotesPlayedSlider.onValueChanged.RemoveListener((value) =>
-            //{
-            //    numNotesTextGUI.text = value.ToString();
-            //    if (ActiveLevelButton != null) ActiveLevelButton.UpdateNumNotesPlayed((int)value);
-            //});
-
-            //nextButton1.onClick.RemoveListener(NextButton1Pressed);
-            //cancelButton.onClick.RemoveListener(CancelButtonPressed);
-            //nextButton2.onClick.RemoveListener(NextButton2Pressed);
-            //previousButton1.onClick.RemoveListener(PreviousButton1Pressed);
-            //confirmButton.onClick.RemoveListener(ConfirmButtonPressed);
-            //previousButton2.onClick.RemoveListener(PreviousButton2Pressed);
         }
 
         void OpenStageOptionsScreen()
@@ -215,7 +200,6 @@ namespace KD.MusicGame.UI
                     return;
                 }
             }
-
             CreateStage();
         }
         void CreateStage()
@@ -237,7 +221,7 @@ namespace KD.MusicGame.UI
                 if (j == 0) levelData.isUnlocked = true;
                 stageData.levels[j] = levelData;
             }
-            GameManager.Instance.customStagesList.Add(stageData);
+            GameManager.customStagesList.Add(stageData);
             BinarySaveSystem.SaveCustomGameData();
 
             StageSelectMenu.Instance.InitializeMenu();

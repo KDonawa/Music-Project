@@ -12,12 +12,12 @@ namespace KD.MusicGame.UI
     {
         [SerializeField] TextMeshProUGUI stageName = null;
         [SerializeField] TextMeshProUGUI levelsPassed = null;
-        int stageNum = 1;
+        int stageIndex = 0;
 
         public void Init(int position, StageData stage)
         {
-            stageNum = position;
-            stageName.text = position + ". " + stage.name;
+            stageIndex = position;
+            stageName.text = $"{position + 1}. {stage.name}";
             if (levelsPassed == null) return;
             levelsPassed.text = $"{stage.numPassedLevels}/{stage.levels.Length}";
         }
@@ -26,7 +26,7 @@ namespace KD.MusicGame.UI
         {
             UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonSelect1);
             buttonPressedAction?.Invoke(GetComponent<Button>());
-            GameManager.CurrentStageIndex = stageNum;
+            GameManager.Instance.currentStageIndex = stageIndex;
             SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_VERTICAL, LevelSelectMenu.Instance.Open);
         }
     }

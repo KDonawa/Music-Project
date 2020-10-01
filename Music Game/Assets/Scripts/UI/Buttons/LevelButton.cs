@@ -8,13 +8,12 @@ namespace KD.MusicGame.UI
 {
     public class LevelButton : MonoBehaviour
     {
-        const int maxNumSubLevels = 6;
         public Button Button { get; private set; }
 
-        public bool[] selectedSubLevels = new bool[maxNumSubLevels];
+        public bool[] selectedSubLevels;
         public int numNotesPlayedPerRound = 1;
         StageCreationScreen stageCreation;
-        
+        int maxNumSubLevels = 1;
 
         private void Awake()
         {
@@ -25,9 +24,11 @@ namespace KD.MusicGame.UI
         {
             Button.onClick.RemoveListener(OnButtonPressed);
         }
-        public void Init(StageCreationScreen stageCreationScreen)
+        public void Init(StageCreationScreen stageCreationScreen, int maxNum)
         {
             stageCreation = stageCreationScreen;
+            maxNumSubLevels = maxNum;
+            selectedSubLevels = new bool[maxNumSubLevels];
         }
         public void UpdateSelectedSubLevels(int index, bool newValue)
         {

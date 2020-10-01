@@ -37,8 +37,8 @@ namespace KD.MusicGame.Utility.SaveSystem
 
         public GameSaveData(bool isCustomData)
         {
-            List<StageData> stages = isCustomData ? GameManager.Instance.customStagesList : GameManager.Instance.stagesList;
-            //List<StageData> stages = GameManager.Instance.stagesList;
+            List<StageData> stages = isCustomData ? GameManager.customStagesList : GameManager.stagesList;
+
             numStages = stages.Count;
             numLevels = new int[numStages];
             stageNames = new string[numStages];

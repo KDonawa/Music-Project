@@ -60,7 +60,6 @@ namespace KD.MusicGame.UI
             foreach (var b in levelOptions) Destroy(b.gameObject);
             levelOptions.Clear();
 
-            //Gameplay.Level[] levels = GameManager.CurrentLevels;
             LevelData[] levels = GameManager.GetCurrentStage().levels;
             for (int i = 0; i < levels.Length; i++)
             {
@@ -72,7 +71,7 @@ namespace KD.MusicGame.UI
                     {
                         b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
                         LevelSelectButton lsb = b.GetComponent<LevelSelectButton>();
-                        lsb.InitializeButton(i + 1, levels[i].numStarsEarned);
+                        lsb.InitializeButton(i, levels[i].numStarsEarned);
                         b.onClick.AddListener(() => lsb.ButtonPressed(ButtonPressedEffect));
                     }
                     levelOptions.Add(b);

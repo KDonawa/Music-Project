@@ -101,14 +101,13 @@ namespace KD.MusicGame.Gameplay
             GuessButton.GuessIncorrectEvent -= ShowCorrectGuessOnWrongGuess;
         }
 
-        bool InitializeLevel()
+        void InitializeLevel()
         {
             MenuManager.CloseAllMenus();
             AudioManager.StopAllNoteSounds();
             _utility.HideButtons(guessButtons);
 
             currentLevel = GameManager.GetCurrentLevelData();
-            if (currentLevel == null) return false; // debug.logwarning
 
             currentSubLevelIndex = 0;
             numGuessesPerRound = currentLevel.numNotesToGuess;
@@ -117,12 +116,10 @@ namespace KD.MusicGame.Gameplay
             _timer.Initialize(timeToGuessPerNote * numGuessesPerRound);
             _scoreSystem.Initialize(numGuessesPerRound * numRoundsPerSublevel * currentLevel.subLevels.Length);
             _textSystem.Initialize();
-
-            return true;
         }
         void InitializeNotes()
         {
-            droneNote = GameManager.DroneNote;
+            droneNote = GameManager.Instance.droneNote;
             currentNotes.Clear();
             foreach (var note in currentLevel.subLevels[currentSubLevelIndex]) currentNotes.Add(note);
         }
@@ -138,7 +135,8 @@ namespace KD.MusicGame.Gameplay
 
         public static void Play()
         {
-            if (_instance.InitializeLevel()) _instance.StartCoroutine(_instance.StartLevelRoutine());
+            _instance.InitializeLevel(); 
+            _instance.StartCoroutine(_instance.StartLevelRoutine());
         }
         IEnumerator StartLevelRoutine()
         {

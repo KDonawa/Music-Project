@@ -116,7 +116,7 @@ namespace KD.MusicGame.UI
         void CorfirmButtonPressed()
         {
             UIAnimator.ButtonPressEffect3(confirmButton, AudioManager.buttonSelect1);
-            GameManager.DroneNote = string.Concat(noteChoice, octaveChoice);
+            GameManager.Instance.droneNote = string.Concat(noteChoice, octaveChoice);
             SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_HORIZONTAL, StageSelectMenu.Instance.Open);
         }
 

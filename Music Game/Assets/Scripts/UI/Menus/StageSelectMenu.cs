@@ -57,7 +57,7 @@ namespace KD.MusicGame.UI
             foreach (var b in stageOptions) Destroy(b.gameObject);
             stageOptions.Clear();
 
-            List<StageData> stages = GameManager.Instance.stagesList;
+            List<StageData> stages = GameManager.stagesList;
             for (int i = 0; i < stages.Count; i++)
             {
                 Button b;
@@ -65,20 +65,20 @@ namespace KD.MusicGame.UI
                 else b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
 
                 StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-                ssb.Init(i + 1, stages[i]);
+                ssb.Init(i, stages[i]);
 
                 if (stages[i].isUnlocked) b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
 
                 stageOptions.Add(b);
             }
 
-            List<StageData> customStages = GameManager.Instance.customStagesList;
+            List<StageData> customStages = GameManager.customStagesList;
             for (int i = 0; i < customStages.Count; i++)
             {
                 Button b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
                 customStages[i].name = $"Custom {i + 1}";
                 StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-                ssb.Init(i + 1 + stages.Count, customStages[i]);
+                ssb.Init(i + stages.Count, customStages[i]);
                 b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
 
                 stageOptions.Add(b);
@@ -92,7 +92,8 @@ namespace KD.MusicGame.UI
         void CreateCustomStagePressed()
         {
             UIAnimator.ButtonPressEffect3(createCustomStageButton, AudioManager.buttonSelect2);
-            if (creationScreen == null || GameManager.Instance.customStagesList.Count >= 4) return;
+
+            if (creationScreen == null || GameManager.customStagesList.Count >= 4) return;
 
             creationScreen.gameObject.SetActive(true);
         }

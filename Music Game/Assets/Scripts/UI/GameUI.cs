@@ -118,7 +118,7 @@ namespace KD.MusicGame.UI
         }
         public IEnumerator DisplayCurrentLevelRoutine()
         {
-            levelText.text = string.Concat("Level ", GameManager.CurrentLevelIndex.ToString());
+            levelText.text = $"Level {GameManager.Instance.currentLevelIndex + 1}";
             ShowTextGUI(levelText);
 
             yield return new WaitForSeconds(1f);

@@ -58,8 +58,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fd9b1d67360fd6a4f9ced924da4200a8, type: 2}
   - {fileID: 11400000, guid: 6101ed3d536c9254eb53269caa788317, type: 2}
   - {fileID: 11400000, guid: 55ec98020e5b965498ee3a4f0895e979, type: 2}
-  currentStageIndex: 1
-  currentLevelIndex: 1
+  currentStageIndex: 0
+  currentLevelIndex: 0
   droneNote: C4
   instrument: 0
   isNewGame: 1
