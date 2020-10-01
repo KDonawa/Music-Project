@@ -26,7 +26,7 @@ namespace KD.MusicGame.Utility
         public static int CurrentStageIndex
         {
             get => Instance.currentStageIndex;
-            set => Instance.currentStageIndex = value > 0 && value <= Instance.stagesList.Count ? value : 1;
+            set => Instance.currentStageIndex = value > 0 && value <= Instance.stagesList.Count + Instance.customStagesList.Count? value : 1;
         }
         public static int CurrentLevelIndex
         {
@@ -45,14 +45,11 @@ namespace KD.MusicGame.Utility
         [SerializeField] AudioManager audioManager = null;
         [SerializeField] SceneTransitions sceneTransition = null;
         [SerializeField] UIAnimator uiAnimator = null;
-        [SerializeField] Game game = null;
-
-        [Header("Stages")]
+        
         [SerializeField] Stage[] stages = null;
-        //[SerializeField] Stage[] customStages = null;
 
         [Header("Variables")]
-        [Range(1, 4)] [SerializeField] int currentStageIndex = 1;
+        [Range(1, 8)] [SerializeField] int currentStageIndex = 1;
         [Range(1, 10)] [SerializeField] int currentLevelIndex = 1;
         [SerializeField] string droneNote = "C4";
         [SerializeField] InstrumentType instrument = InstrumentType.HARMONIUM;
@@ -96,12 +93,10 @@ namespace KD.MusicGame.Utility
                         () => newWelcomescreen.gameObject.SetActive(true));
 
                 }
-                if (GetCurrentSceneName() == GameScene)// for testing
+                if (GetCurrentSceneName() == GameScene) // for testing
                 {
-                    LoadGameData();
-                    Instantiate(game); 
+                    LoadGame();
                 }
-
             }
         }
         private void Start()
@@ -153,6 +148,7 @@ namespace KD.MusicGame.Utility
         {
             Instance.isNewGame = false;
             BinarySaveSystem.SaveGameStateData();
+
             Instance.InitializeGameData();
         }
         void InitializeGameData()
@@ -161,6 +157,8 @@ namespace KD.MusicGame.Utility
             stagesList.Clear();
             for (int i = 0; i < stages.Length; i++)
             {
+                if (stages[i] == null) continue;
+
                 StageData stageData = new StageData
                 {
                     name = stages[i].name,
@@ -173,6 +171,8 @@ namespace KD.MusicGame.Utility
                 // init levels
                 for (int j = 0; j < stages[i].Levels.Length; j++)
                 {
+                    if (stages[i].Levels[j] == null) continue;
+
                     LevelData levelData = new LevelData
                     {
                         isUnlocked = stages[i].Levels[j].isUnlocked,
@@ -187,6 +187,7 @@ namespace KD.MusicGame.Utility
                     // init sublevels
                     for (int k = 0; k < stages[i].Levels[j].subLevels.Length; k++)
                     {
+                        if (stages[i].Levels[j].subLevels[k] == null) continue;
                         levelData.subLevels[k] = stages[i].Levels[j].subLevels[k].notes;
                     }
                 }
@@ -194,37 +195,41 @@ namespace KD.MusicGame.Utility
             
             BinarySaveSystem.SaveGameData();
         }        
-        public static void LoadGameData()
+        public static void LoadGame()
         {
-            GameSaveData data = BinarySaveSystem.LoadGameData();
+            Instance.LoadGameData(BinarySaveSystem.LoadGameData(), Instance.stagesList);
+
+            Instance.LoadGameData(BinarySaveSystem.LoadCustomGameData(), Instance.customStagesList);
+        }
+        void LoadGameData(GameSaveData data, List<StageData> destination)
+        {
             if (data == null) return;
 
-            Instance.stagesList.Clear();
-            for (int i = 0; i < data.stageNames.Length; i++)
+            destination.Clear();
+            for (int i = 0; i < data.numStages; i++)
             {
                 StageData stageData = new StageData
                 {
                     name = data.stageNames[i],
                     isUnlocked = data.unlockedStages[i],
                     numPassedLevels = data.numPassedLevels[i],
-                    levels = new LevelData[data.stageNames.Length]
+                    levels = new LevelData[data.numLevels[i]]
                 };
-                Instance.stagesList.Add(stageData);
+                destination.Add(stageData);
 
-                for (int j = 0; j < stageData.levels.Length; j++)
+                for (int j = 0; j < data.numLevels[i]; j++)
                 {
                     LevelData levelData = new LevelData
                     {
-                        isUnlocked = data.unlockedLevels[j],
-                        isPassed = data.passedLevels[j],
-                        hiScore = data.hiScores[j],
-                        numStarsEarned = data.starsEarned[j],
-                        numNotesToGuess = data.numNotesToGuess[j],
-                        subLevels = data.subLevels[j]
+                        isUnlocked = data.unlockedLevels[i][j],
+                        isPassed = data.passedLevels[i][j],
+                        hiScore = data.hiScores[i][j],
+                        numStarsEarned = data.starsEarned[i][j],
+                        numNotesToGuess = data.numNotesToGuess[i][j],
+                        subLevels = data.subLevels[i][j]
                     };
                     stageData.levels[j] = levelData;
                 }
-
             }
         }
 
@@ -233,7 +238,8 @@ namespace KD.MusicGame.Utility
         #region UTILITY
         public static StageData GetCurrentStage()
         {
-            return Instance.stagesList[CurrentStageIndex - 1];
+            if(CurrentStageIndex <= Instance.stagesList.Count) return Instance.stagesList[CurrentStageIndex - 1];
+            else return Instance.customStagesList[CurrentStageIndex - Instance.stagesList.Count - 1];
         }
         public static LevelData GetCurrentLevelData()
         {
@@ -261,13 +267,16 @@ namespace KD.MusicGame.Utility
         }
         public static void IncrementStage()
         {
-            if (Instance.currentStageIndex < Instance.stagesList.Count) Instance.currentStageIndex++;
+            if (!IsFinalStage()) Instance.currentStageIndex++;
         }
         public static void IncrementLevel()
         {
             if (!IsFinalLevel()) Instance.currentLevelIndex++;
         }
-        public static bool IsFinalStage() => Instance.stagesList.Count == Instance.currentStageIndex;
+        public static bool IsFinalStage()
+        {
+            return Instance.currentStageIndex >= Instance.stagesList.Count;
+        }
         public static bool IsFinalLevel() => GetCurrentStage().levels.Length == Instance.currentLevelIndex;
 
         #endregion
@@ -275,8 +284,7 @@ namespace KD.MusicGame.Utility
         #region SCENE LOADING
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (scene.name == GameScene) Instantiate(game);
-
+            //if (scene.name == GameScene) Instantiate(game);
             SceneTransitions.sceneLoadingComplete = true;
         }
         public static string GetCurrentSceneName() => SceneManager.GetActiveScene().name;

@@ -53,9 +53,11 @@ MonoBehaviour:
     type: 3}
   uiAnimator: {fileID: 1546590672288415898, guid: 7290146321476444abe2d1b66e76be6c,
     type: 3}
-  game: {fileID: 977705765011780015, guid: a2044bd05ff8c7944a5db5ed0563d25b, type: 3}
   stages:
   - {fileID: 11400000, guid: 70b63f3087015504eaaca9ac8286e5e0, type: 2}
+  - {fileID: 11400000, guid: fd9b1d67360fd6a4f9ced924da4200a8, type: 2}
+  - {fileID: 11400000, guid: 6101ed3d536c9254eb53269caa788317, type: 2}
+  - {fileID: 11400000, guid: 55ec98020e5b965498ee3a4f0895e979, type: 2}
   currentStageIndex: 1
   currentLevelIndex: 1
   droneNote: C4

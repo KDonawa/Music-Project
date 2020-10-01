@@ -67,6 +67,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7dbec6a880175c84aa79f345db9d19b5, type: 2}
   - {fileID: 11400000, guid: 7a99229a34df5a342abe079bbcfab82c, type: 2}
   - {fileID: 11400000, guid: f3ecda089b203a847a560ceed0b8b13e, type: 2}
+  - {fileID: 11400000, guid: bf5e3295e5b6c7e4eae1b778bbd8136a, type: 2}
   droneSounds:
   - {fileID: 11400000, guid: feb6a44de3f8eb446a49f504a27b092c, type: 2}
   harmoniumSounds:

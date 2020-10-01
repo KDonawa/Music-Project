@@ -4,17 +4,11 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-/*
-    TODO:
-    - MoveTo()
-*/
 namespace KD.MusicGame.Utility
 {
     public class UIAnimator : MonoBehaviour
     {
         static UIAnimator _instance;
-
-        //Coroutine pulseTextCoroutine;
 
         private void Awake()
         {

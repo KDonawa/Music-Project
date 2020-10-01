@@ -13,7 +13,6 @@ namespace KD.MusicGame.Gameplay
         // higher octaves: 'sa 're 'ga (end in apostrophe and Capitalized)
         readonly string[] indianNotes = { "sa", "_re", "re", "_ga", "ga", "ma", "Ma", "pa", "_dha", "dha", "_ni", "ni" };
         readonly string[] westernNotes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-        //readonly string[] droneNotes = { "d:C", "d:C#", "d:D", "d:D#", "d:E", "d:F", "d:F#", "d:G", "d:G#", "d:A", "d:A#", "d:B", };
 
         StringBuilder sb;
 
@@ -29,12 +28,6 @@ namespace KD.MusicGame.Gameplay
         {
             return string.Empty;
         }
-        //public string GetDroneNoteFormatted(string droneNote)
-        //{
-        //    int octave = droneNote[droneNote.Length - 1] - '0';
-        //    droneNote = droneNote.Substring(0, droneNote.Length - 1);
-        //    return westernNotes[Array.FindIndex(droneNotes, x => x == droneNote)] + octave;
-        //}
         public string GetNoteFormatted(string indianNotation)
         {
             bool isBoldAndItalicized = false;

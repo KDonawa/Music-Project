@@ -51,7 +51,7 @@ namespace KD.MusicGame.Utility
         public const string swoosh1 = "swoosh1";
         public const string success = "success";
         public const string finalScoreUpdate = "finalScoreUpdate";
-
+        public const string sliderChanged = "sliderChanged";
 
         #region SETUP
         private void Awake()

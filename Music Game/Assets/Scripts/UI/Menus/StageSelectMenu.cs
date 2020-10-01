@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using KD.MusicGame.Utility;
@@ -10,14 +9,18 @@ namespace KD.MusicGame.UI
 {
     public class StageSelectMenu : Menu<StageSelectMenu>
     {
-        [Header("References")]
+        #region SETUP
+        [Header("UI/Prefabs")]
         [SerializeField] GameObject buttonsContainer = null;
+
         [SerializeField] Button backButton = null;
         [SerializeField] Button mainMenuButton = null;
+        [SerializeField] Button createCustomStageButton = null;
 
-        [Header("UI/Prefabs")]
         [SerializeField] Button unlockedButtonPrefab = null;
         [SerializeField] Button lockedButtonPrefab = null;
+
+        [SerializeField] StageCreationScreen creationScreen = null;
 
 
         List<Button> stageOptions;
@@ -27,13 +30,11 @@ namespace KD.MusicGame.UI
             base.Awake();
 
             stageOptions = new List<Button>();
+            if (creationScreen != null) creationScreen.gameObject.SetActive(false);
 
-            if (backButton == null) Debug.LogError("No reference to back button");
-            else backButton.onClick.AddListener(BackPressed);
-
-            if (mainMenuButton == null) Debug.LogError("No reference to Main Menu button");
-            else mainMenuButton.onClick.AddListener(MainMenuPressed);
-
+            if (backButton != null) backButton.onClick.AddListener(BackPressed);
+            if (mainMenuButton != null) mainMenuButton.onClick.AddListener(MainMenuPressed);
+            if (createCustomStageButton != null) createCustomStageButton.onClick.AddListener(CreateCustomStagePressed);
         }
 
         protected override void OnDestroy()
@@ -41,6 +42,7 @@ namespace KD.MusicGame.UI
             base.OnDestroy();
             if (backButton != null) backButton.onClick.RemoveListener(BackPressed);
             if (mainMenuButton != null) mainMenuButton.onClick.RemoveListener(MainMenuPressed);
+            if (createCustomStageButton != null) createCustomStageButton.onClick.RemoveListener(CreateCustomStagePressed);
         }
         public override void Open()
         {
@@ -48,14 +50,13 @@ namespace KD.MusicGame.UI
             base.Open();
         }
 
-        void InitializeMenu()
+        public void InitializeMenu()
         {
             buttonsContainer.GetComponent<GridLayoutGroup>().enabled = true;            
 
             foreach (var b in stageOptions) Destroy(b.gameObject);
             stageOptions.Clear();
 
-            //Gameplay.Stage[] stages = GameManager.Stages;
             List<StageData> stages = GameManager.Instance.stagesList;
             for (int i = 0; i < stages.Count; i++)
             {
@@ -64,29 +65,37 @@ namespace KD.MusicGame.UI
                 else b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
 
                 StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-                ssb.Init(i + 1, stages[i].name, stages[i].numPassedLevels);
+                ssb.Init(i + 1, stages[i]);
 
                 if (stages[i].isUnlocked) b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
 
                 stageOptions.Add(b);
             }
 
-            ////Custom stages
-            //Gameplay.Stage[] customStages = GameManager.CustomStages;
-            //for (int i = 0; i < customStages.Length; i++)
-            //{
-            //    if (customStages[i] != null /*&& customStages[i].isActive*/)
-            //    {
-            //        Button b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
-            //        StageSelectButton ssb = b.GetComponent<StageSelectButton>();
-            //        ssb.Init(i + 1 + stages.Length, customStages[i].name, customStages[i].numPassedLevels);
-            //        b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
-            //        stageOptions.Add(b);
-            //    }
-            //}
+            List<StageData> customStages = GameManager.Instance.customStagesList;
+            for (int i = 0; i < customStages.Count; i++)
+            {
+                Button b = Instantiate(unlockedButtonPrefab, buttonsContainer.transform);
+                customStages[i].name = $"Custom {i + 1}";
+                StageSelectButton ssb = b.GetComponent<StageSelectButton>();
+                ssb.Init(i + 1 + stages.Count, customStages[i]);
+                b.onClick.AddListener(() => ssb.ButtonPressed(ButtonPressedEffect));
+
+                stageOptions.Add(b);
+            }
+
+
         }
+        #endregion
 
         #region BUTTON EVENTS
+        void CreateCustomStagePressed()
+        {
+            UIAnimator.ButtonPressEffect3(createCustomStageButton, AudioManager.buttonSelect2);
+            if (creationScreen == null || GameManager.Instance.customStagesList.Count >= 4) return;
+
+            creationScreen.gameObject.SetActive(true);
+        }
         void ButtonPressedEffect(Button button)
         {
             buttonsContainer.GetComponent<GridLayoutGroup>().enabled = false;
@@ -99,17 +108,17 @@ namespace KD.MusicGame.UI
                 }
             }
         }
-
         void BackPressed()
         {
             UIAnimator.ButtonPressEffect3(backButton, AudioManager.buttonSelect2);
-            SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, DroneSelectMenu.Instance.Open);
+            SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_RIGHT, OutTransition.CIRCLE_WIPE_RIGHT, MainMenu.Instance.Open);
         }
         void MainMenuPressed()
         {
             UIAnimator.ButtonPressEffect3(mainMenuButton, AudioManager.buttonSelect2);
             SceneTransitions.PlayTransition(InTransition.CIRCLE_WIPE_DOWN, OutTransition.CIRCLE_WIPE_DOWN, MainMenu.Instance.Open);
         }
+        
 
         #endregion
     }

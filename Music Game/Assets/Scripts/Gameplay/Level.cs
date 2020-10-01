@@ -14,10 +14,10 @@ namespace KD.MusicGame.Gameplay
     }
     public class LevelData
     {
-        public bool isUnlocked;
-        public bool isPassed;
-        public int hiScore;
-        public int numStarsEarned;
+        public bool isUnlocked = false;
+        public bool isPassed = false;
+        public int hiScore = 0;
+        public int numStarsEarned = 0;
         public int numNotesToGuess = 1;
         public string[][] subLevels;
     }

@@ -89,7 +89,7 @@ namespace KD.MusicGame.Gameplay
         void IncrementNumCorrectGuesses() => numCorrectGuesses++;
         public int FinalScorePercentage()
         {
-            float scorePercentage = numCorrectGuesses / (float)totalNumGuesses * 100f;
+            float scorePercentage = totalNumGuesses <= 0 ? 0f: numCorrectGuesses / (float)totalNumGuesses * 100f;
             return (int)scorePercentage;
         }
         //public void UpdatePlayerScore(int pointsGained) => StartCoroutine(UpdatePlayerScoreRoutine(pointsGained));  

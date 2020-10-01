@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using KD.MusicGame.Utility;
+using KD.MusicGame.Gameplay;
 
 namespace KD.MusicGame.UI
 {
@@ -11,21 +12,21 @@ namespace KD.MusicGame.UI
     {
         [SerializeField] TextMeshProUGUI stageName = null;
         [SerializeField] TextMeshProUGUI levelsPassed = null;
-        int stage = 1;
+        int stageNum = 1;
 
-        public void Init(int val, string text, int numPassedLevels)
+        public void Init(int position, StageData stage)
         {
-            stage = val;
-            stageName.text = val + ". " + text;
+            stageNum = position;
+            stageName.text = position + ". " + stage.name;
             if (levelsPassed == null) return;
-            levelsPassed.text = numPassedLevels.ToString() + "/" + GameManager.GetCurrentStage().levels.Length.ToString();
+            levelsPassed.text = $"{stage.numPassedLevels}/{stage.levels.Length}";
         }
 
         public void ButtonPressed(System.Action<Button> buttonPressedAction)
         {
             UIAnimator.ButtonPressEffect3(GetComponent<Button>(), AudioManager.buttonSelect1);
             buttonPressedAction?.Invoke(GetComponent<Button>());
-            GameManager.CurrentStageIndex = stage;
+            GameManager.CurrentStageIndex = stageNum;
             SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.OPEN_VERTICAL, LevelSelectMenu.Instance.Open);
         }
     }

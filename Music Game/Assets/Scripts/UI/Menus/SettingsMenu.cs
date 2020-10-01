@@ -43,16 +43,6 @@ namespace KD.MusicGame.UI
             LoadData();
             base.Open();
         }
-        //public static void ResetSettingsData()
-        //{
-        //    Instance.slider1.value = 1f;
-        //    Instance.slider2.value = 1f;
-        //    Instance.slider3.value = 1f;
-        //    Instance.slider4.value = 1f;
-        //    Instance.slider5.value = 3f;
-
-        //    BinarySaveSystem.SaveSettings();
-        //}
 
         protected override void OnDestroy()
         {

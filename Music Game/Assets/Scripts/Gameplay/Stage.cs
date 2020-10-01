@@ -14,20 +14,9 @@ namespace KD.MusicGame.Gameplay
     }
     public class StageData
     {
-        public string name = "New Stage";
-        public bool isUnlocked;
-        public int numPassedLevels;
+        public string name = "Stage";
+        public bool isUnlocked = false;
+        public int numPassedLevels = 0;
         public LevelData[] levels;
-    }
-
-    [CreateAssetMenu(menuName = "Game/Custom Stage")]
-    public class CustomStage : ScriptableObject
-    {
-        public new string name = "Custom Stage";
-        public bool isActive;
-        public int numActiveLevels;
-        public int numPassedLevels;
-        [SerializeField] Level[] levels = null;
-        public Level[] Levels => levels;
     }
 }

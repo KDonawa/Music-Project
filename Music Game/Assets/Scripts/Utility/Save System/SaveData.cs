@@ -18,27 +18,38 @@ namespace KD.MusicGame.Utility.SaveSystem
     public class GameSaveData
     {
         // stage data
+        public int numStages = 0;        
         public string[] stageNames;
         public bool[] unlockedStages;
         public int[] numPassedLevels;
 
         // level data
-        public bool[] unlockedLevels;
-        public bool[] passedLevels;
-        public int[] starsEarned;
-        public int[] hiScores;
-        public int[] numNotesToGuess;
+        public int[] numLevels;
+        public bool[][] unlockedLevels;
+        public bool[][] passedLevels;
+        public int[][] starsEarned;
+        public int[][] hiScores;
+        public int[][] numNotesToGuess;
 
         // sublevel data
-        public string[][][] subLevels;
+        public string[][][][] subLevels;
 
-        public GameSaveData()
+
+        public GameSaveData(bool isCustomData)
         {
-            List<StageData> stages = GameManager.Instance.stagesList;
-            int numStages = stages.Count;
+            List<StageData> stages = isCustomData ? GameManager.Instance.customStagesList : GameManager.Instance.stagesList;
+            //List<StageData> stages = GameManager.Instance.stagesList;
+            numStages = stages.Count;
+            numLevels = new int[numStages];
             stageNames = new string[numStages];
             unlockedStages = new bool[numStages];
             numPassedLevels = new int[numStages];
+            unlockedLevels = new bool[numStages][];
+            passedLevels = new bool[numStages][];
+            starsEarned = new int[numStages][];
+            hiScores = new int[numStages][];
+            numNotesToGuess = new int[numStages][];
+            subLevels = new string[numStages][][][];
 
             for (int i = 0; i < numStages; i++)
             {
@@ -46,24 +57,24 @@ namespace KD.MusicGame.Utility.SaveSystem
                 unlockedStages[i] = stages[i].isUnlocked;
                 numPassedLevels[i] = stages[i].numPassedLevels;
 
-                int numLevels = stages[i].levels.Length;
-                unlockedLevels = new bool[numLevels];
-                passedLevels = new bool[numLevels];
-                starsEarned = new int[numLevels];
-                hiScores = new int[numLevels];
-                numNotesToGuess = new int[numLevels];
-                subLevels = new string[numLevels][][];
+                numLevels[i] = stages[i].levels.Length;
+                unlockedLevels[i] = new bool[numLevels[i]];
+                passedLevels[i] = new bool[numLevels[i]];
+                starsEarned[i] = new int[numLevels[i]];
+                hiScores[i] = new int[numLevels[i]];
+                numNotesToGuess[i] = new int[numLevels[i]];
+                subLevels[i] = new string[numLevels[i]][][];
 
-                for (int j = 0; j < numLevels; j++)
+                for (int j = 0; j < numLevels[i]; j++)
                 {
                     if (stages[i].levels[j] != null)
                     {
-                        unlockedLevels[j] = stages[i].levels[j].isUnlocked;
-                        passedLevels[j] = stages[i].levels[j].isPassed;
-                        starsEarned[j] = stages[i].levels[j].numStarsEarned;
-                        hiScores[j] = stages[i].levels[j].hiScore;
-                        numNotesToGuess[j] = stages[i].levels[j].numNotesToGuess;
-                        subLevels[j] = stages[i].levels[j].subLevels;
+                        unlockedLevels[i][j] = stages[i].levels[j].isUnlocked;
+                        passedLevels[i][j] = stages[i].levels[j].isPassed;
+                        starsEarned[i][j] = stages[i].levels[j].numStarsEarned;
+                        hiScores[i][j] = stages[i].levels[j].hiScore;
+                        numNotesToGuess[i][j] = stages[i].levels[j].numNotesToGuess;
+                        subLevels[i][j] = stages[i].levels[j].subLevels;
                     }
                 }
             }

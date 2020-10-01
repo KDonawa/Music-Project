@@ -16,13 +16,12 @@ MonoBehaviour:
   isUnlocked: 1
   numPassedLevels: 0
   levels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: cc4ac2339bc1e8a428d713c42b4e1097, type: 2}
+  - {fileID: 11400000, guid: 43557b791c6251b44821ce71e558f63b, type: 2}
+  - {fileID: 11400000, guid: dc34249d3bf9fcc44a8f23ba9df2ab60, type: 2}
+  - {fileID: 11400000, guid: 0814f41c4d51b2b49803b6d179b08d89, type: 2}
+  - {fileID: 11400000, guid: 4c1b4fd43b1fa8345b04adaf98a93aba, type: 2}
+  - {fileID: 11400000, guid: 105b28348b06d2a4e912d7e11841c826, type: 2}
+  - {fileID: 11400000, guid: d238666d5cf0a3f448310304810bdda8, type: 2}
+  - {fileID: 11400000, guid: be7481aed6c4024439f43b9aecd2df73, type: 2}
+  - {fileID: 11400000, guid: 57d9bec5eb6daa34f804e8753f899b92, type: 2}

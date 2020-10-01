@@ -7,9 +7,7 @@ using KD.MusicGame.Utility.SaveSystem;
 using KD.MusicGame.UI;
 /*
 IDEAS:     
--hints reduce score by 10% each time one is used
--add tips: this will explain the indian notations, what each stage will teach, what each level plays like, what the drone is, and how to turn off
--object pool sounds
+-hints reduce score by 10% each time one is used: add a variable to keep track of hints/replays
 -instrument select screen    
 */
 namespace KD.MusicGame.Gameplay
@@ -19,6 +17,9 @@ namespace KD.MusicGame.Gameplay
     {
         static Game _instance;
 
+        public static event System.Action LevelPassedEvent;
+
+        #region SETUP
         [Header("Prefabs")]
         [SerializeField] GameUI gameUI = null;
 
@@ -51,11 +52,9 @@ namespace KD.MusicGame.Gameplay
         int guessCount;
         int currentRound;
         List<string> answers;
-        List<string> activeNoteSounds;
+        List<string> activeNoteSounds;       
 
-        public static event System.Action LevelPassedEvent;
-
-        #region SETUP
+        
         private void Awake()
         {
             if (_instance == null) _instance = this;
@@ -108,7 +107,6 @@ namespace KD.MusicGame.Gameplay
             AudioManager.StopAllNoteSounds();
             _utility.HideButtons(guessButtons);
 
-            //currentLevel = GameManager.CurrentLevel;
             currentLevel = GameManager.GetCurrentLevelData();
             if (currentLevel == null) return false; // debug.logwarning
 
@@ -207,52 +205,52 @@ namespace KD.MusicGame.Gameplay
         }
         IEnumerator ContinueGameLoop()
         {
-            _utility.HideButtons(guessButtons);
-            _gameUI.HideDebugText();
-            _gameUI.HideGameText();
-            //_timer.StopGuessTimer();
             currentSubLevelIndex++;
+            _gameUI.HideHintButton();
+            _gameUI.HideReplayButton();
+            //_timer.StopGuessTimer();            
+            yield return new WaitForSeconds(1f);
+            _utility.HideButtons(guessButtons);
+            _gameUI.HideGameText();
+            _gameUI.HideDebugText();
+            yield return new WaitForSeconds(1f);
 
-            yield return new WaitForSeconds(1.5f);
+            if (HasLevelEnded())
+            {
+                _gameUI.HidePauseButton();
+                //_timer.HideTimer();
 
-            if (HasLevelEnded()) StartCoroutine(LevelEndedRoutine());
+                if (IsLevelPassed())
+                {
+                    LevelPassedEvent?.Invoke();
+                    if (!currentLevel.isPassed)
+                    {
+                        currentLevel.isPassed = true;
+                        GameManager.GetCurrentStage().numPassedLevels += 1;
+                    }
+                }
+                int finalScore = _scoreSystem.FinalScorePercentage();
+                int currentHiScore = currentLevel.hiScore;
+                if (finalScore > currentHiScore) currentLevel.hiScore = finalScore;
+
+                // calculate stars earned
+                int numStars = 0;
+                if (finalScore >= 50) numStars = 1;
+                if (finalScore >= 75) numStars = 2;
+                if (finalScore == 100) numStars = 3;
+                if (numStars > currentLevel.numStarsEarned) currentLevel.numStarsEarned = numStars;
+
+                // save progress
+                BinarySaveSystem.SaveGameData();
+                BinarySaveSystem.SaveCustomGameData();
+
+                LevelCompleteMenu.DisplayMenu(finalScore, IsLevelPassed(), currentHiScore, numStars);
+            }                         
             else PlayGameLoop();
         }
-        IEnumerator LevelEndedRoutine()
-        {
-            _gameUI.HidePauseButton();
-            //_timer.HideTimer();
 
-            if (IsLevelPassed())
-            {
-                LevelPassedEvent?.Invoke();
-                if (!currentLevel.isPassed)
-                {
-                    currentLevel.isPassed = true;
-                    //GameManager.CurrentStage.numPassedLevels += 1;
-                    GameManager.GetCurrentStage().numPassedLevels += 1;
-                }
-            }
-            int finalScore = _scoreSystem.FinalScorePercentage();
-            int currentHiScore = currentLevel.hiScore;
-            if (finalScore > currentHiScore) currentLevel.hiScore = finalScore;
-
-            // calculate stars earned
-            int numStars = 0;
-            if (finalScore >= 50) numStars = 1;
-            if (finalScore >= 75) numStars = 2;
-            if (finalScore == 100) numStars = 3;
-            if (numStars > currentLevel.numStarsEarned) currentLevel.numStarsEarned = numStars;
-
-            // save progress
-            //BinarySaveSystem.SaveLevelData(GameManager.CurrentStageIndex);
-            BinarySaveSystem.SaveGameData();
-
-            yield return new WaitForSeconds(2f);
-            LevelCompleteMenu.DisplayMenu(finalScore, IsLevelPassed(), currentHiScore, numStars);
-        }
-        public bool HasLevelEnded() => currentSubLevelIndex == currentLevel.subLevels.Length;
-        public bool IsLevelPassed() => _scoreSystem.FinalScorePercentage() >= levelPassPercentage;
+        bool HasLevelEnded() => currentSubLevelIndex == currentLevel.subLevels.Length;
+        bool IsLevelPassed() => _scoreSystem.FinalScorePercentage() >= levelPassPercentage;
         #endregion
 
         #region EVENTS

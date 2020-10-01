@@ -9,6 +9,7 @@ namespace KD.MusicGame.Utility.SaveSystem
         private const string gamestatefilePath = "/gamestatedata";
         private const string settingsfilePath = "/settings";
         private const string gameDatafilePath = "/gamedata";
+        private const string customGameDatafilePath = "/customgamedata";
         private const string filePathEnd = ".sav";
 
         #region GAME STATE DATA
@@ -43,11 +44,22 @@ namespace KD.MusicGame.Utility.SaveSystem
         public static void SaveGameData()
         {
             string path = Application.persistentDataPath + gameDatafilePath + filePathEnd;
-            SaveData(path, new GameSaveData());
+            SaveData(path, new GameSaveData(false));
         }
         public static GameSaveData LoadGameData()
         {
             string path = Application.persistentDataPath + gameDatafilePath + filePathEnd;
+            object data = LoadData(path);
+            return data != null ? (GameSaveData)data : null;
+        }
+        public static void SaveCustomGameData()
+        {
+            string path = Application.persistentDataPath + customGameDatafilePath + filePathEnd;
+            SaveData(path, new GameSaveData(true));
+        }
+        public static GameSaveData LoadCustomGameData()
+        {
+            string path = Application.persistentDataPath + customGameDatafilePath + filePathEnd;
             object data = LoadData(path);
             return data != null ? (GameSaveData)data : null;
         }

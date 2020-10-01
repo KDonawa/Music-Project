@@ -42,7 +42,7 @@ namespace KD.MusicGame.UI
         #region BUTTON EVENTS
         void ContinueGamePressed()
         {
-            GameManager.LoadGameData();
+            GameManager.LoadGame();
             UIAnimator.ButtonPressEffect3(continueButton, AudioManager.buttonSelect1);
             //SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.CIRCLE_SHRINK, DroneSelectMenu.Instance.Open);
             SceneTransitions.PlayTransition(InTransition.FADE_IN, OutTransition.CIRCLE_SHRINK, StageSelectMenu.Instance.Open);

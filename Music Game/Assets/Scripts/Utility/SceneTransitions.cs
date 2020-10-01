@@ -37,7 +37,7 @@ namespace KD.MusicGame.Utility
         [SerializeField] CanvasGroup circleCG = null;
         [SerializeField] CanvasGroup closeOpenCG = null;
 
-        public static float fadeDuration = 2f;
+        public static float fadeDuration = 1f;
         public static bool sceneLoadingComplete = true;
 
         static SceneTransitions _instance;

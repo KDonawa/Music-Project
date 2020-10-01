@@ -9,7 +9,7 @@ namespace KD.MusicGame.UI
 
         [SerializeField] Menu[] menuPrefabs = null;
 
-        List<Menu> menus;
+        List<Menu> menus = new List<Menu>();
         Menu _currentMenu;
         private void Awake()
         {
@@ -25,7 +25,7 @@ namespace KD.MusicGame.UI
         void InitializeMenus()
         {
             _currentMenu = null;
-            menus = new List<Menu>();
+            menus.Clear();
 
             foreach (var menu in menuPrefabs)
             {
