@@ -24,7 +24,7 @@ namespace KD.MusicGame.Gameplay
 
         [Header("Variables")]
         [Range(0, 100)] [SerializeField] int levelPassPercentage = 50;
-        [Range(1, 10)] [SerializeField] int numRoundsPerSublevel = 5;
+        //[Range(1, 10)] [SerializeField] int numRoundsPerSublevel = 5;
 
         [Header("Systems")]
         [SerializeField] ScoreSystem scoreSystemPrefab = null;
@@ -45,9 +45,9 @@ namespace KD.MusicGame.Gameplay
         int guessCount;
         int currentRound;
         List<string> answers;
-        List<string> activeNoteSounds;       
+        List<string> activeNoteSounds;
+        int numRoundsPerSublevel = 1;
 
-        
         private void Awake()
         {
             if (_instance == null) _instance = this;
@@ -104,6 +104,7 @@ namespace KD.MusicGame.Gameplay
             currentLevel = GameManager.GetCurrentLevelData();
             currentSubLevelIndex = 0;
             numGuessesPerRound = currentLevel.numNotesToGuess;
+            numRoundsPerSublevel = (int)SettingsMenu.NumRoundsSlider.value;
 
             _gameUI.Inititialize();
             _scoreSystem.Initialize(numGuessesPerRound * numRoundsPerSublevel * currentLevel.subLevels.Length);
@@ -178,7 +179,6 @@ namespace KD.MusicGame.Gameplay
                 PlayInstrumentNote(GameManager.GetWesternNotation(answers[i], droneNote));
                 //_gameUI.DisplayDebugText(_utility.GetNoteFormatted(note)); // testing
 
-                //yield return new WaitForSeconds(1.8f);
                 yield return new WaitForSeconds(4f - SettingsMenu.NoteSpeedSlider.value);
                 StopInstrumentNote(GameManager.GetWesternNotation(answers[i], droneNote));
             }

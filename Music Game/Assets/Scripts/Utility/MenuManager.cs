@@ -17,9 +17,6 @@ namespace KD.MusicGame.UI
             else Destroy(gameObject);
 
             DontDestroyOnLoad(_instance);
-        }
-        private void Start()
-        {
             InitializeMenus();
         }
         void InitializeMenus()

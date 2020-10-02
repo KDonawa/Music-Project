@@ -89,6 +89,7 @@ namespace KD.MusicGame.Utility.SaveSystem
         public float value3;
         public float value4;
         public float noteSpeed;
+        public int numRounds;
 
         public SettingsSaveData()
         {
@@ -97,6 +98,7 @@ namespace KD.MusicGame.Utility.SaveSystem
             value3 = UI.SettingsMenu.Slider3.value;
             value4 = UI.SettingsMenu.Slider4.value;
             noteSpeed = UI.SettingsMenu.NoteSpeedSlider.value;
+            numRounds = (int)UI.SettingsMenu.NumRoundsSlider.value;
         }
     }
 }

@@ -62,9 +62,6 @@ namespace KD.MusicGame.Utility
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
 
-                //audioSources = new List<AudioSource>();
-                //sfxMixerGroup.audioMixer.SetFloat();
-
                 foreach (var sound in uiSounds) AddAudioSource(sound, sfxMixerGroup);
                 foreach (var sound in droneSounds) AddAudioSource(sound, droneMixerGroup);
                 foreach (var sound in harmoniumSounds) AddAudioSource(sound, instrumentMixerGroup);
@@ -88,7 +85,8 @@ namespace KD.MusicGame.Utility
         #region UTILITY
         public static void SetVolume(SoundType soundType, float volume)
         {
-            volume = 20f * Mathf.Log10(volume);
+            // vol: 0 - 1
+            volume = (1 - Mathf.Sqrt(volume)) * -80f;
             switch (soundType)
             {
                 case SoundType.NONE:

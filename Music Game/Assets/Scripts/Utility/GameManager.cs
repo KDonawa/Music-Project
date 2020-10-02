@@ -89,6 +89,7 @@ namespace KD.MusicGame.Utility
         }
         private void Start()
         {
+            SettingsMenu.LoadData();
             SceneManager.sceneLoaded += OnSceneLoaded;
             Game.LevelPassedEvent += UnlockNextStage;
             Game.LevelPassedEvent += UnlockNextLevel;
